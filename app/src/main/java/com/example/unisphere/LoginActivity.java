@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback, U
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-       authService = AuthService.getInstance();
+        authService = AuthService.getInstance();
         databaseService = DatabaseService.getInstance();
 
         email = (EditText) findViewById(R.id.email);
@@ -101,7 +101,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback, U
 
 
         // Toasting temporarily
-        Toast.makeText(LoginActivity.this, "Login Unsuccessful" , Toast.LENGTH_SHORT).show();
+        Toast.makeText(LoginActivity.this, "Login Unsuccessful", Toast.LENGTH_SHORT).show();
     }
 
     @Override
