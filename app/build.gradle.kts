@@ -7,7 +7,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.unisphere"
+        applicationId = "edu.northeastern.unisphere"
         minSdk = 27
         targetSdk = 34
         versionCode = 1
