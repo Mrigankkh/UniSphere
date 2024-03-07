@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,7 +15,6 @@ import com.example.unisphere.service.AuthService;
 import com.example.unisphere.service.DatabaseService;
 import com.example.unisphere.service.LoginCallback;
 import com.example.unisphere.service.UserDataCallback;
-import com.google.firebase.FirebaseApp;
 
 /**
  * Activity for the Login Screen through email ID and password.
@@ -29,6 +27,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback, U
     private Button loginButton;
     private EditText email;
     private EditText password;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +55,11 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback, U
     private boolean checkInputValidity(String emailString, String passwordString) {
         //TODO: Check if any validation required
         return true;
+    }
+
+    public void signupUser(View view) {
+        Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+        startActivity(intent);
     }
 
     public void loginUser(View view) {
