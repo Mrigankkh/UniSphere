@@ -33,17 +33,23 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback, U
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
-        authService = AuthService.getInstance();
-        databaseService = DatabaseService.getInstance();
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
 
-        email = (EditText) findViewById(R.id.email);
-        password = (EditText) findViewById(R.id.password);
-
-
-        //Temporary login button logic
-        loginButton = (Button) findViewById(R.id.login);
+        return;
+//
+//        setContentView(R.layout.activity_login);
+//
+//        authService = AuthService.getInstance();
+//        databaseService = DatabaseService.getInstance();
+//
+//        email = (EditText) findViewById(R.id.email);
+//        password = (EditText) findViewById(R.id.password);
+//
+//
+//        //Temporary login button logic
+//        loginButton = (Button) findViewById(R.id.login);
 
     }
 
