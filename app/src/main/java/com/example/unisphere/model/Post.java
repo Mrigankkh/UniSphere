@@ -9,7 +9,17 @@ public class Post {
     private String imageUrl;
     private String description;
     private String userId;
-    private Long likes;
+
+    public List<String> getLikedByUserIds() {
+        return likedByUserIds;
+    }
+
+    public void setLikedByUserIds(List<String> likedByUserIds) {
+        this.likedByUserIds = likedByUserIds;
+    }
+
+    private List<String> likedByUserIds;
+
     private List<Comment> comments;
 
     public String getImageUrl() {
@@ -36,13 +46,6 @@ public class Post {
         this.userId = userId;
     }
 
-    public Long getLikes() {
-        return likes;
-    }
-
-    public void setLikes(Long likes) {
-        this.likes = likes;
-    }
 
     public List<Comment> getComments() {
         return comments;

@@ -34,7 +34,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
         Post postItem = list.get(position);
-        holder.likeCount.setText(String.valueOf(postItem.getLikes()));
+        holder.likeCount.setText(String.valueOf(postItem.getLikedByUserIds().size()));
         holder.commentCount.setText(String.valueOf(postItem.getComments().size()));
         holder.description.setText(postItem.getDescription());
         Picasso.get().load(postItem.getImageUrl()).into(holder.postImage);
