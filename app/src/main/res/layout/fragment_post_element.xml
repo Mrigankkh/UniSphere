@@ -5,8 +5,9 @@
     android:layout_height="wrap_content"
     android:id="@+id/post_list_container"
     android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    app:cardBackgroundColor="#D5D5D5"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="10dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -25,6 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/imageView_post"
             android:padding="16dp"
+            app:cardBackgroundColor="#000000"
             android:text="Description"
             android:textSize="18sp" />
 
@@ -50,7 +52,7 @@
                 android:text="0"
                 android:textSize="16sp"
                 android:textColor="@android:color/black"
-                android:layout_margin="8dp"
+                android:layout_margin="14dp"
 
                 android:layout_marginRight="16dp"/>
 
@@ -66,7 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
-                android:layout_margin="8dp"
+                android:layout_margin="14dp"
                 android:textSize="16sp"
                 android:textColor="@android:color/black" />
 
