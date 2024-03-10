@@ -1,7 +1,5 @@
 package com.example.unisphere.service;
 
-import com.example.unisphere.model.Student;
-import com.example.unisphere.model.User;
 import com.google.firebase.database.FirebaseDatabase;
 
 /**
@@ -11,6 +9,7 @@ public class DatabaseService {
 
     private static DatabaseService instance;
     private final FirebaseDatabase firebaseDatabase;
+
     public static DatabaseService getInstance() {
         if (instance == null) {
             instance = new DatabaseService();
@@ -19,7 +18,7 @@ public class DatabaseService {
     }
 
     private DatabaseService() {
-        this.firebaseDatabase =  FirebaseDatabase.getInstance();
+        this.firebaseDatabase = FirebaseDatabase.getInstance();
     }
 
     /**
@@ -27,10 +26,14 @@ public class DatabaseService {
      *
      * @param email email of the user
      */
-    public void getUserData(String email, UserDataCallback userDataCallback) {
+    public void getUserData(String email, DatabaseCallback userDataCallback) {
 
 
-        userDataCallback.onUserDataRetrieved(new Student());
+        //userDataCallback.onUserDataRetrieved(new Student());
 
     }
+
+    public void getUniversityList() {
+    }
+
 }
