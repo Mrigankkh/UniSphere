@@ -9,17 +9,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.unisphere.model.Student;
 import com.example.unisphere.model.User;
 import com.example.unisphere.service.AuthService;
 import com.example.unisphere.service.DatabaseService;
 import com.example.unisphere.service.LoginCallback;
-import com.example.unisphere.service.UserDataCallback;
+import com.example.unisphere.service.DatabaseCallback;
 
 /**
  * Activity for the Login Screen through email ID and password.
  */
-public class LoginActivity extends AppCompatActivity implements LoginCallback, UserDataCallback {
+public class LoginActivity extends AppCompatActivity implements LoginCallback, DatabaseCallback {
 
 
     AuthService authService;
@@ -54,8 +53,9 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback, U
     }
 
     private User getUserData(String email) {
+        return null;
         //Temporary
-        return new Student();
+        // return new Student();
     }
 
     private boolean checkInputValidity(String emailString, String passwordString) {
@@ -114,37 +114,33 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback, U
         Toast.makeText(LoginActivity.this, "Login Unsuccessful", Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onUserDataRetrieved(User user) {
 
-        try {
-            addUserDataToSharedPreferences(user);
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
 
-        } catch (Exception e) {
-            // TODO: Find out the correct error message here
-            Toast.makeText(LoginActivity.this, "Error logging in the user./ DBError", Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    @Override
-    public void onUserDataRetrieveFailed() {
-
-    }
 
 
     private void addUserDataToSharedPreferences(User user) throws RuntimeException {
     }
 
-//    @Override
-//    public void onDataRetrieveSuccess() {
-//
-//    }
-//
-//    @Override
-//    public void onDataRetrieveFailed() {
-//
-//    }
+
+    @Override
+    public void onDataRetrieved(Object user) {
+        if (user instanceof User)
+            try {
+
+                addUserDataToSharedPreferences((User) user);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+
+            } catch (Exception e) {
+                // TODO: Find out the correct error message here
+                Toast.makeText(LoginActivity.this, "Error logging in the user./ DBError", Toast.LENGTH_SHORT).show();
+            }
+    }
+
+    @Override
+    public void onDataRetrieveFailed() {
+
+    }
+
+
 }

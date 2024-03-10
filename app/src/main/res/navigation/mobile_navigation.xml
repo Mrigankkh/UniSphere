@@ -3,35 +3,61 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+  >
 
-    <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.example.unisphere.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+<!--    <fragment-->
+<!--        android:id="@+id/navigation_home"-->
+<!--        android:name="com.example.unisphere.ui.home.HomeFragment"-->
+<!--        android:label="@string/title_home"-->
+<!--        tools:layout="@layout/fragment_home" />-->
 
-    <fragment
-        android:id="@+id/navigation_events"
-        android:name="com.example.unisphere.ui.events.EventsFragment"
-        android:label="@string/title_events"
-        tools:layout="@layout/fragment_events" />
+<!--    <fragment-->
+<!--        android:id="@+id/navigation_events"-->
+<!--        android:name="com.example.unisphere.ui.events.EventsFragment"-->
+<!--        android:label="@string/title_events"-->
+<!--        tools:layout="@layout/fragment_events" />-->
 
-    <fragment
-        android:id="@+id/navigation_search"
-        android:name="com.example.unisphere.ui.search.SearchFragment"
-        android:label="@string/title_search"
-        tools:layout="@layout/fragment_search" />
+<!--    <fragment-->
+<!--        android:id="@+id/navigation_search"-->
+<!--        android:name="com.example.unisphere.ui.search.SearchFragment"-->
+<!--        android:label="@string/title_search"-->
+<!--        tools:layout="@layout/fragment_search" />-->
 
-    <fragment
-        android:id="@+id/navigation_messenger"
-        android:name="com.example.unisphere.ui.messenger.MessengerFragment"
-        android:label="@string/title_messenger"
-        tools:layout="@layout/fragment_messenger" />
+<!--    <fragment-->
+<!--        android:id="@+id/navigation_messenger"-->
+<!--        android:name="com.example.unisphere.ui.messenger.MessengerFragment"-->
+<!--        android:label="@string/title_messenger"-->
+<!--        tools:layout="@layout/fragment_messenger" />-->
 
-    <fragment
-        android:id="@+id/navigation_profile"
-        android:name="com.example.unisphere.ui.profile.ProfileFragment"
-        android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile" />
+<!--    <fragment-->
+<!--        android:id="@+id/navigation_profile"-->
+<!--        android:name="com.example.unisphere.ui.profile.ProfileFragment"-->
+<!--        android:label="@string/title_profile"-->
+<!--        tools:layout="@layout/fragment_profile" />-->
+
+
+<!--    <fragment-->
+<!--        android:id="@+id/navigation_signup_user"-->
+<!--        android:name="com.example.unisphere.ui.profile.ProfileFragment"-->
+<!--        android:label="@string/title_profile"-->
+<!--        tools:layout="@layout/fragment_signup_user" />-->
+
+<!--    <fragment-->
+<!--        android:id="@+id/navigation_signup_student"-->
+<!--        android:name="com.example.unisphere.ui.profile.ProfileFragment"-->
+<!--        android:label="@string/title_profile"-->
+<!--        tools:layout="@layout/fragment_signup_student" />-->
+<!--    <fragment-->
+<!--        android:id="@+id/navigation_signup_organization"-->
+<!--        android:name="com.example.unisphere.ui.profile.ProfileFragment"-->
+<!--        android:label="@string/title_profile"-->
+<!--        tools:layout="@layout/fragment_signup_organization" />-->
+<!--    <action-->
+<!--        android:id="@+id/user_to_student"-->
+<!--        app:destination="@id/navigation_signup_student" />-->
+<!--    <action-->
+<!--        android:id="@+id/user_to_organization"-->
+<!--        app:destination="@id/navigation_signup_organization" />-->
+
+
 </navigation>

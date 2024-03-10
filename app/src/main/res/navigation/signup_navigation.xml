@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/signup_navigation"
+    app:startDestination="@id/signupUserFragment"
+
+    >
+
+
+    <fragment
+        android:id="@+id/signupUserFragment"
+
+        android:name="com.example.unisphere.SignupUserFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_signup_user" />
+
+    <fragment
+        android:id="@+id/signupStudentFragment"
+        android:name="com.example.unisphere.SignupStudentFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_signup_student" />
+    <fragment
+        android:id="@+id/navigation_signup_organization"
+        android:name="com.example.unisphere.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_signup_organization" />
+    <action
+        android:id="@+id/action_fragment_signup_user_to_fragment_signup_student"
+        app:destination="@id/signupStudentFragment" />
+
+
+
+</navigation>
