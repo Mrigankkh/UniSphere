@@ -1,0 +1,47 @@
+package com.example.unisphere.adapter;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.unisphere.R;
+import com.example.unisphere.model.Post;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
+
+public class PostAdapter extends RecyclerView.Adapter<PostViewHolder> {
+    Context context;
+    List<Post> list;
+    View rootView;
+
+    public PostAdapter(Context context, List<Post> list, View rootView) {
+        this.context = context;
+        this.list = list;
+        this.rootView = rootView;
+    }
+
+    @NonNull
+    @Override
+    public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new PostViewHolder(LayoutInflater.from(context).inflate(R.layout.fragment_post_element, parent, false), context, list);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
+        Post postItem = list.get(position);
+        holder.likeCount.setText(String.valueOf(postItem.getLikedByUserIds().size()));
+        holder.commentCount.setText(String.valueOf(postItem.getComments().size()));
+        holder.description.setText(postItem.getDescription());
+        Picasso.get().load(postItem.getImageUrl()).into(holder.postImage);
+    }
+
+    @Override
+    public int getItemCount() {
+        return list.size();
+    }
+}
