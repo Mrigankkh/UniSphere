@@ -19,7 +19,11 @@
         android:id="@+id/signupStudentFragment"
         android:name="com.example.unisphere.SignupStudentFragment"
         android:label="@string/title_profile"
-        tools:layout="@layout/fragment_signup_student" />
+        tools:layout="@layout/fragment_signup_student" >
+        <argument
+            android:name="studentBuilder"
+            android:defaultValue="null" />
+    </fragment>
     <fragment
         android:id="@+id/navigation_signup_organization"
         android:name="com.example.unisphere.ui.profile.ProfileFragment"
