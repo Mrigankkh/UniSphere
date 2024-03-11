@@ -15,9 +15,8 @@ import com.example.unisphere.model.Student;
 import com.example.unisphere.model.University;
 import com.example.unisphere.model.User;
 import com.example.unisphere.service.AuthService;
-import com.example.unisphere.service.DatabaseService;
+
 import com.example.unisphere.service.LoginCallback;
-import com.example.unisphere.service.DatabaseCallback;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,7 +36,6 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
 
 
     AuthService authService;
-    DatabaseService databaseService;
     private Button loginButton;
     private EditText email;
     private EditText password;
