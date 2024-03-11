@@ -58,50 +58,45 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
         email = (EditText) findViewById(R.id.email);
         password = (EditText) findViewById(R.id.password);
 
-//
-//        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//        startActivity(intent);
-
-        return;
-//
-//        setContentView(R.layout.activity_login);
-//
-//        authService = AuthService.getInstance();
-//        databaseService = DatabaseService.getInstance();
-//
-//        email = (EditText) findViewById(R.id.email);
-//        password = (EditText) findViewById(R.id.password);
-//
-//
-//        //Temporary login button logic
-//        loginButton = (Button) findViewById(R.id.login);
 
     }
 
-    private User getUserData(String email) {
-        return null;
-        //Temporary
-        // return new Student();
-    }
 
     private boolean checkInputValidity(String emailString, String passwordString) {
+
+        if (emailString.isEmpty() || passwordString.length() < 6)
+            return false;
         //TODO: Check if any validation required
         return true;
     }
 
-    public void signupUser(View view) {
+    /**
+     * If sign up is clicked, user is redirected to the signup view.
+     *
+     * @param view
+     */
+    public void onSignupClicked(View view) {
         Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
         startActivity(intent);
     }
 
-    public void loginUser(View view) {
+    /**
+     * Handles the case when the user presses the login button from the UI.
+     *
+     * @param view
+     */
+    public void onLoginClicked(View view) {
 
         String emailString = email.getText().toString();
         String passwordString = password.getText().toString();
+
+        //Check if inputs are valid
         if (!checkInputValidity(emailString, passwordString)) {
-            Toast.makeText(LoginActivity.this, "Email entered is invalid!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Email or password entered is invalid!", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        //Authenticate the user
         try {
             authenticate(emailString, passwordString);
         } catch (Exception e) {
@@ -111,11 +106,16 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
         //TODO: Error handling during authentication.
     }
 
-
+    /**
+     * Authenticate the user using the email and password.
+     *
+     * @param emailString    is the email ID of the user
+     * @param passwordString is the password of the user
+     */
     private void authenticate(String emailString, String passwordString) {
 
         try {
-
+            //call the auth service
             authService.loginWithEmailAndPassword(emailString, passwordString, this);
 
         } catch (Exception e) {
@@ -125,6 +125,11 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
 
     }
 
+    /**
+     * Callback if the user is authenticated
+     *
+     * @param email that is logged in.
+     */
     @Override
     public void onLoginSuccess(String email) {
 
@@ -166,8 +171,6 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                             }
 
 
-
-
                         } else if (snapshot.child("userRole").equals("organization")) {
                             // Org code.
                         }
@@ -203,7 +206,12 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
         Toast.makeText(LoginActivity.this, "Login Unsuccessful", Toast.LENGTH_SHORT).show();
     }
 
-
+    /**
+     * Add the user data to shared preferences.
+     *
+     * @param user is the user data of the user
+     * @throws RuntimeException
+     */
     private void addUserDataToSharedPreferences(User user) throws RuntimeException {
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         preferences.edit().putString("username", user.getName()).putString("university", user.getUniversity().getUniversityName()).putString("email", user.getEmailID())
@@ -214,22 +222,12 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
         }
     }
 
-
-//    @Override
-//    public void onDataRetrieved(Object user) {
-//        if (user instanceof User)
-//            try {
-//
-//                addUserDataToSharedPreferences((User) user);
-//                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                startActivity(intent);
-//
-//            } catch (Exception e) {
-//                // TODO: Find out the correct error message here
-//                Toast.makeText(LoginActivity.this, "Error logging in the user./ DBError", Toast.LENGTH_SHORT).show();
-//            }
-//    }
-
+    /**
+     * Gets the university name from domain "university" in email@university.edu
+     *
+     * @param domain
+     * @return name of the university
+     */
     private String getUniversityFromDomain(String domain) {
         return "Northeastern University";
     }
