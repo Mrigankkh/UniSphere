@@ -5,9 +5,13 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
 
+
     <string name="firebase_db_url">https://unisphere-340ac-default-rtdb.firebaseio.com/</string>
 
     <string name="title_home">Feed</string>
+
+    <string name="title_feed">Feed</string>
+
     <string name="title_events">Events</string>
     <string name="title_search">Search</string>
     <string name="title_messenger">Messenger</string>
