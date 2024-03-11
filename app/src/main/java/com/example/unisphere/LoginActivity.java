@@ -17,6 +17,8 @@ import com.example.unisphere.model.User;
 import com.example.unisphere.service.AuthService;
 
 import com.example.unisphere.service.LoginCallback;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,8 +45,13 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
     private DatabaseReference univeresityReference;
     private DatabaseReference userReference;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        }
 
         super.onCreate(savedInstanceState);
 
