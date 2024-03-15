@@ -21,18 +21,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        binding = ActivityMainBinding.inflate(getLayoutInflater());
-//        setContentView(binding.getRoot());
-        setContentView(R.layout.activity_main);
-//        BottomNavigationView navView = findViewById(R.id.nav_view);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        BottomNavigationView navView = findViewById(R.id.nav_view);
 //        // Passing each menu ID as a set of Ids because each
 //        // menu should be considered as top level destinations.
-//        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-//                R.id.navigation_home, R.id.navigation_events, R.id.navigation_search, R.id.navigation_messenger, R.id.navigation_profile)
-//                .build();
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_home, R.id.navigation_events, R.id.navigation_search, R.id.navigation_messenger, R.id.navigation_profile)
+                .build();
      navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-//        NavigationUI.setupWithNavController(binding.navView, navController);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(binding.navView, navController);
     }
 
 }
