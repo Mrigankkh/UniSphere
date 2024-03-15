@@ -18,7 +18,7 @@ import com.example.unisphere.service.AuthService;
 
 import com.example.unisphere.service.LoginCallback;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -220,10 +220,10 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
     private void addUserDataToSharedPreferences(User user) throws RuntimeException {
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         preferences.edit().putString("username", user.getName()).putString("university", user.getUniversity().getUniversityName()).putString("email", user.getEmailID())
-                .putString("user_role", user.getUserRole()).putString("phone_number", user.getPhoneNumber()).putStringSet("tags", user.getUserTags())
+                .putString("user_role", user.getUserRole()).putString("phone_number", user.getPhoneNumber()).putStringSet("tags", user.getUserTags()).apply();
         ;
         if (user.getUserRole().equals("student")) {
-            preferences.edit().putString("DoB", ((Student) user).getDateOfBirth().toString());
+            preferences.edit().putString("DoB", ((Student) user).getDateOfBirth().toString()).apply();
         }
     }
 

@@ -78,7 +78,7 @@
             app:layout_constraintTop_toBottomOf="@+id/editTextDate" />
 
         <Spinner
-            android:id="@+id/spinner"
+            android:id="@+id/programSelector"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"

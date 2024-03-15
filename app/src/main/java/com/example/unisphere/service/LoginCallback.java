@@ -1,6 +1,5 @@
 package com.example.unisphere.service;
 
-import com.example.unisphere.model.User;
 
 /**
  * A callback for log in. On successful login, onLoginSuccess callback function is called.

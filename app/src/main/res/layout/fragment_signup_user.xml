@@ -91,7 +91,7 @@
         app:layout_constraintTop_toBottomOf="@+id/emailLabel" />
 
     <TextView
-        android:id="@+id/newUserPassword"
+        android:id="@+id/PasswordLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -102,7 +102,7 @@
         app:layout_constraintTop_toBottomOf="@+id/userRoleSelector" />
 
     <EditText
-        android:id="@+id/editTextTextPassword"
+        android:id="@+id/newUserPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -110,10 +110,10 @@
         android:ems="10"
         android:inputType="textPassword"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newUserPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/PasswordLabel" />
 
     <TextView
-        android:id="@+id/newUserConfirmPassword"
+        android:id="@+id/confirmPasswordLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -121,10 +121,10 @@
         android:text="Confirm Password"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/newUserPassword" />
 
     <EditText
-        android:id="@+id/editTextTextPassword2"
+        android:id="@+id/newUserConfirmPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -132,7 +132,7 @@
         android:ems="10"
         android:inputType="textPassword"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newUserConfirmPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/confirmPasswordLabel" />
 
     <Spinner
         android:id="@+id/userRoleSelector"
