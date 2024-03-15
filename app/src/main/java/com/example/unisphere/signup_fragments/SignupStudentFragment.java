@@ -1,4 +1,4 @@
-package com.example.unisphere;
+package com.example.unisphere.signup_fragments;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -14,16 +14,14 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.example.unisphere.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
 
 
 public class SignupStudentFragment extends Fragment {

@@ -1,4 +1,4 @@
-package com.example.unisphere;
+package com.example.unisphere.signup_fragments;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.unisphere.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**

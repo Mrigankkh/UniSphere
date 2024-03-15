@@ -11,13 +11,13 @@
     <fragment
         android:id="@+id/signupUserFragment"
 
-        android:name="com.example.unisphere.SignupUserFragment"
+        android:name="com.example.unisphere.signup_fragments.SignupUserFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_signup_user" />
 
     <fragment
         android:id="@+id/signupStudentFragment"
-        android:name="com.example.unisphere.SignupStudentFragment"
+        android:name="com.example.unisphere.signup_fragments.SignupStudentFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_signup_student" >
 <!--        <argument-->
