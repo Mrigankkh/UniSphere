@@ -105,6 +105,7 @@ public class SignupUserFragment extends Fragment {
 
 
         navController.navigate(R.id.action_fragment_signup_user_to_fragment_signup_student);
+        //navController.popBackStack();
 
     }
 
