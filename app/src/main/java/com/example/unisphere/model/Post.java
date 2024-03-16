@@ -1,11 +1,12 @@
 package com.example.unisphere.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import lombok.Builder;
 
 @Builder(toBuilder = true)
-public class Post {
+public class Post implements Serializable {
     private String imageUrl;
     private String description;
     private String userId;
