@@ -29,6 +29,7 @@ public class AuthService {
         System.out.println("hello world");
     }
 
+
     public void loginWithEmailAndPassword(String email, String password, LoginCallback loginCallback) {
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {

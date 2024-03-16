@@ -7,5 +7,6 @@ public class Application extends android.app.Application {
     public void onCreate() {
         FirebaseApp.initializeApp(this);
         super.onCreate();
+
     }
 }

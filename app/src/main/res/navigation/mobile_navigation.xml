@@ -3,7 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@id/navigation_home">
+
+    <activity
+        android:id="@+id/activity_login"
+        android:name="com.example.unisphere.LoginActivity"
+        android:label="Login" />
 
     <fragment
         android:id="@+id/navigation_home"
@@ -33,12 +38,39 @@
         android:id="@+id/navigation_profile"
         android:name="com.example.unisphere.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_navigation_profile_to_activity_login"
+            app:destination="@id/activity_login" />
+    </fragment>
 
     <fragment
         android:id="@+id/postDetailsFragment"
         android:name="com.example.unisphere.ui.home.PostDetailsFragment"
         android:label="@string/title_post_details"
         tools:layout="@layout/fragment_post_detail" />
+
+    <!--    <fragment-->
+    <!--        android:id="@+id/navigation_signup_user"-->
+    <!--        android:name="com.example.unisphere.ui.profile.ProfileFragment"-->
+    <!--        android:label="@string/title_profile"-->
+    <!--        tools:layout="@layout/fragment_signup_user" />-->
+
+    <!--    <fragment-->
+    <!--        android:id="@+id/navigation_signup_student"-->
+    <!--        android:name="com.example.unisphere.ui.profile.ProfileFragment"-->
+    <!--        android:label="@string/title_profile"-->
+    <!--        tools:layout="@layout/fragment_signup_student" />-->
+    <!--    <fragment-->
+    <!--        android:id="@+id/navigation_signup_organization"-->
+    <!--        android:name="com.example.unisphere.ui.profile.ProfileFragment"-->
+    <!--        android:label="@string/title_profile"-->
+    <!--        tools:layout="@layout/fragment_signup_organization" />-->
+    <!--    <action-->
+    <!--        android:id="@+id/user_to_student"-->
+    <!--        app:destination="@id/navigation_signup_student" />-->
+    <!--    <action-->
+    <!--        android:id="@+id/user_to_organization"-->
+    <!--        app:destination="@id/navigation_signup_organization" />-->
 
 </navigation>
