@@ -8,10 +8,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unisphere.R;
+import com.example.unisphere.adapter.CommentAdapter;
+import com.example.unisphere.model.Comment;
 import com.example.unisphere.model.Post;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 public class PostDetailsFragment extends Fragment {
 
@@ -50,6 +56,16 @@ public class PostDetailsFragment extends Fragment {
             textViewDescription.setText(post.getDescription());
             textViewLikeCount.setText(String.valueOf(post.getLikedByUserIds().size()));
             textViewCommentCount.setText(String.valueOf(post.getComments().size()));
+
+            // Assuming you have a list of comments in your Post object
+            List<Comment> comments = post.getComments();
+
+// Initialize the RecyclerView
+            RecyclerView recyclerViewComments = view.findViewById(R.id.recyclerViewComments);
+            recyclerViewComments.setLayoutManager(new LinearLayoutManager(requireContext()));
+            CommentAdapter commentAdapter = new CommentAdapter(comments);
+            recyclerViewComments.setAdapter(commentAdapter);
+
         }
 
         return view;
