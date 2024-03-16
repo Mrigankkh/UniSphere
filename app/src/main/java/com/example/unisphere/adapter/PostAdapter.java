@@ -19,16 +19,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostViewHolder> {
     List<Post> list;
     View rootView;
 
-    public PostAdapter(Context context, List<Post> list, View rootView) {
+    private ClickListener clickListener;
+
+
+    public PostAdapter(Context context, List<Post> list, View rootView, ClickListener clickListener) {
         this.context = context;
         this.list = list;
         this.rootView = rootView;
+        this.clickListener = clickListener;
     }
 
     @NonNull
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new PostViewHolder(LayoutInflater.from(context).inflate(R.layout.fragment_post_element, parent, false), context, list);
+        return new PostViewHolder(LayoutInflater.from(context).inflate(R.layout.fragment_post_element, parent, false), context, list,clickListener);
     }
 
     @Override
@@ -43,5 +47,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostViewHolder> {
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    public interface ClickListener {
+        void onPostClick(int position);
     }
 }

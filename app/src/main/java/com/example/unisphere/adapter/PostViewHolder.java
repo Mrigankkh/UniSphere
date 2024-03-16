@@ -9,33 +9,29 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unisphere.R;
 import com.example.unisphere.model.Comment;
 import com.example.unisphere.model.Post;
+import com.example.unisphere.ui.home.PostDetailsFragment;
 
 import java.util.List;
 
-public class PostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class PostViewHolder extends RecyclerView.ViewHolder  {
 
     CardView cardView;
     TextView description;
     ImageView postImage;
-
     TextView likeCount;
-
     TextView commentCount;
-
     Context context;
     List<Post> postList;
-
     ImageView likeIcon;
 
-
-
-
-    public PostViewHolder(@NonNull View itemView, Context context, List<Post> postList) {
+    public PostViewHolder(@NonNull View itemView, Context context, List<Post> postList, PostAdapter.ClickListener clickListener) {
         super(itemView);
         this.context = context;
         this.cardView = itemView.findViewById(R.id.post_list_container);
@@ -45,8 +41,14 @@ public class PostViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         this.commentCount = itemView.findViewById(R.id.comment_count);
         this.likeIcon = itemView.findViewById(R.id.like_icon);
         this.postList = postList;
+        itemView.setOnClickListener(v -> {
+            int position = getAdapterPosition();
+            if (position != RecyclerView.NO_POSITION && clickListener != null) {
+                clickListener.onPostClick(position);
+            }
+        });
         this.description.setTextColor(ContextCompat.getColor(context, android.R.color.black)); // Change text color to black
-
+       // itemView.setOnClickListener(this);
         likeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,8 +86,4 @@ public class PostViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     }
 
-    @Override
-    public void onClick(View v) {
-
-    }
 }
