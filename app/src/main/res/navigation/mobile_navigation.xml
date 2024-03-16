@@ -34,4 +34,11 @@
         android:name="com.example.unisphere.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/postDetailsFragment"
+        android:name="com.example.unisphere.ui.home.PostDetailsFragment"
+        android:label="@string/title_post_details"
+        tools:layout="@layout/fragment_post_detail" />
+
 </navigation>
