@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +28,9 @@ public class HomeFragment extends Fragment {
     RecyclerView recyclerView;
     PostAdapter postAdapter;
 
+    private static final String ARG_POST = "post";
+
+
     public static HomeFragment newInstance(String param1, String param2) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
@@ -42,10 +47,17 @@ public class HomeFragment extends Fragment {
 
         recyclerView = homeView.findViewById(R.id.recyclerViewPostsHome);
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 1));
-        postAdapter = new PostAdapter(requireContext(), postList, homeView.findViewById(android.R.id.content));
+        postAdapter = new PostAdapter(requireContext(), postList, homeView.findViewById(android.R.id.content), this::onPostClick);
         recyclerView.setAdapter(postAdapter);
 
         return homeView;
+    }
+
+    private void onPostClick(int position) {
+        Post post = postList.get(position);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ARG_POST, post);
+        Navigation.findNavController(requireView()).navigate(R.id.postDetailsFragment,bundle);
     }
 
 
