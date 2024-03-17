@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.unisphere.R;
+import com.example.unisphere.service.AuthService;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.w3c.dom.Text;
@@ -30,13 +31,13 @@ public class ProfileFragment extends Fragment {
     private TextView tempUserData;
     private SharedPreferences sharedPreferences;
     private NavController navController;
-    FirebaseAuth firebaseAuth;
+    AuthService authService;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPreferences = getActivity().getSharedPreferences("USER_DATA",MODE_PRIVATE);
-        firebaseAuth = FirebaseAuth.getInstance();
+        sharedPreferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        authService = AuthService.getInstance();
 
 
     }
@@ -65,7 +66,7 @@ public class ProfileFragment extends Fragment {
 
     public void logOut() {
         sharedPreferences.edit().clear();
-        firebaseAuth.signOut();
+        authService.signOut();
         navController.clearBackStack(R.id.activity_login);
         navController.navigate(R.id.action_navigation_profile_to_activity_login);
 
