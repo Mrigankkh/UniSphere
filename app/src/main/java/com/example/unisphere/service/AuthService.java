@@ -29,6 +29,12 @@ public class AuthService {
         System.out.println("hello world");
     }
 
+    public void signOut() {
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        if (firebaseUser != null) {
+            this.firebaseAuth.signOut();
+        }
+    }
 
     public void loginWithEmailAndPassword(String email, String password, LoginCallback loginCallback) {
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {

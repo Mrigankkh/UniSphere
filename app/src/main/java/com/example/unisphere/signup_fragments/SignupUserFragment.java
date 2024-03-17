@@ -36,6 +36,7 @@ public class SignupUserFragment extends Fragment {
     private EditText userConfirmPassword;
     private Spinner userRoleSelector;
     private SharedPreferences preferences;
+//private File
 
     public SignupUserFragment() {
         // Required empty public constructor
@@ -45,7 +46,7 @@ public class SignupUserFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = getActivity().getPreferences(MODE_PRIVATE);
+        preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
 
 
     }
@@ -75,7 +76,7 @@ public class SignupUserFragment extends Fragment {
         userEmail = (EditText) view.findViewById(R.id.newUserEmail);
         userPassword = (EditText) view.findViewById(R.id.newUserPassword);
         userConfirmPassword = (EditText) view.findViewById(R.id.newUserConfirmPassword);
-        FloatingActionButton nextButton = view.findViewById(R.id.signup3_btn);
+        FloatingActionButton nextButton = view.findViewById(R.id.signup_user_next_btn);
 
         nextButton.setOnClickListener(this::signupStudent);
 
