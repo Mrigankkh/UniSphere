@@ -68,6 +68,7 @@ public class PostDetailsFragment extends Fragment {
 
         }
 
+
         return view;
     }
 
