@@ -2,6 +2,7 @@ package com.example.unisphere.signup_fragments;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -60,9 +61,9 @@ public class SignupStudentFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        this.firebaseDatabase = FirebaseDatabase.getInstance("https://unisphere-340ac-default-rtdb.firebaseio.com/");
 
-        preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        // Set up Firebase and Shared Preferences
+        setup();
 
         String university = preferences.getString("university", "Northeastern University");
 
@@ -70,20 +71,19 @@ public class SignupStudentFragment extends Fragment {
         universityReference.orderByChild("name").equalTo(university).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                 String universityKey = (String) snapshot.getChildren().iterator().next().getKey();
                 programReference = universityReference.child(universityKey).child("programs");
+
                 programReference.addValueEventListener(new ValueEventListener() {
 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        int i = 0;
-                        programs = new String[(int) dataSnapshot.getChildrenCount()];
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            String data = snapshot.getValue(String.class);
-                            programs[i++] = data;
-                        }
-                        ArrayAdapter<String> programAdapter = new ArrayAdapter<>(getContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, programs);
-                        programSelector.setAdapter(programAdapter);
+
+                        programs = getListFromSnapshots(dataSnapshot);
+                        populateSpinner(getContext(), programSelector, programs);
+
+
                     }
 
                     @Override
@@ -99,31 +99,6 @@ public class SignupStudentFragment extends Fragment {
             }
         });
 
-        pickMedia =
-                registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
-                    // Callback is invoked after the user selects a media item or closes the
-                    // photo picker.
-                    if (uri != null) {
-                        profilePicture = uri;
-                        profilePictureView.setImageURI(profilePicture);
-
-                        Log.d("PhotoPicker", "Selected URI: " + uri);
-                    } else {
-                        Log.d("PhotoPicker", "No media selected");
-                    }
-                });
-
-    }
-
-    public void onUploadButtonClick() {
-
-        pickMedia.launch(new PickVisualMediaRequest.Builder()
-                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                .build());
-
-    }
-
-    public void onProfilePictureUpload() {
 
     }
 
@@ -150,5 +125,62 @@ public class SignupStudentFragment extends Fragment {
 
 
     }
+
+    /**
+     * Set up the firebase service, shared preferences and register for activity results.
+     */
+    public void setup() {
+        this.firebaseDatabase = FirebaseDatabase.getInstance("https://unisphere-340ac-default-rtdb.firebaseio.com/");
+        preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        pickMedia =
+                registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+
+                    if (uri != null) {
+                        profilePicture = uri;
+                        profilePictureView.setImageURI(profilePicture);
+
+                        Log.d("PhotoPicker", "Selected URI: " + uri);
+                    } else {
+                        Log.d("PhotoPicker", "No media selected");
+                    }
+                });
+
+    }
+
+    /**
+     * Gets a string array from a data snapshot.
+     *
+     * @param dataSnapshot is the datasnapshot containing data.
+     */
+    private String[] getListFromSnapshots(DataSnapshot dataSnapshot) {
+        int i = 0;
+        String[] programs = new String[(int) dataSnapshot.getChildrenCount()];
+        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+            String data = snapshot.getValue(String.class);
+            programs[i++] = data;
+        }
+        return programs;
+    }
+
+    /**
+     * Add the string array to a spinner adapter.
+     */
+    private void populateSpinner(Context context, Spinner spinner, String[] arr) {
+        spinner.setAdapter(new ArrayAdapter<>(context, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, arr));
+    }
+
+    /**
+     * Launch a image picker when the image upload button is clicked.
+     */
+    public void onUploadButtonClick() {
+
+        pickMedia.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build());
+
+    }
+
+
+
 
 }
