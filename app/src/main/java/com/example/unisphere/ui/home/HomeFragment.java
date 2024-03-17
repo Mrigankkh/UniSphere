@@ -1,10 +1,14 @@
 package com.example.unisphere.ui.home;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
@@ -15,6 +19,7 @@ import com.example.unisphere.R;
 import com.example.unisphere.adapter.PostAdapter;
 import com.example.unisphere.model.Comment;
 import com.example.unisphere.model.Post;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +55,35 @@ public class HomeFragment extends Fragment {
         postAdapter = new PostAdapter(requireContext(), postList, homeView.findViewById(android.R.id.content), this::onPostClick);
         recyclerView.setAdapter(postAdapter);
 
+        FloatingActionButton fab = homeView.findViewById(R.id.fab);
+        fab.setOnClickListener(view -> showNewPostDialog());
+
         return homeView;
+    }
+
+    private void showNewPostDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_new_post, null);
+        builder.setView(dialogView);
+
+        EditText editTextDescription = dialogView.findViewById(R.id.editText_description);
+        Button buttonUploadPicture = dialogView.findViewById(R.id.button_upload_picture);
+        Button buttonPost = dialogView.findViewById(R.id.button_post);
+
+        Dialog dialog = builder.create();
+
+        buttonUploadPicture.setOnClickListener(view -> {
+            // TODO:  Handle upload picture action
+            dialog.dismiss();
+        });
+
+        buttonPost.setOnClickListener(view -> {
+            String description = editTextDescription.getText().toString();
+            // TODO: Post the new post with the description
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 
     private void onPostClick(int position) {
