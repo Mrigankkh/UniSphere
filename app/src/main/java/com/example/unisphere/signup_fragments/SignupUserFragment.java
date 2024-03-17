@@ -46,7 +46,7 @@ public class SignupUserFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = getActivity().getPreferences(MODE_PRIVATE);
+        preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
 
 
     }

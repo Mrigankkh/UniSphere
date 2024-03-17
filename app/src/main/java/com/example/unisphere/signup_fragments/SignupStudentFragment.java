@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -40,7 +41,9 @@ public class SignupStudentFragment extends Fragment {
     private NavController navController;
     private FirebaseDatabase firebaseDatabase;
     FirebaseStorage storage = FirebaseStorage.getInstance();
+    private DatabaseReference programReference;
     private DatabaseReference universityReference;
+
     private SharedPreferences preferences;
     private Spinner programSelector;
     private String[] programs;
@@ -61,13 +64,15 @@ public class SignupStudentFragment extends Fragment {
 
         preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
 
+        String university = preferences.getString("university", "Northeastern University");
 
         universityReference = firebaseDatabase.getReference();
-        universityReference.orderByChild("name").equalTo(preferences.getString("university", "Northeastern University")).addListenerForSingleValueEvent(new ValueEventListener() {
+        universityReference.orderByChild("name").equalTo(university).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String universityKey = (String) snapshot.getChildren().iterator().next().getKey();
-                universityReference.child(universityKey).child("programs").addListenerForSingleValueEvent(new ValueEventListener() {
+                programReference = universityReference.child(universityKey).child("programs");
+                programReference.addValueEventListener(new ValueEventListener() {
 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -77,6 +82,8 @@ public class SignupStudentFragment extends Fragment {
                             String data = snapshot.getValue(String.class);
                             programs[i++] = data;
                         }
+                        ArrayAdapter<String> programAdapter = new ArrayAdapter<>(getContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, programs);
+                        programSelector.setAdapter(programAdapter);
                     }
 
                     @Override
@@ -140,7 +147,6 @@ public class SignupStudentFragment extends Fragment {
         uploadProfilePictureButton = view.findViewById(R.id.uploadProfilePictureButton);
         uploadProfilePictureButton.setOnClickListener(View -> onUploadButtonClick());
         profilePictureView = view.findViewById(R.id.profilePictureView);
-        // ArrayAdapter<String> programAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item     , programs);
 
 
     }
