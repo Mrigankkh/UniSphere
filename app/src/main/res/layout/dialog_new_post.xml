@@ -3,36 +3,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="16dp">
 
-        <Button
-            android:id="@+id/button_upload_picture"
+        <!-- Camera preview -->
+        <androidx.camera.view.PreviewView
+            android:id="@+id/previewViewCamera"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Upload Picture" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginBottom="16dp" />
 
+        <!-- Description EditText -->
         <EditText
-            android:id="@+id/editText_description"
+            android:id="@+id/editTextDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Description" />
+            android:hint="Enter description"
+            android:inputType="textMultiLine"
+            android:gravity="top"
+            android:layout_marginBottom="16dp" />
 
+        <!-- Post button -->
         <Button
-            android:id="@+id/button_post"
-            android:layout_width="match_parent"
+            android:id="@+id/buttonPost"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Post" />
-
     </LinearLayout>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
