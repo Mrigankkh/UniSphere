@@ -1,16 +1,18 @@
 package com.example.unisphere.model;
 
+
+import android.net.Uri;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Represents a user of the application.
  */
 public abstract class User {
-    public University getUniversity() {
-        return university;
-    }
 
     public String getName() {
         return name;
@@ -20,20 +22,17 @@ public abstract class User {
         return emailID;
     }
 
-    public String getHashedPassword() {
-        return password;
-    }
 
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public File getProfilePicture() {
+    public Uri getProfilePicture() {
         return profilePicture;
     }
 
-    public HashSet<String> getUserTags() {
-        return new HashSet<>();
+    public Collection<String> getUserTags() {
+        return new ArrayList<>();
     }
 
     public String getUserRole() {
@@ -41,30 +40,27 @@ public abstract class User {
     }
 
 
-
-    private University university;
+    //    private University university;
     private String name;
     private String emailID;
 
     //Currently we do not hash it; Using Bcrypt to store hashed password would be good practice.
-    private String password;
+
     private String phoneNumber;
-    private File profilePicture;
-    private HashSet<Tag> userTags;
+    private Uri profilePicture;
+    private Collection<Tag> userTags;
     private String userRole;
 
-    public User(University university, String name, String emailID, String hashedPassword, String phoneNumber, File profilePicture, HashSet<Tag> userTags, String userRole) {
-        this.university = university;
+    public User(String name, String emailID, String phoneNumber, Uri profilePicture, Collection<Tag> userTags, String userRole) {
+//        this.university = university;
         this.name = name;
         this.emailID = emailID;
-        this.password = hashedPassword;
         this.phoneNumber = phoneNumber;
         this.profilePicture = profilePicture;
         this.userTags = userTags;
         this.userRole = userRole;
 
     }
-
 
 
 //
