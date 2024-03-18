@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.unisphere.R;
+import com.example.unisphere.SignupActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
@@ -36,6 +37,7 @@ public class SignupUserFragment extends Fragment {
     private EditText userConfirmPassword;
     private Spinner userRoleSelector;
     private SharedPreferences preferences;
+    private final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 //private File
 
     public SignupUserFragment() {
@@ -83,20 +85,31 @@ public class SignupUserFragment extends Fragment {
 
     }
 
-    public boolean validateInputs() {
+    public boolean validateInputs() throws Exception {
 
+        String email = userEmail.getText().toString();
+        if (!(email.matches(emailPattern) && email.length() > 0))
+            throw new Exception("Invalid Email!");
+        if (userPassword.getText().toString().length() < 6)
+            throw new Exception("Passwords must be at least 6 characters!");
         if (!userConfirmPassword.getText().toString().equals(userPassword.getText().toString()))
-            return false;
+            throw new Exception("Passwords do not match!");
         //TODO: Complete this method
         return true;
     }
 
     public void signupStudent(View view) {
 
-        if (!validateInputs()) {
-            Toast.makeText(this.getContext(), "Invalid Inputs!", Toast.LENGTH_SHORT).show();
+        try {
+            if (!validateInputs()) {
+                Toast.makeText(this.getContext(), "Invalid Inputs!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch (Exception e) {
+            Toast.makeText(this.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             return;
         }
+
 
         //  User.UserBuilder studentBuilder = Student.getBuilder().name(userName.getText().toString()).email(userEmail.getText().toString()).university(new University()).hashedPassword("password");
 
