@@ -46,20 +46,20 @@ public class EventsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         events = new ArrayList<>();
-        events.add(new Event(null, "Trivia Night1Trivia Night1Trivia Night1Trivia Night1", "2024-03-04T12:33:58", "Krentzman Quad"));
-        events.add(new Event(null, "Trivia Night2", "2024-03-04T12:33:58", "Krentzman Quad"));
-        events.add(new Event(null, "Trivia Night3", "2024-03-04T12:33:58", "Krentzman Quad"));
-        events.add(new Event(null, "Trivia Night4", "2024-03-04T12:33:58", "Krentzman Quad"));
-        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad"));
-        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad"));
-        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad"));
-        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad"));
-        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad"));
-        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad"));
-        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad"));
-        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad"));
-        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad"));
-
+        List<String> options = new ArrayList<>();
+        options.add("Yes");
+        options.add("No");
+        events.add(new Event(null, "Trivia Night1Trivia Night1Trivia Night1Trivia Night1", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
+        events.add(new Event(null, "Trivia Night2", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
+        events.add(new Event(null, "Trivia Night3", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
+        events.add(new Event(null, "Trivia Night4", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
+        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
+        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
+        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
+        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
+        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
+        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
+        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
     }
 
     @Override
