@@ -1,6 +1,9 @@
 package com.example.unisphere.ui.events;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +23,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 public class CreateEventFragment extends Fragment {
@@ -82,10 +86,36 @@ public class CreateEventFragment extends Fragment {
             }
         });
 
-        DatePicker dateFromDP = view.findViewById(R.id.datePickerFrom);
-        DatePicker dateToDP = view.findViewById(R.id.datePickerTo);
-        TimePicker timeFromTP = view.findViewById(R.id.timePickerFrom);
-        TimePicker timeToTP = view.findViewById(R.id.timePickerTo);
+        EditText dateFromTv = view.findViewById(R.id.fromDateTv);
+        EditText dateToTv = view.findViewById(R.id.toDateTv);
+        EditText timeFromTv = view.findViewById(R.id.fromTimeTv);
+        EditText timeToTv = view.findViewById(R.id.toTimeTv);
+
+        DatePickerDialog.OnDateSetListener fromDateListener = (v, year, monthOfYear, dayOfMonth) -> {
+            String selectedDate = year + "-" + String.format("%02d", (monthOfYear + 1)) + "-" + String.format("%02d", dayOfMonth);
+            dateFromTv.setText(selectedDate);
+        };
+        TimePickerDialog.OnTimeSetListener fromTimeListener = (v, hourOfDay, minute) -> {
+            String selectedTime = hourOfDay + ":" + String.format("%02d", minute) + ":00";
+            timeFromTv.setText(selectedTime);
+        };
+
+        DatePickerDialog.OnDateSetListener toDateListener = (v, year, monthOfYear, dayOfMonth) -> {
+            String selectedDate = year + "-" + String.format("%02d", (monthOfYear + 1)) + "-" + String.format("%02d", dayOfMonth);
+            dateToTv.setText(selectedDate);
+        };
+        TimePickerDialog.OnTimeSetListener toTimeListener = (v, hourOfDay, minute) -> {
+            String selectedTime = hourOfDay + ":" + String.format("%02d", minute) + ":00";
+            timeToTv.setText(selectedTime);
+        };
+
+        dateFromTv.setOnClickListener(v -> showDatePicker(fromDateListener));
+
+        timeFromTv.setOnClickListener(v -> showTimePicker(fromTimeListener));
+
+        dateToTv.setOnClickListener(v -> showDatePicker(toDateListener));
+
+        timeToTv.setOnClickListener(v -> showTimePicker(toTimeListener));
 
         CheckBox addRadioCheckBox = view.findViewById(R.id.addRadioCb);
         EditText radioLabelEditText = view.findViewById(R.id.radioLabelET);
@@ -126,12 +156,12 @@ public class CreateEventFragment extends Fragment {
                 String eventPlace = editTextPlace.getText().toString();
                 String eventImageUrl = editTextImageLink.getText().toString();
                 // "2024-03-04T12:33:58"
-                String dateFrom = dateFromDP.getYear() + "-" + dateFromDP.getMonth() + "-" + dateFromDP.getDayOfMonth();
-                String timeFrom = timeFromTP.getHour() + ":" + timeFromTP.getMinute() + ":00";
+                String dateFrom = dateFromTv.getText().toString();
+                String timeFrom = timeFromTv.getText().toString();
                 String eventStartDateTime = dateFrom + "T" + timeFrom;
 
-                String dateTo = dateToDP.getYear() + "-" + dateToDP.getMonth() + "-" + dateToDP.getDayOfMonth();
-                String timeTo = timeToTP.getHour() + ":" + timeToTP.getMinute() + ":00";
+                String dateTo = dateToTv.getText().toString();
+                String timeTo = timeToTv.getText().toString();
                 String eventEndDateTime = dateTo + "T" + timeTo;
 
                 String radioLabel = null;
@@ -192,6 +222,37 @@ public class CreateEventFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void showDatePicker(DatePickerDialog.OnDateSetListener dateSetListener) {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                getContext(),
+                dateSetListener,
+                year,
+                month,
+                dayOfMonth
+        );
+        datePickerDialog.show();
+    }
+
+    private void showTimePicker(TimePickerDialog.OnTimeSetListener timeSetListener) {
+        Calendar calendar = Calendar.getInstance();
+        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                getContext(),
+                timeSetListener,
+                hourOfDay,
+                minute,
+                DateFormat.is24HourFormat(getContext())
+        );
+        timePickerDialog.show();
     }
 
     private boolean areOptionsValid(String[] radioOptionsArray) {

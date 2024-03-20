@@ -63,17 +63,20 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <DatePicker
-                android:id="@+id/datePickerFrom"
+            <EditText
+                android:id="@+id/fromDateTv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:hint="yyyy-MM-dd"
+                android:layout_marginEnd="6dp"/>
 
-            <TimePicker
-                android:id="@+id/timePickerFrom"
+            <EditText
+                android:id="@+id/fromTimeTv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:hint="HH:mm"/>
         </LinearLayout>
 
         <TextView
@@ -90,17 +93,19 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <DatePicker
-                android:id="@+id/datePickerTo"
+            <EditText
+                android:id="@+id/toDateTv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:hint="yyyy-MM-dd"/>
 
-            <TimePicker
-                android:id="@+id/timePickerTo"
+            <EditText
+                android:id="@+id/toTimeTv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:hint="HH:mm"/>
         </LinearLayout>
 
         <CheckBox
