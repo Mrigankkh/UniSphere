@@ -5,9 +5,11 @@ import java.util.List;
 
 public class Event implements Serializable {
 
-    private String organizerImage;
     private String eventTitle;
-    private String eventDate;
+    private String eventDescription;
+    private String organizerImage;
+    private String eventStartDate;
+    private String eventEndDate;
     private String eventPlace;
     private String inputTextLabel;
     private String inputTextButtonLabel;
@@ -19,26 +21,18 @@ public class Event implements Serializable {
     public Event() {
     }
 
-    public Event(String organizerImage, String eventTitle, String eventDate, String eventPlace,
-                 String inputTextLabel, String inputTextButtonLabel, String radioLabel,
-                 List<String> radioOptions, String radioButtonLabel) {
-        this.organizerImage = organizerImage;
+    public Event(String eventTitle, String eventDescription, String organizerImage, String eventStartDate, String eventEndDate, String eventPlace, String inputTextLabel, String inputTextButtonLabel, String radioLabel, List<String> radioOptions, String radioButtonLabel) {
         this.eventTitle = eventTitle;
-        this.eventDate = eventDate;
+        this.eventDescription = eventDescription;
+        this.organizerImage = organizerImage;
+        this.eventStartDate = eventStartDate;
+        this.eventEndDate = eventEndDate;
         this.eventPlace = eventPlace;
         this.inputTextLabel = inputTextLabel;
         this.inputTextButtonLabel = inputTextButtonLabel;
         this.radioLabel = radioLabel;
         this.radioOptions = radioOptions;
         this.radioButtonLabel = radioButtonLabel;
-    }
-
-    public String getOrganizerImage() {
-        return organizerImage;
-    }
-
-    public void setOrganizerImage(String organizerImage) {
-        this.organizerImage = organizerImage;
     }
 
     public String getEventTitle() {
@@ -49,12 +43,36 @@ public class Event implements Serializable {
         this.eventTitle = eventTitle;
     }
 
-    public String getEventDate() {
-        return eventDate;
+    public String getEventDescription() {
+        return eventDescription;
     }
 
-    public void setEventDate(String eventDate) {
-        this.eventDate = eventDate;
+    public void setEventDescription(String eventDescription) {
+        this.eventDescription = eventDescription;
+    }
+
+    public String getOrganizerImage() {
+        return organizerImage;
+    }
+
+    public void setOrganizerImage(String organizerImage) {
+        this.organizerImage = organizerImage;
+    }
+
+    public String getEventStartDate() {
+        return eventStartDate;
+    }
+
+    public void setEventStartDate(String eventStartDate) {
+        this.eventStartDate = eventStartDate;
+    }
+
+    public String getEventEndDate() {
+        return eventEndDate;
+    }
+
+    public void setEventEndDate(String eventEndDate) {
+        this.eventEndDate = eventEndDate;
     }
 
     public String getEventPlace() {
@@ -108,9 +126,11 @@ public class Event implements Serializable {
     @Override
     public String toString() {
         return "Event{" +
-                "organizerImage='" + organizerImage + '\'' +
-                ", eventTitle='" + eventTitle + '\'' +
-                ", eventDate='" + eventDate + '\'' +
+                "eventTitle='" + eventTitle + '\'' +
+                ", eventDescription='" + eventDescription + '\'' +
+                ", organizerImage='" + organizerImage + '\'' +
+                ", eventStartDate='" + eventStartDate + '\'' +
+                ", eventEndDate='" + eventEndDate + '\'' +
                 ", eventPlace='" + eventPlace + '\'' +
                 ", inputTextLabel='" + inputTextLabel + '\'' +
                 ", inputTextButtonLabel='" + inputTextButtonLabel + '\'' +

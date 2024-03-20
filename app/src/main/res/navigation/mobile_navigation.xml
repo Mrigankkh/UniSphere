@@ -56,6 +56,12 @@
         android:label="@string/title_event_details"
         tools:layout="@layout/fragment_event_detail" />
 
+    <fragment
+        android:id="@+id/createEventFragment"
+        android:name="com.example.unisphere.ui.events.CreateEventFragment"
+        android:label="@string/title_create_event"
+        tools:layout="@layout/fragment_create_event" />
+
     <!--    <fragment-->
     <!--        android:id="@+id/navigation_signup_user"-->
     <!--        android:name="com.example.unisphere.ui.profile.ProfileFragment"-->

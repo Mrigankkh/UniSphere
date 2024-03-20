@@ -1,6 +1,5 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,121 +8,120 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/event_list_container"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/event_list_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="8dp"
+            app:cardBackgroundColor="#D5D5D5"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="#D5D5D5"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="10dp"
-                android:layout_centerInParent="true"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                android:layout_height="wrap_content">
 
-                <RelativeLayout
+                <ImageView
+                    android:id="@+id/imageView_event"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="200dp"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop" />
 
-                    <ImageView
-                        android:id="@+id/imageView_event"
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:scaleType="centerCrop"
-                        android:contentDescription="@null" />
+                <TextView
+                    android:id="@+id/eventTitleTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/imageView_event"
+                    android:gravity="start"
+                    android:padding="4dp"
+                    android:text="Event Title"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView_event_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/eventTitleTv"
+                    android:padding="16dp"
+                    android:text="Description"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
+
+                <LinearLayout
+                    android:id="@+id/date_place_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/textView_event_description"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/eventTitleTv"
+                        android:id="@+id/eventDateTv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="start"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/eventPlaceTv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/imageView_event"
-                        android:gravity="start"
-                        android:textColor="@android:color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:padding="4dp"
-                        android:text="Event Title"/>
+                        android:drawableStart="@drawable/ic_location"
+                        android:drawablePadding="8dp"
+                        android:gravity="end"
+                        android:paddingEnd="8dp"
+                        android:textSize="14sp" />
+                </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/textView_event_description"
-                        android:layout_width="match_parent"
+                <RelativeLayout
+                    android:id="@+id/formComponentsRv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/date_place_layout"></RelativeLayout>
+
+                <!-- Add the option to write and post a comment here -->
+                <LinearLayout
+                    android:id="@+id/comment_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/formComponentsRv"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <EditText
+                        android:id="@+id/editText_comment"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/eventTitleTv"
-                        android:padding="16dp"
-                        android:textColor="@android:color/black"
-                        android:text="Description"
-                        android:textSize="18sp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/textView_event_description"
-                        android:id="@+id/date_place_layout"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/eventDateTv"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:gravity="start"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/eventPlaceTv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="end"
-                            android:textSize="14sp"
-                            android:drawableStart="@drawable/ic_location"
-                            android:drawablePadding="8dp"
-                            android:paddingEnd="8dp" />
-                    </LinearLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/date_place_layout"
-                        android:id="@+id/formComponentsRv">
-                    </RelativeLayout>
-
-                    <!-- Add the option to write and post a comment here -->
-                    <LinearLayout
-                        android:id="@+id/comment_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/formComponentsRv"
-                        android:orientation="horizontal"
-                        android:padding="16dp">
-
-                        <EditText
-                            android:id="@+id/editText_comment"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:hint="Write a comment..."
-                            android:padding="16dp" />
-
-                        <Button
-                            android:id="@+id/button_post_comment"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Post"
-                            android:padding="8dp" />
-
-                    </LinearLayout>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerViewComments"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/comment_layout"
+                        android:layout_weight="1"
+                        android:hint="Write a comment..."
                         android:padding="16dp" />
 
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
+                    <Button
+                        android:id="@+id/button_post_comment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="Post" />
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewComments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/comment_layout"
+                    android:padding="16dp" />
+
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

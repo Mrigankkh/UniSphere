@@ -2,7 +2,6 @@ package com.example.unisphere.ui.events;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,7 +66,7 @@ public class EventDetailsFragment extends Fragment {
         Picasso.get().load(imageUrl).into(eventImage);
         eventTitle.setText(event.getEventTitle());
         eventDescription.setText(event.getEventTitle());
-        eventDateTv.setText(Util.convertDateTime(event.getEventDate()));
+        eventDateTv.setText(Util.convertDateTime(event.getEventStartDate()) + "-" + Util.convertDateTime(event.getEventEndDate()));
         eventPlaceTv.setText(event.getEventPlace());
 
         RelativeLayout parentLayout = view.findViewById(R.id.formComponentsRv);
@@ -80,10 +78,10 @@ public class EventDetailsFragment extends Fragment {
 
     private void createFormComponents(RelativeLayout parentLayout) {
         int lastElementId = -1;
-        if(event.getRadioLabel()!=null && !event.getRadioLabel().isEmpty())
+        if (event.getRadioLabel() != null && !event.getRadioLabel().isEmpty())
             lastElementId = createRadioComponent(parentLayout);
 
-        if(event.getInputTextLabel()!=null && !event.getInputTextLabel().isEmpty())
+        if (event.getInputTextLabel() != null && !event.getInputTextLabel().isEmpty())
             createEditTextComponent(parentLayout, lastElementId);
     }
 
@@ -110,7 +108,7 @@ public class EventDetailsFragment extends Fragment {
 
         // Create radio buttons and add them to the radio group
         List<String> radioOptions = event.getRadioOptions();
-        for (String radioOption: radioOptions) {
+        for (String radioOption : radioOptions) {
             RadioButton radioButton = new RadioButton(requireContext());
             radioButton.setText(radioOption);
             radioButton.setId(View.generateViewId());
@@ -167,7 +165,7 @@ public class EventDetailsFragment extends Fragment {
                 RelativeLayout.LayoutParams.WRAP_CONTENT
         );
         editLabelParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        if(lastElementId!=-1)
+        if (lastElementId != -1)
             editLabelParams.addRule(RelativeLayout.BELOW, lastElementId);
         editLabel.setLayoutParams(editLabelParams);
 

@@ -25,11 +25,11 @@ import java.util.List;
  */
 public class EventsFragment extends Fragment {
 
+    private static final String ARG_EVENT = "event";
     private List<Event> events;
     private RecyclerView recyclerView;
     private EventAdapter eventAdapter;
     private FloatingActionButton fabAddEvent;
-    private static final String ARG_EVENT = "event";
 
     public EventsFragment() {
         // Required empty public constructor
@@ -49,17 +49,72 @@ public class EventsFragment extends Fragment {
         List<String> options = new ArrayList<>();
         options.add("Yes");
         options.add("No");
-        events.add(new Event(null, "Trivia Night1Trivia Night1Trivia Night1Trivia Night1", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
-        events.add(new Event(null, "Trivia Night2", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
-        events.add(new Event(null, "Trivia Night3", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
-        events.add(new Event(null, "Trivia Night4", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
-        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
-        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
-        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
-        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
-        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
-        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
-        events.add(new Event(null, "Trivia Night5", "2024-03-04T12:33:58", "Krentzman Quad", "Enter your email id below", "Register", "Are you going to join the event?", options, "Go!"));
+        events.add(new Event("Trivia Night",
+                "This will be a game night for all the college students. Pizza will be served.",
+                null,
+                "2024-03-04T18:30:00",
+                "2024-03-04T22:30:00",
+                "Krentzman Quad",
+                "Enter your email id below",
+                "Register",
+                "Are you going to join the event?",
+                options,
+                "Go!"));
+        events.add(new Event("Trivia Night2",
+                "This will be a game night for all the college students. Pizza will be served.",
+                null,
+                "2024-03-04T18:30:00",
+                "2024-03-04T22:30:00",
+                "Krentzman Quad",
+                "Enter your email id below",
+                "Register",
+                "Are you going to join the event?",
+                options,
+                "Go!"));
+        events.add(new Event("Trivia Night3",
+                "This will be a game night for all the college students. Pizza will be served.",
+                null,
+                "2024-03-04T18:30:00",
+                "2024-03-04T22:30:00",
+                "Krentzman Quad",
+                "Enter your email id below",
+                "Register",
+                "Are you going to join the event?",
+                options,
+                "Go!"));
+        events.add(new Event("Trivia Night4",
+                "This will be a game night for all the college students. Pizza will be served.",
+                null,
+                "2024-03-04T18:30:00",
+                "2024-03-04T22:30:00",
+                "Krentzman Quad",
+                "Enter your email id below",
+                "Register",
+                "Are you going to join the event?",
+                options,
+                "Go!"));
+        events.add(new Event("Trivia Night5",
+                "This will be a game night for all the college students. Pizza will be served.",
+                null,
+                "2024-03-04T18:30:00",
+                "2024-03-04T22:30:00",
+                "Krentzman Quad",
+                "Enter your email id below",
+                "Register",
+                "Are you going to join the event?",
+                options,
+                "Go!"));
+        events.add(new Event("Trivia Night6",
+                "This will be a game night for all the college students. Pizza will be served.",
+                null,
+                "2024-03-04T18:30:00",
+                "2024-03-04T22:30:00",
+                "Krentzman Quad",
+                "Enter your email id below",
+                "Register",
+                "Are you going to join the event?",
+                options,
+                "Go!"));
     }
 
     @Override
@@ -84,13 +139,14 @@ public class EventsFragment extends Fragment {
     }
 
     private void createNewEvent(View view) {
+        Navigation.findNavController(requireView()).navigate(R.id.createEventFragment);
     }
 
     private void onEventClick(int position) {
         Event event = events.get(position);
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_EVENT, event);
-        Navigation.findNavController(requireView()).navigate(R.id.eventDetailsFragment,bundle);
+        Navigation.findNavController(requireView()).navigate(R.id.eventDetailsFragment, bundle);
     }
 
 }

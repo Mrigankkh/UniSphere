@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unisphere.R;
 import com.example.unisphere.model.Event;
-import com.example.unisphere.model.Post;
 import com.example.unisphere.service.Util;
 import com.squareup.picasso.Picasso;
 
@@ -34,7 +33,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     @NonNull
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new EventViewHolder(LayoutInflater.from(context).inflate(R.layout.event_list_row_item, parent, false), context, events,clickListener);
+        return new EventViewHolder(LayoutInflater.from(context).inflate(R.layout.event_list_row_item, parent, false), context, events, clickListener);
     }
 
     @Override
@@ -42,7 +41,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         Event event = events.get(position);
         holder.eventTitleTv.setText(event.getEventTitle());
         holder.eventPlaceTv.setText(event.getEventPlace());
-        holder.eventDateTv.setText(Util.convertDateTime(event.getEventDate()));
+        holder.eventDateTv.setText(Util.convertDateTime(event.getEventStartDate()) + "-" + Util.convertDateTime(event.getEventEndDate()));
 
         Picasso.get()
                 .load(R.drawable.no_events)
