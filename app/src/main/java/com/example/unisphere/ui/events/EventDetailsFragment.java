@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unisphere.R;
@@ -60,13 +61,21 @@ public class EventDetailsFragment extends Fragment {
         TextView eventPlaceTv = view.findViewById(R.id.eventPlaceTv);
         EditText commentsET = view.findViewById(R.id.editText_comment);
         Button commentsBtn = view.findViewById(R.id.button_post_comment);
+        Button editEventBtn = view.findViewById(R.id.editEventBtn);
+
+        editEventBtn.setOnClickListener(v -> gotoEditEvent(v));
+        // Add condition to check userType == Organizer of this event
+        if(event!=null) {
+            editEventBtn.setVisibility(View.VISIBLE);
+        }
+
         RecyclerView commentsListRv = view.findViewById(R.id.recyclerViewComments);
 
         String imageUrl = "https://fastly.picsum.photos/id/1050/200/300.jpg?hmac=mMZp1DAD5EpHCZh-YBwfvrg5w327V3DoJQ8CmRAKF70";
         Picasso.get().load(imageUrl).into(eventImage);
         eventTitle.setText(event.getEventTitle());
-        eventDescription.setText(event.getEventTitle());
-        eventDateTv.setText(Util.convertDateTime(event.getEventStartDate()) + "-" + Util.convertDateTime(event.getEventEndDate()));
+        eventDescription.setText(event.getEventDescription());
+        eventDateTv.setText(Util.convertDateTime(event.getEventStartDate()) + " to " + Util.convertDateTime(event.getEventEndDate()));
         eventPlaceTv.setText(event.getEventPlace());
 
         RelativeLayout parentLayout = view.findViewById(R.id.formComponentsRv);
@@ -74,6 +83,14 @@ public class EventDetailsFragment extends Fragment {
         createFormComponents(parentLayout);
 
         return view;
+    }
+
+    private void gotoEditEvent(View v) {
+        if(event!=null) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(ARG_EVENT, event);
+            Navigation.findNavController(requireView()).navigate(R.id.editEventFragment, bundle);
+        }
     }
 
     private void createFormComponents(RelativeLayout parentLayout) {

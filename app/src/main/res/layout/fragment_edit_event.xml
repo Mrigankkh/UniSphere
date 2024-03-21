@@ -1,0 +1,168 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <EditText
+            android:id="@+id/editTextTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Title" />
+
+        <EditText
+            android:id="@+id/editTextDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Description" />
+
+        <EditText
+            android:id="@+id/editTextPlace"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Event Location" />
+
+        <EditText
+            android:id="@+id/editTextImageLink"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Image Link" />
+
+        <Button
+            android:id="@+id/buttonUploadImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Upload Image" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="Event Starts on"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/fromDateTv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="yyyy-MM-dd"
+                android:layout_marginEnd="6dp"/>
+
+            <EditText
+                android:id="@+id/fromTimeTv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="HH:mm"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="Event Ends on"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/toDateTv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="yyyy-MM-dd"/>
+
+            <EditText
+                android:id="@+id/toTimeTv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="HH:mm"/>
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/addRadioCb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Want to add a poll or optional question?" />
+
+        <EditText
+            android:id="@+id/radioLabelET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Question you want to ask (like joining the event etc.)"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/radioOptionsET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Give options to choose from comma-separated (like Yes,No etc.)"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/radioBtnLabelET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Give a name to the submit button (like Register etc.)"
+            android:visibility="gone" />
+
+        <CheckBox
+            android:id="@+id/addETCB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Do you want to ask a question?" />
+
+        <EditText
+            android:id="@+id/questionET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="What do you want to ask?"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/questionLabelET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Give a name to the Submit button (like Post etc.)"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/editEventBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Update Event" />
+
+    </LinearLayout>
+</ScrollView>

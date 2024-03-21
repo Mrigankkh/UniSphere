@@ -60,7 +60,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/textView_event_description"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:padding="6dp">
 
                     <TextView
                         android:id="@+id/eventDateTv"
@@ -70,23 +71,25 @@
                         android:gravity="start"
                         android:textSize="14sp"
                         android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/eventPlaceTv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:drawableStart="@drawable/ic_location"
-                        android:drawablePadding="8dp"
-                        android:gravity="end"
-                        android:paddingEnd="8dp"
-                        android:textSize="14sp" />
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/eventPlaceTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/date_place_layout"
+                    android:drawableStart="@drawable/ic_location"
+                    android:drawablePadding="8dp"
+                    android:gravity="start"
+                    android:textSize="16sp"
+                    android:textColor="@color/purple_500"
+                    android:padding="6dp"/>
 
                 <RelativeLayout
                     android:id="@+id/formComponentsRv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/date_place_layout"></RelativeLayout>
+                    android:layout_below="@id/eventPlaceTv"></RelativeLayout>
 
                 <!-- Add the option to write and post a comment here -->
                 <LinearLayout
@@ -121,7 +124,17 @@
                     android:layout_below="@id/comment_layout"
                     android:padding="16dp" />
 
+                <Button
+                    android:id="@+id/editEventBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/recyclerViewComments"
+                    android:padding="8dp"
+                    android:text="Edit Event"
+                    android:visibility="gone"/>
             </RelativeLayout>
+
+
         </androidx.cardview.widget.CardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
