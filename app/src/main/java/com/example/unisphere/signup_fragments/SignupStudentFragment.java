@@ -2,6 +2,8 @@ package com.example.unisphere.signup_fragments;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.google.firebase.appcheck.internal.util.Logger.TAG;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,8 +36,13 @@ import com.example.unisphere.model.Student;
 
 import com.example.unisphere.model.User;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -74,6 +81,7 @@ public class SignupStudentFragment extends Fragment {
     private String email;
     private FloatingActionButton prevButton;
     private ActivityResultLauncher<Intent> galleryLauncher;
+    private FirebaseAuth firebaseAuth;
 
     public SignupStudentFragment() {
         // Required empty public constructor
@@ -166,6 +174,7 @@ public class SignupStudentFragment extends Fragment {
      */
     private void setup() {
         this.firebaseDatabase = FirebaseDatabase.getInstance("https://unisphere-340ac-default-rtdb.firebaseio.com/");
+        this.firebaseAuth = FirebaseAuth.getInstance();
         preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
         galleryLauncher =
 
@@ -245,23 +254,41 @@ public class SignupStudentFragment extends Fragment {
 
         String userKey = universityReference.child(universityKey).child("users").push().getKey();
         userReference = universityReference.child(universityKey).child("users").child(userKey);
+        String password = preferences.getString("password", null);
+        preferences.edit().remove("password").apply();
+        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
 
-        userReference.setValue(user)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("TAG", "User added successfully!");
-                        imageRef = storage.getReference().child(fireStoreProfilePictureURL);
-                        imageRef.putFile(profilePicture).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                navController.navigate(R.id.action_signupStudentFragment_to_mainActivity);
+                if (task.isSuccessful()) {
+                    userReference.setValue(user)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d("TAG", "User added successfully!");
+                                    imageRef = storage.getReference().child(fireStoreProfilePictureURL);
+                                    imageRef.putFile(profilePicture).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                            FirebaseUser user = firebaseAuth.getCurrentUser();
+                                            navController.navigate(R.id.action_signupStudentFragment_to_mainActivity);
 
-                            }
-                        });
-                    }
+                                        }
+                                    });
+                                }
 
-                });
+                            });
+                } else {
+
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                    Toast.makeText(getContext(), "Authentication failed.",
+                            Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+        });
 
 
     }
