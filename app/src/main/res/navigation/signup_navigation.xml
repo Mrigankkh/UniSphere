@@ -26,6 +26,9 @@
         <action
             android:id="@+id/action_signupStudentFragment_to_mainActivity"
             app:destination="@id/mainActivity" />
+        <action
+            android:id="@+id/action_signupStudentFragment_to_signupUserFragment"
+            app:destination="@id/signupUserFragment" />
     </fragment>
     <fragment
         android:id="@+id/navigation_signup_organization"

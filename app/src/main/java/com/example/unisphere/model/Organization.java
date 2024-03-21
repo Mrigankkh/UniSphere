@@ -9,7 +9,7 @@ import java.util.HashSet;
 
 public class Organization extends User {
 
-    Organization(String name, String emailID, String hashedPassword, String phoneNumber, Uri profilePicture, HashSet<Tag> userTags, String userRole) {
-        super(name, emailID, phoneNumber, profilePicture, userTags, userRole);
+    Organization(String name, String emailID, String hashedPassword, String phoneNumber, String profilePictureURL, HashSet<Tag> userTags, String userRole) {
+        super(name, emailID, phoneNumber, profilePictureURL, userTags, userRole);
     }
 }

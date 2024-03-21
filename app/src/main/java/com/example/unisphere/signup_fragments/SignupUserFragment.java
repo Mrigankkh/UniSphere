@@ -19,8 +19,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.unisphere.R;
-import com.example.unisphere.SignupActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+//TODO: Fix the backstack.
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,6 +49,10 @@ public class SignupUserFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // If you reach this page, your app should have no prior user data.
+
+        getContext().deleteSharedPreferences("USER_DATA");
         preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
 
 
@@ -87,14 +92,13 @@ public class SignupUserFragment extends Fragment {
 
     public boolean validateInputs() throws Exception {
 
-        String email = userEmail.getText().toString();
-        if (!(email.matches(emailPattern) && email.length() > 0))
-            throw new Exception("Invalid Email!");
-        if (userPassword.getText().toString().length() < 6)
-            throw new Exception("Passwords must be at least 6 characters!");
-        if (!userConfirmPassword.getText().toString().equals(userPassword.getText().toString()))
-            throw new Exception("Passwords do not match!");
-        //TODO: Complete this method
+//        String email = userEmail.getText().toString();
+//        if (!(email.matches(emailPattern) && email.length() > 0))
+//            throw new Exception("Invalid Email!");
+//        if (userPassword.getText().toString().length() < 6)
+//            throw new Exception("Passwords must be at least 6 characters!");
+//        if (!userConfirmPassword.getText().toString().equals(userPassword.getText().toString()))
+//            throw new Exception("Passwords do not match!");
         return true;
     }
 

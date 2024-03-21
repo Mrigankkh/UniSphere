@@ -18,8 +18,8 @@ public class Student extends User {
     // private final String program;
 
 
-    public Student(String name, String emailID, String phoneNumber, Uri profilePicture, Collection<Tag> userTags, String userRole, Date dateOfBirth) {
-        super( name, emailID, phoneNumber, profilePicture, userTags, "Student");
+    public Student(String name, String emailID, String phoneNumber, String profilePictureURL, Collection<Tag> userTags, String userRole, Date dateOfBirth) {
+        super( name, emailID, phoneNumber, profilePictureURL, userTags, "Student");
         this.dateOfBirth = dateOfBirth;
     }
 

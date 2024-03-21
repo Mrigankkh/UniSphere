@@ -27,8 +27,8 @@ public abstract class User {
         return phoneNumber;
     }
 
-    public Uri getProfilePicture() {
-        return profilePicture;
+    public String getProfilePicture() {
+        return profilePictureURL;
     }
 
     public Collection<String> getUserTags() {
@@ -47,16 +47,16 @@ public abstract class User {
     //Currently we do not hash it; Using Bcrypt to store hashed password would be good practice.
 
     private String phoneNumber;
-    private Uri profilePicture;
+    private String profilePictureURL;
     private Collection<Tag> userTags;
     private String userRole;
 
-    public User(String name, String emailID, String phoneNumber, Uri profilePicture, Collection<Tag> userTags, String userRole) {
+    public User(String name, String emailID, String phoneNumber, String profilePictureURL, Collection<Tag> userTags, String userRole) {
 //        this.university = university;
         this.name = name;
         this.emailID = emailID;
         this.phoneNumber = phoneNumber;
-        this.profilePicture = profilePicture;
+        this.profilePictureURL = profilePictureURL;
         this.userTags = userTags;
         this.userRole = userRole;
 
