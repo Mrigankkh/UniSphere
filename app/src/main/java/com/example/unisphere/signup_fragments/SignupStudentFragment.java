@@ -11,12 +11,10 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultOwner;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -62,7 +60,7 @@ public class SignupStudentFragment extends Fragment {
 
     private NavController navController;
     private FirebaseDatabase firebaseDatabase;
-    FirebaseStorage storage = FirebaseStorage.getInstance();
+    FirebaseStorage storage ;
     private DatabaseReference programReference;
     private DatabaseReference universityReference;
     private DatabaseReference userReference;
@@ -73,7 +71,6 @@ public class SignupStudentFragment extends Fragment {
     private Button uploadProfilePictureButton;
     private Uri profilePicture;
     private ImageView profilePictureView;
-    private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
     private FloatingActionButton nextButton;
     private String universityKey;
     private StorageReference imageRef;
@@ -93,6 +90,7 @@ public class SignupStudentFragment extends Fragment {
     public void loadProgramList() {
 
         if (universityName == null) {
+            Toast.makeText(getContext(), "Error! Please go back!", Toast.LENGTH_SHORT).show();
             return;
         }
         universityReference.orderByChild("name").equalTo(universityName).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -101,7 +99,6 @@ public class SignupStudentFragment extends Fragment {
 
                 universityKey = (String) snapshot.getChildren().iterator().next().getKey();
                 programReference = universityReference.child(universityKey).child("programs");
-
                 programReference.addValueEventListener(new ValueEventListener() {
 
                     @Override
@@ -137,6 +134,16 @@ public class SignupStudentFragment extends Fragment {
         // Set up Firebase and Shared Preferences
         setup();
 
+        galleryLauncher = this.registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == getActivity().RESULT_OK) {
+                        // Handle gallery pick result
+                        Intent data = result.getData();
+                        if (data != null && data.getData() != null) {
+                            profilePicture = data.getData();
+                            profilePictureView.setImageURI(profilePicture);
+                        }
+                    }
+                });
         universityName = preferences.getString("university", "Northeastern University");
         email = preferences.getString("email", null);
         universityReference = firebaseDatabase.getReference();
@@ -159,6 +166,7 @@ public class SignupStudentFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initializeUIComponents(view);
+
         prevButton.setOnClickListener(this::onPrevClicked);
         nextButton.setOnClickListener(this::signupStudent);
 
@@ -173,24 +181,12 @@ public class SignupStudentFragment extends Fragment {
      * Set up the firebase service, shared preferences and register for activity results.
      */
     private void setup() {
+
         this.firebaseDatabase = FirebaseDatabase.getInstance("https://unisphere-340ac-default-rtdb.firebaseio.com/");
         this.firebaseAuth = FirebaseAuth.getInstance();
-        preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
-        galleryLauncher =
+        this.storage = FirebaseStorage.getInstance();
+        this.preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
 
-                this.registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                    if (result.getResultCode() == getActivity().RESULT_OK) {
-                        // Handle gallery pick result
-                        Intent data = result.getData();
-                        if (data != null && data.getData() != null) {
-                            profilePicture = data.getData();
-                            profilePictureView.setImageURI(profilePicture);
-
-                            // Use the imageUri as needed
-                        }
-                    }
-
-                });
 
     }
 
@@ -221,19 +217,16 @@ public class SignupStudentFragment extends Fragment {
      */
     public void onUploadButtonClick() {
 
-//        pickMedia.launch(new PickVisualMediaRequest.Builder()
-//                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-//                .build());
-        Intent pickPhotoIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        galleryLauncher.launch(pickPhotoIntent);
+        galleryLauncher.launch(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI));
 
     }
 
     public boolean validateInputs() {
 
+
 //        if (!userConfirmPassword.getText().toString().equals(userPassword.getText().toString()))
 //            return false;
-        //TODO: Complete this method
+        //TODO: Complete this method; Add stuff for date of birth and phone number
         return true;
     }
 
