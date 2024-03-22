@@ -68,9 +68,8 @@ public class HomeFragment extends Fragment {
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1001;
 
     private static final int PICK_IMAGE_REQUEST = 1;
-    private View popupView;
+    private boolean isCameraPreviewVisible = false;
 
-    private CameraSelector cameraSelector;
     ImageCapture imageCapture;
 
 
@@ -108,7 +107,6 @@ public class HomeFragment extends Fragment {
 
         FloatingActionButton fab = homeView.findViewById(R.id.fab);
         fab.setOnClickListener(view -> showAddPostPopup());
-        popupView = getLayoutInflater().inflate(R.layout.dialog_new_post, null);
 
 
         return homeView;
@@ -128,10 +126,15 @@ public class HomeFragment extends Fragment {
         Button buttonPost = popupView.findViewById(R.id.buttonPost);
         Button buttonUpload = popupView.findViewById(R.id.buttonUpload);
         Button buttonClick = popupView.findViewById(R.id.buttonClick);
+        Button buttonClickPhoto = popupView.findViewById(R.id.buttonClickTst);
+        buttonClickPhoto.setVisibility(View.GONE);
+
+
 
         buttonUpload.setOnClickListener(view -> {
             // Perform action for uploading picture
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            buttonClick.setVisibility(View.GONE);
 
             dialog.dismiss();
             startActivityForResult(intent, PICK_IMAGE_REQUEST);
@@ -146,12 +149,14 @@ public class HomeFragment extends Fragment {
                         new String[]{android.Manifest.permission.CAMERA},
                         MY_PERMISSIONS_REQUEST_CAMERA);
             } else {
+
                 // Permission is granted, open camera
                 openCamera(previewView);
+                buttonClickPhoto.setVisibility(View.VISIBLE);
+
             }
         });
 
-        Button buttonClickPhoto = popupView.findViewById(R.id.buttonClickTst);
 
         buttonClickPhoto.setOnClickListener(view -> {
             File photoFile = createImageFile();
@@ -162,6 +167,9 @@ public class HomeFragment extends Fragment {
                 public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
                     // Image capture successful
                     Toast.makeText(requireContext(), "Image saved successfully", Toast.LENGTH_SHORT).show();
+                    buttonClick.setVisibility(View.GONE);
+                    previewView.setVisibility(View.GONE);
+                    buttonUpload.setVisibility(View.GONE);
                 }
 
                 @Override
