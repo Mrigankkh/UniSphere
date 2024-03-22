@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -24,11 +25,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -44,6 +48,9 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference univeresityReference;
     private DatabaseReference userReference;
+    private FirebaseStorage storage;
+
+    private StorageReference storageReference;
 
 
     @Override
@@ -59,7 +66,8 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
 
         authService = AuthService.getInstance();
         this.firebaseDatabase = FirebaseDatabase.getInstance("https://unisphere-340ac-default-rtdb.firebaseio.com/");
-
+        this.storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
         email = (EditText) findViewById(R.id.email);
         password = (EditText) findViewById(R.id.password);
 
@@ -161,16 +169,17 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                             System.out.println("User is student");
                             DataSnapshot currStudentSnapshot = snapshot.child(userKey);
                             try {
-                                user = new Student(new University(),
+                                user = new Student(
                                         currStudentSnapshot.child("name").getValue(String.class),
                                         currStudentSnapshot.child("emailID").getValue(String.class),
-                                        currStudentSnapshot.child("password").getValue(String.class),
                                         currStudentSnapshot.child("phoneNumber").getValue(String.class),
-                                        getprofilePictureFromLink(currStudentSnapshot.child("profilePicture").getValue(String.class)),
-                                        new HashSet<>(),
+                                       null, new HashSet<>(),
                                         currStudentSnapshot.child("userRole").getValue(String.class),
                                         new SimpleDateFormat("dd/mm/yyyy")
                                                 .parse(currStudentSnapshot.child("dateOfBirth").getValue(String.class)));
+
+
+
                             } catch (ParseException e) {
                                 throw new RuntimeException(e);
                             }
@@ -219,8 +228,8 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
      */
     private void addUserDataToSharedPreferences(User user) throws RuntimeException {
         SharedPreferences preferences = getSharedPreferences("USER_DATA", MODE_PRIVATE);
-        preferences.edit().putString("username", user.getName()).putString("university", user.getUniversity().getUniversityName()).putString("email", user.getEmailID())
-                .putString("user_role", user.getUserRole()).putString("phone_number", user.getPhoneNumber()).putStringSet("tags", user.getUserTags()).apply();
+        preferences.edit().putString("username", user.getName()).putString("university", user.getEmailID()).putString("email", user.getEmailID())
+                .putString("user_role", user.getUserRole()).putString("phone_number", user.getPhoneNumber()).putStringSet("tags", new HashSet<>()).apply();
         ;
         if (user.getUserRole().equals("student")) {
             preferences.edit().putString("DoB", ((Student) user).getDateOfBirth().toString()).apply();
@@ -242,8 +251,12 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
     }
 
 
-    private File getprofilePictureFromLink(String link) {
-        return null;
+    private Uri getprofilePictureFromLink(String link) {
+        link  =" ";
+//        StorageReference profilepicReference = storage.getReference(link);
+
+return null;
+
     }
 
 }

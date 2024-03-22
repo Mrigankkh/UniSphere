@@ -23,6 +23,12 @@
 <!--        <argument-->
 <!--            android:name="studentBuilder"-->
 <!--            android:defaultValue="null" />-->
+        <action
+            android:id="@+id/action_signupStudentFragment_to_mainActivity"
+            app:destination="@id/mainActivity" />
+        <action
+            android:id="@+id/action_signupStudentFragment_to_signupUserFragment"
+            app:destination="@id/signupUserFragment" />
     </fragment>
     <fragment
         android:id="@+id/navigation_signup_organization"
@@ -32,7 +38,10 @@
     <action
         android:id="@+id/action_fragment_signup_user_to_fragment_signup_student"
         app:destination="@id/signupStudentFragment" />
-
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.example.unisphere.MainActivity"
+        android:label="MainActivity" />
 
 
 </navigation>

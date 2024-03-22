@@ -17,8 +17,9 @@
     <string name="title_messenger">Messenger</string>
     <string name="title_profile">Profile</string>
     <string name="title_post_details">Post Details</string>
-
-
+    <string name="title_event_details">Event Details</string>
+    <string name="title_create_event">Create New Event</string>
+    <string name="title_edit_event">Edit Event</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

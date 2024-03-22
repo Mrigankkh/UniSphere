@@ -1,9 +1,13 @@
 package com.example.unisphere.model;
 
+import android.net.Uri;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 public class Student extends User {
     private Date dateOfBirth;
@@ -14,8 +18,8 @@ public class Student extends User {
     // private final String program;
 
 
-    public Student(University university, String name, String emailID, String hashedPassword, String phoneNumber, File profilePicture, HashSet<Tag> userTags, String userRole, Date dateOfBirth) {
-        super(university, name, emailID, hashedPassword, phoneNumber, profilePicture, userTags, "Student");
+    public Student(String name, String emailID, String phoneNumber, String profilePictureURL, Collection<Tag> userTags, String userRole, Date dateOfBirth) {
+        super( name, emailID, phoneNumber, profilePictureURL, userTags, "Student");
         this.dateOfBirth = dateOfBirth;
     }
 

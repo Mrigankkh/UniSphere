@@ -1,13 +1,15 @@
 package com.example.unisphere.model;
 
+import android.net.Uri;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 
-public class Organization extends User{
+public class Organization extends User {
 
-    Organization(University university, String name, String emailID, String hashedPassword, String phoneNumber, File profilePicture, HashSet<Tag> userTags, String userRole) {
-        super(university, name, emailID, hashedPassword, phoneNumber, profilePicture, userTags, userRole);
+    Organization(String name, String emailID, String hashedPassword, String phoneNumber, String profilePictureURL, HashSet<Tag> userTags, String userRole) {
+        super(name, emailID, phoneNumber, profilePictureURL, userTags, userRole);
     }
 }

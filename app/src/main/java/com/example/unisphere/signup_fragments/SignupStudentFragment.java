@@ -2,13 +2,15 @@ package com.example.unisphere.signup_fragments;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.google.firebase.appcheck.internal.util.Logger.TAG;
+
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,16 +27,32 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.unisphere.R;
+import com.example.unisphere.model.Student;
+
+import com.example.unisphere.model.User;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
 
-import java.io.File;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 
 public class SignupStudentFragment extends Fragment {
@@ -41,9 +60,10 @@ public class SignupStudentFragment extends Fragment {
 
     private NavController navController;
     private FirebaseDatabase firebaseDatabase;
-    FirebaseStorage storage = FirebaseStorage.getInstance();
+    FirebaseStorage storage ;
     private DatabaseReference programReference;
     private DatabaseReference universityReference;
+    private DatabaseReference userReference;
 
     private SharedPreferences preferences;
     private Spinner programSelector;
@@ -51,30 +71,34 @@ public class SignupStudentFragment extends Fragment {
     private Button uploadProfilePictureButton;
     private Uri profilePicture;
     private ImageView profilePictureView;
-    private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
+    private FloatingActionButton nextButton;
+    private String universityKey;
+    private StorageReference imageRef;
+    private String universityName;
+    private String email;
+    private FloatingActionButton prevButton;
+    private ActivityResultLauncher<Intent> galleryLauncher;
+    private FirebaseAuth firebaseAuth;
 
     public SignupStudentFragment() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    /**
+     * Get the list of programs offered by the university.
+     */
+    public void loadProgramList() {
 
-        super.onCreate(savedInstanceState);
-
-        // Set up Firebase and Shared Preferences
-        setup();
-
-        String university = preferences.getString("university", "Northeastern University");
-
-        universityReference = firebaseDatabase.getReference();
-        universityReference.orderByChild("name").equalTo(university).addListenerForSingleValueEvent(new ValueEventListener() {
+        if (universityName == null) {
+            Toast.makeText(getContext(), "Error! Please go back!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        universityReference.orderByChild("name").equalTo(universityName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                String universityKey = (String) snapshot.getChildren().iterator().next().getKey();
+                universityKey = (String) snapshot.getChildren().iterator().next().getKey();
                 programReference = universityReference.child(universityKey).child("programs");
-
                 programReference.addValueEventListener(new ValueEventListener() {
 
                     @Override
@@ -99,6 +123,32 @@ public class SignupStudentFragment extends Fragment {
             }
         });
 
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+
+
+        super.onCreate(savedInstanceState);
+
+        // Set up Firebase and Shared Preferences
+        setup();
+
+        galleryLauncher = this.registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == getActivity().RESULT_OK) {
+                        // Handle gallery pick result
+                        Intent data = result.getData();
+                        if (data != null && data.getData() != null) {
+                            profilePicture = data.getData();
+                            profilePictureView.setImageURI(profilePicture);
+                        }
+                    }
+                });
+        universityName = preferences.getString("university", "Northeastern University");
+        email = preferences.getString("email", null);
+        universityReference = firebaseDatabase.getReference();
+
+        loadProgramList();
 
     }
 
@@ -115,35 +165,28 @@ public class SignupStudentFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initializeUIComponents(view);
 
+        prevButton.setOnClickListener(this::onPrevClicked);
+        nextButton.setOnClickListener(this::signupStudent);
 
-        navController = Navigation.findNavController(view);
-        programSelector = view.findViewById(R.id.programSelector);
-        uploadProfilePictureButton = view.findViewById(R.id.uploadProfilePictureButton);
-        uploadProfilePictureButton.setOnClickListener(View -> onUploadButtonClick());
-        profilePictureView = view.findViewById(R.id.profilePictureView);
+    }
 
-
+    private void onPrevClicked(View view) {
+        navController.navigate(R.id.action_signupStudentFragment_to_signupUserFragment);
+        navController.clearBackStack(R.id.action_signupStudentFragment_to_signupUserFragment);
     }
 
     /**
      * Set up the firebase service, shared preferences and register for activity results.
      */
-    public void setup() {
+    private void setup() {
+
         this.firebaseDatabase = FirebaseDatabase.getInstance("https://unisphere-340ac-default-rtdb.firebaseio.com/");
-        preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
-        pickMedia =
-                registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+        this.firebaseAuth = FirebaseAuth.getInstance();
+        this.storage = FirebaseStorage.getInstance();
+        this.preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
 
-                    if (uri != null) {
-                        profilePicture = uri;
-                        profilePictureView.setImageURI(profilePicture);
-
-                        Log.d("PhotoPicker", "Selected URI: " + uri);
-                    } else {
-                        Log.d("PhotoPicker", "No media selected");
-                    }
-                });
 
     }
 
@@ -174,13 +217,93 @@ public class SignupStudentFragment extends Fragment {
      */
     public void onUploadButtonClick() {
 
-        pickMedia.launch(new PickVisualMediaRequest.Builder()
-                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                .build());
+        galleryLauncher.launch(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI));
 
     }
 
+    public boolean validateInputs() {
 
 
+//        if (!userConfirmPassword.getText().toString().equals(userPassword.getText().toString()))
+//            return false;
+        //TODO: Complete this method; Add stuff for date of birth and phone number
+        return true;
+    }
 
+    /**
+     * Handle sign up complete event
+     *
+     * @param view
+     */
+    public void signupStudent(View view) {
+
+        if (!validateInputs()) {
+            Toast.makeText(this.getContext(), "Invalid Inputs!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String fireStoreProfilePictureURL = "/" + universityName + "/" + "Users" + "/" + email + "/" + "profile_picture/profile_picture.jpg";
+
+        User user = new Student(preferences.getString("username", "NULL"), preferences.getString("email", "NULL"), preferences.getString("phone", "NULL"), fireStoreProfilePictureURL, new ArrayList<>(), "Student", new Date());
+
+        String userKey = universityReference.child(universityKey).child("users").push().getKey();
+        userReference = universityReference.child(universityKey).child("users").child(userKey);
+        String password = preferences.getString("password", null);
+        preferences.edit().remove("password").apply();
+        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                if (task.isSuccessful()) {
+                    userReference.setValue(user)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d("TAG", "User added successfully!");
+                                    imageRef = storage.getReference().child(fireStoreProfilePictureURL);
+                                    imageRef.putFile(profilePicture).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                            FirebaseUser user = firebaseAuth.getCurrentUser();
+                                            navController.navigate(R.id.action_signupStudentFragment_to_mainActivity);
+
+                                        }
+                                    });
+                                }
+
+                            });
+                } else {
+
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                    Toast.makeText(getContext(), "Authentication failed.",
+                            Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+        });
+
+
+    }
+
+    private void addProfilePictureToFirebase(Uri profilePictureUri) {
+
+
+        imageRef = storage.getReference().child("/Northeastern University/Users/mrigank@northeastern.edu/profile_picture/profile_picture.jpg");
+        UploadTask uploadTask = imageRef.putFile(profilePictureUri);
+
+
+    }
+
+    private void initializeUIComponents(View view) {
+        navController = Navigation.findNavController(view);
+        programSelector = view.findViewById(R.id.programSelector);
+        uploadProfilePictureButton = view.findViewById(R.id.uploadProfilePictureButton);
+        uploadProfilePictureButton.setOnClickListener(View -> onUploadButtonClick());
+        profilePictureView = view.findViewById(R.id.profilePictureView);
+        nextButton = view.findViewById(R.id.signup_student_next_btn);
+        prevButton = view.findViewById(R.id.signup_student_prev_btn);
+
+
+    }
 }
