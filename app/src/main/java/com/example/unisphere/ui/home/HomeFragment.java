@@ -111,6 +111,19 @@ public class HomeFragment extends Fragment {
 
         // Set background color for dialog window
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        dialog.setOnDismissListener(dialogInterface -> {
+            ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext());
+
+            cameraProviderFuture.addListener(() -> {
+                try {
+                    ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+                    cameraProvider.unbindAll();
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }, ContextCompat.getMainExecutor(requireContext()));
+        });
+
 
 
         PreviewView previewView = popupView.findViewById(R.id.previewViewCamera);
@@ -147,8 +160,6 @@ public class HomeFragment extends Fragment {
                 buttonClick.setVisibility(View.GONE);
                 buttonUpload.setVisibility(View.GONE);
                 openCamera(previewView);
-
-
             }
         });
 
