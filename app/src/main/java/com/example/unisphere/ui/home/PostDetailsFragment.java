@@ -57,10 +57,8 @@ public class PostDetailsFragment extends Fragment {
             textViewLikeCount.setText(String.valueOf(post.getLikedByUserIds().size()));
             textViewCommentCount.setText(String.valueOf(post.getComments().size()));
 
-            // Assuming you have a list of comments in your Post object
             List<Comment> comments = post.getComments();
 
-// Initialize the RecyclerView
             RecyclerView recyclerViewComments = view.findViewById(R.id.recyclerViewComments);
             recyclerViewComments.setLayoutManager(new LinearLayoutManager(requireContext()));
             CommentAdapter commentAdapter = new CommentAdapter(comments);

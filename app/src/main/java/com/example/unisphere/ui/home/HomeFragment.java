@@ -1,8 +1,12 @@
 package com.example.unisphere.ui.home;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
@@ -51,6 +55,8 @@ public class HomeFragment extends Fragment {
 
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1001;
 
+    private static final int PICK_IMAGE_REQUEST = 1;
+
 
 
     public static HomeFragment newInstance(String param1, String param2) {
@@ -92,14 +98,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void showAddPostPopup() {
-        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            requestPermissions(
-                    new String[]{android.Manifest.permission.CAMERA},
-                    MY_PERMISSIONS_REQUEST_CAMERA);
-        }
-
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View popupView = getLayoutInflater().inflate(R.layout.dialog_new_post, null);
         builder.setView(popupView);
@@ -109,9 +107,56 @@ public class HomeFragment extends Fragment {
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
 
         PreviewView previewView = popupView.findViewById(R.id.previewViewCamera);
-        EditText editTextDescription = popupView.findViewById(R.id.editTextDescription);
+        EditText editTextDescription = popupView.findViewById(R.id.editTextCaption);
         Button buttonPost = popupView.findViewById(R.id.buttonPost);
-        // Initialize CameraX
+        Button buttonUpload = popupView.findViewById(R.id.buttonUpload);
+        Button buttonClick = popupView.findViewById(R.id.buttonClick);
+
+        buttonUpload.setOnClickListener(view -> {
+            // Perform action for uploading picture
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+            dialog.dismiss();
+            startActivityForResult(intent, PICK_IMAGE_REQUEST);
+
+        });
+
+        buttonClick.setOnClickListener(view -> {
+            if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Permission is not granted, request it
+                requestPermissions(
+                        new String[]{android.Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_REQUEST_CAMERA);
+            } else {
+                // Permission is granted, open camera
+                openCamera(previewView);
+            }
+        });
+
+        // Post button click listener
+        buttonPost.setOnClickListener(view -> {
+            String description = editTextDescription.getText().toString().trim();
+            // Perform post action
+            // TODO: IMPLEMENT SUBMITTING FORM
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+            // Use the selected image URI
+            // For example, you can display the image in an ImageView
+            // imageView.setImageURI(uri);
+        }
+    }
+
+    private void openCamera(PreviewView previewView) {
         ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext());
         cameraProviderFuture.addListener(() -> {
             try {
@@ -121,16 +166,8 @@ public class HomeFragment extends Fragment {
                 e.printStackTrace();
             }
         }, ContextCompat.getMainExecutor(requireContext()));
-
-        // Post button click listener
-        buttonPost.setOnClickListener(view -> {
-            String description = editTextDescription.getText().toString().trim();
-            // Perform post action
-            dialog.dismiss();
-        });
-
-        dialog.show();
     }
+
 
 
     private void bindPreview(ProcessCameraProvider cameraProvider, PreviewView previewView) {
