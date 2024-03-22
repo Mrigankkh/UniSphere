@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -68,19 +69,9 @@ public class HomeFragment extends Fragment {
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1001;
 
     private static final int PICK_IMAGE_REQUEST = 1;
-    private boolean isCameraPreviewVisible = false;
 
     ImageCapture imageCapture;
 
-
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -121,6 +112,7 @@ public class HomeFragment extends Fragment {
         // Set background color for dialog window
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
 
+
         PreviewView previewView = popupView.findViewById(R.id.previewViewCamera);
         EditText editTextDescription = popupView.findViewById(R.id.editTextCaption);
         Button buttonPost = popupView.findViewById(R.id.buttonPost);
@@ -151,8 +143,11 @@ public class HomeFragment extends Fragment {
             } else {
 
                 // Permission is granted, open camera
-                openCamera(previewView);
                 buttonClickPhoto.setVisibility(View.VISIBLE);
+                buttonClick.setVisibility(View.GONE);
+                buttonUpload.setVisibility(View.GONE);
+                openCamera(previewView);
+
 
             }
         });
@@ -168,8 +163,13 @@ public class HomeFragment extends Fragment {
                     // Image capture successful
                     Toast.makeText(requireContext(), "Image saved successfully", Toast.LENGTH_SHORT).show();
                     buttonClick.setVisibility(View.GONE);
+                    buttonClickPhoto.setVisibility(View.GONE);
                     previewView.setVisibility(View.GONE);
                     buttonUpload.setVisibility(View.GONE);
+                    ImageView imageViewPreview = popupView.findViewById(R.id.imageViewPreview);
+                    imageViewPreview.setImageURI(Uri.fromFile(photoFile));
+                    imageViewPreview.setVisibility(View.VISIBLE);
+
                 }
 
                 @Override
@@ -183,6 +183,7 @@ public class HomeFragment extends Fragment {
         // Post button click listener
         buttonPost.setOnClickListener(view -> {
             String description = editTextDescription.getText().toString().trim();
+
             // Perform post action
             // TODO: IMPLEMENT SUBMITTING FORM
             dialog.dismiss();
