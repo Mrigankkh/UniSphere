@@ -48,6 +48,17 @@
             android:layout_gravity="center_horizontal"
             android:paddingEnd="16dp" />
 
+        <Button
+            android:id="@+id/buttonClickTst"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Click"
+            android:layout_marginBottom="8dp"
+            android:textColor="@android:color/white"
+            android:paddingStart="16dp"
+            android:layout_gravity="center_horizontal"
+            android:paddingEnd="16dp" />
+
         <!-- Post caption EditText -->
         <EditText
             android:id="@+id/editTextCaption"

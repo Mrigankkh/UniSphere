@@ -1,12 +1,16 @@
 package com.example.unisphere.ui.home;
 
+import static android.os.Environment.*;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
@@ -17,6 +21,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.camera.core.CameraInfoUnavailableException;
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
@@ -35,9 +42,14 @@ import com.example.unisphere.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import androidx.camera.core.CameraSelector;
@@ -56,7 +68,10 @@ public class HomeFragment extends Fragment {
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1001;
 
     private static final int PICK_IMAGE_REQUEST = 1;
+    private View popupView;
 
+    private CameraSelector cameraSelector;
+    ImageCapture imageCapture;
 
 
     public static HomeFragment newInstance(String param1, String param2) {
@@ -93,6 +108,8 @@ public class HomeFragment extends Fragment {
 
         FloatingActionButton fab = homeView.findViewById(R.id.fab);
         fab.setOnClickListener(view -> showAddPostPopup());
+        popupView = getLayoutInflater().inflate(R.layout.dialog_new_post, null);
+
 
         return homeView;
     }
@@ -134,6 +151,27 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        Button buttonClickPhoto = popupView.findViewById(R.id.buttonClickTst);
+
+        buttonClickPhoto.setOnClickListener(view -> {
+            File photoFile = createImageFile();
+            ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(photoFile).build();
+
+            imageCapture.takePicture(outputFileOptions, ContextCompat.getMainExecutor(requireContext()), new ImageCapture.OnImageSavedCallback() {
+                @Override
+                public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+                    // Image capture successful
+                    Toast.makeText(requireContext(), "Image saved successfully", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onError(@NonNull ImageCaptureException exception) {
+                    // Image capture failed
+                    Toast.makeText(requireContext(), "Error saving image: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
         // Post button click listener
         buttonPost.setOnClickListener(view -> {
             String description = editTextDescription.getText().toString().trim();
@@ -161,12 +199,60 @@ public class HomeFragment extends Fragment {
         cameraProviderFuture.addListener(() -> {
             try {
                 ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+                CameraSelector cameraSelector = new CameraSelector.Builder()
+                        .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+                        .build();
+                if (!cameraProvider.hasCamera(cameraSelector)) {
+                    Log.e("Camera", "Camera not available");
+                    return;
+                }
                 bindPreview(cameraProvider, previewView);
+                setupImageCapture(cameraProvider, cameraSelector);
+
+
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
+            } catch (CameraInfoUnavailableException e) {
+                throw new RuntimeException(e);
             }
         }, ContextCompat.getMainExecutor(requireContext()));
     }
+
+    private File createImageFile()  {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+
+        // Get the directory where the image will be saved
+        File storageDir = requireContext().getExternalFilesDir(DIRECTORY_PICTURES);
+
+        // Create the File object
+        File imageFile = null;
+        try {
+            imageFile = File.createTempFile(
+                    imageFileName,  /* prefix */
+                    ".jpg",         /* suffix */
+                    storageDir      /* directory */
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Return the File object
+        return imageFile;
+    }
+
+
+
+    private void setupImageCapture(ProcessCameraProvider cameraProvider, CameraSelector cameraSelector) {
+        ImageCapture.Builder builder = new ImageCapture.Builder();
+        this.imageCapture = builder.build();
+
+
+
+        cameraProvider.bindToLifecycle((LifecycleOwner) requireContext(), cameraSelector, imageCapture);
+    }
+
 
 
 
