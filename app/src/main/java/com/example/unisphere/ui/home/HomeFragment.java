@@ -72,6 +72,7 @@ public class HomeFragment extends Fragment {
 
     ImageCapture imageCapture;
 
+    View popupView;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -105,7 +106,7 @@ public class HomeFragment extends Fragment {
 
     private void showAddPostPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        View popupView = getLayoutInflater().inflate(R.layout.dialog_new_post, null);
+        this.popupView = getLayoutInflater().inflate(R.layout.dialog_new_post, null);
         builder.setView(popupView);
         AlertDialog dialog = builder.create();
 
@@ -113,7 +114,7 @@ public class HomeFragment extends Fragment {
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
         dialog.setOnDismissListener(dialogInterface -> {
             ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext());
-
+            this.popupView = null;
             cameraProviderFuture.addListener(() -> {
                 try {
                     ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
@@ -140,9 +141,10 @@ public class HomeFragment extends Fragment {
             // Perform action for uploading picture
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             buttonClick.setVisibility(View.GONE);
+            buttonUpload.setVisibility(View.GONE);
 
-            dialog.dismiss();
             startActivityForResult(intent, PICK_IMAGE_REQUEST);
+
 
         });
 
@@ -208,11 +210,13 @@ public class HomeFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
             Uri uri = data.getData();
-            // Use the selected image URI
-            // For example, you can display the image in an ImageView
-            // imageView.setImageURI(uri);
+            ImageView imageViewPreview = popupView.findViewById(R.id.imageViewPreview);
+            imageViewPreview.setImageURI(uri);
+            imageViewPreview.setVisibility(View.VISIBLE);
+
         }
     }
+
 
     private void openCamera(PreviewView previewView) {
         ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext());
