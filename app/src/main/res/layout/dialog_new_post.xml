@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,24 +22,58 @@
             android:layout_weight="1"
             android:layout_marginBottom="16dp" />
 
-        <!-- Description EditText -->
-        <EditText
-            android:id="@+id/editTextDescription"
-            android:layout_width="match_parent"
+
+
+        <!-- Upload button -->
+        <Button
+            android:id="@+id/buttonUpload"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Enter description"
-            android:inputType="textMultiLine"
-            android:gravity="top"
-            android:layout_marginBottom="16dp" />
+            android:text="Upload a Picture"
+            android:layout_marginBottom="8dp"
+            android:textColor="@android:color/white"
+            android:paddingStart="16dp"
+            android:layout_gravity="center_horizontal"
+            android:paddingEnd="16dp" />
+
+        <!-- Click button -->
+        <Button
+            android:id="@+id/buttonClick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Click a Picture"
+            android:layout_marginBottom="8dp"
+            android:textColor="@android:color/white"
+            android:paddingStart="16dp"
+            android:layout_gravity="center_horizontal"
+            android:paddingEnd="16dp" />
+
+        <!-- Post caption EditText -->
+        <EditText
+            android:id="@+id/editTextCaption"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:hint="Enter caption"
+            android:inputType="text"
+            android:layout_marginBottom="16dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:background="@drawable/edittext_background"
+            android:layout_gravity="center_horizontal"
+            />
 
         <!-- Post button -->
         <Button
             android:id="@+id/buttonPost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Post" />
+            android:text="Post"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@android:color/white"
+            android:paddingStart="16dp"
+            android:background="#4CAF50"
+            android:paddingEnd="16dp" />
+
     </LinearLayout>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
