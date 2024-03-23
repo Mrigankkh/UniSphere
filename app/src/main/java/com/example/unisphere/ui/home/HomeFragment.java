@@ -349,6 +349,7 @@ public class HomeFragment extends Fragment {
             imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                 String imageUrl = uri.toString();
                 post.setImageUrl(imageUrl);
+                post.setKeyFirebase(key);
 
                 // Update the local list of posts
                 postList.add(0, post);

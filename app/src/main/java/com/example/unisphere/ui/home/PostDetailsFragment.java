@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,6 +16,8 @@ import com.example.unisphere.R;
 import com.example.unisphere.adapter.CommentAdapter;
 import com.example.unisphere.model.Comment;
 import com.example.unisphere.model.Post;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -24,6 +27,9 @@ public class PostDetailsFragment extends Fragment {
     private static final String ARG_POST = "post";
 
     private Post post;
+
+
+
 
     public static PostDetailsFragment newInstance(Post post) {
         PostDetailsFragment fragment = new PostDetailsFragment();
@@ -51,6 +57,7 @@ public class PostDetailsFragment extends Fragment {
         TextView textViewLikeCount = view.findViewById(R.id.like_count);
         TextView textViewCommentCount = view.findViewById(R.id.comment_count);
 
+
         if (post != null) {
             Picasso.get().load(post.getImageUrl()).into(imageViewPost);
             textViewDescription.setText(post.getDescription());
@@ -69,5 +76,7 @@ public class PostDetailsFragment extends Fragment {
 
         return view;
     }
+
+
 
 }
