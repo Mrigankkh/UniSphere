@@ -17,6 +17,11 @@ import com.example.unisphere.R;
 import com.example.unisphere.model.Comment;
 import com.example.unisphere.model.Post;
 import com.example.unisphere.ui.home.PostDetailsFragment;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -31,6 +36,12 @@ public class PostViewHolder extends RecyclerView.ViewHolder  {
     List<Post> postList;
     ImageView likeIcon;
 
+
+    // TODO: Fetch current user ID from SharedPreferences
+
+    String currentUserId = "test@northeastern.edu";
+    String university="northeastern";
+
     public PostViewHolder(@NonNull View itemView, Context context, List<Post> postList, PostAdapter.ClickListener clickListener) {
         super(itemView);
         this.context = context;
@@ -41,6 +52,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder  {
         this.commentCount = itemView.findViewById(R.id.comment_count);
         this.likeIcon = itemView.findViewById(R.id.like_icon);
         this.postList = postList;
+
         itemView.setOnClickListener(v -> {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION && clickListener != null) {
@@ -49,17 +61,24 @@ public class PostViewHolder extends RecyclerView.ViewHolder  {
         });
         this.description.setTextColor(ContextCompat.getColor(context, android.R.color.black)); // Change text color to black
        // itemView.setOnClickListener(this);
-        likeIcon.setOnClickListener(new View.OnClickListener() {
+        likeIcon.setOnClickListener(v -> {
+            int position = getAdapterPosition();
+            Post post = postList.get(position);
+            toggleLike(post);
+        });
+
+    }
+
+
+    private void toggleLike(Post post) {
+
+
+        DatabaseReference postRef = FirebaseDatabase.getInstance().getReference().child(university).child("posts").child(post.getKeyFirebase());
+
+        postRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                int position = getAdapterPosition();
-                Post post = postList.get(position);
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<String> likedByUserIds = post.getLikedByUserIds();
-
-                // TODO: FETCH USER ID FROM SHARED PREFERENCES
-                String currentUserId = "test@northeastern.edu";
-
-                // Toggle like status
                 if (likedByUserIds.contains(currentUserId)) {
                     // User already liked the post, remove like
                     likedByUserIds.remove(currentUserId);
@@ -68,22 +87,27 @@ public class PostViewHolder extends RecyclerView.ViewHolder  {
                     likedByUserIds.add(currentUserId);
                 }
 
-                // Update like count
-                int likes = likedByUserIds.size();
-                likeCount.setText(String.valueOf(likes));
+                // Update the like count text view
+                likeCount.setText(String.valueOf(likedByUserIds.size()));
 
-                // Change like button icon based on like status
+                // Update the like icon based on the like status
                 if (likedByUserIds.contains(currentUserId)) {
                     likeIcon.setImageResource(R.drawable.ic_like_filled_foreground);
                 } else {
                     likeIcon.setImageResource(R.drawable.ic_like_foreground);
                 }
 
-
-                // TODO: Implement code to update like status in firebase
+                // Update the likedByUserIds field in the database
+                postRef.child("likedByUserIds").setValue(likedByUserIds);
             }
-        });
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+
+
+        });
     }
 
 }

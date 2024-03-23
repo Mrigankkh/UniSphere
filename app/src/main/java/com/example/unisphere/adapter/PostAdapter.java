@@ -22,6 +22,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostViewHolder> {
     private ClickListener clickListener;
 
 
+    // TODO: Fetch current user ID from SharedPreferences
+
+    String currentUserId = "test@northeastern.edu";
+    String university="northeastern";
+
     public PostAdapter(Context context, List<Post> list, View rootView, ClickListener clickListener) {
         this.context = context;
         this.list = list;
@@ -42,6 +47,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostViewHolder> {
         holder.commentCount.setText(String.valueOf(postItem.getComments().size()));
         holder.description.setText(postItem.getDescription());
         Picasso.get().load(postItem.getImageUrl()).into(holder.postImage);
+
+        if (postItem.getLikedByUserIds().contains(currentUserId)) {
+            holder.likeIcon.setImageResource(R.drawable.ic_like_filled_foreground);
+        } else {
+            holder.likeIcon.setImageResource(R.drawable.ic_like_foreground);
+        }
     }
 
     @Override
@@ -52,4 +63,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostViewHolder> {
     public interface ClickListener {
         void onPostClick(int position);
     }
+
+
 }
