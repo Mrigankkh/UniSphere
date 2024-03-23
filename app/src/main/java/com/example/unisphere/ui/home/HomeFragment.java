@@ -39,6 +39,15 @@ import com.example.unisphere.model.Comment;
 import com.example.unisphere.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,8 +55,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 
@@ -60,8 +71,18 @@ public class HomeFragment extends Fragment {
     RecyclerView recyclerView;
     PostAdapter postAdapter;
     ImageCapture imageCapture;
+    private FirebaseDatabase firebaseDatabase;
+
+    File photoFileClicked;
 
     View popupView;
+
+    // TODO: change this to get from profile
+    String universityKey = "northeastern";
+
+    String userId = "test@northeastern.edu";
+
+    private DatabaseReference postDatabaseReference;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -79,6 +100,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View homeView = inflater.inflate(R.layout.fragment_home, container, false);
+
 
         recyclerView = homeView.findViewById(R.id.recyclerViewPostsHome);
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 1));
@@ -167,6 +189,7 @@ public class HomeFragment extends Fragment {
                     buttonUpload.setVisibility(View.GONE);
                     ImageView imageViewPreview = popupView.findViewById(R.id.imageViewPreview);
                     imageViewPreview.setImageURI(Uri.fromFile(photoFile));
+                    photoFileClicked = photoFile;
                     imageViewPreview.setVisibility(View.VISIBLE);
 
                 }
@@ -185,6 +208,10 @@ public class HomeFragment extends Fragment {
 
             // Perform post action
             // TODO: IMPLEMENT SUBMITTING FORM
+            Post post = new Post();
+            post.description=description;
+            post.userId = userId;
+            createPostOnFirebase(post);
             dialog.dismiss();
         });
 
@@ -281,25 +308,93 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         postList = new ArrayList<>();
-        // TODO FETCH FROM API LATER
-        postList.add(Post.builder().description("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book")
-                .comments(Arrays.asList(Comment.builder().text("nice post").userId("tst1@g.com").build(), Comment.builder().text("great location").userId("tst2@g.com").build()))
-                .likedByUserIds(new ArrayList<>(Arrays.asList("tst1", "tst1", "tst1", "tst1", "tst1")))
-                .userId("test@northeastern.edu")
-                .imageUrl("https://fastly.picsum.photos/id/1050/200/300.jpg?hmac=mMZp1DAD5EpHCZh-YBwfvrg5w327V3DoJQ8CmRAKF70").build());
-        postList.add(Post.builder().description("It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.")
-                .comments(Arrays.asList(Comment.builder().text("Awesome!").userId("user1@example.com").build(), Comment.builder().text("Love it!").userId("user2@example.com").build()))
-                .likedByUserIds(new ArrayList<>(Arrays.asList("tst1", "tst1", "tst1", "tst1", "tst1", "tst1", "tst1", "tst1", "tst1")))
+        firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
 
-                .userId("test@northeastern.edu")
-                .imageUrl("https://fastly.picsum.photos/id/237/200/300.jpg?hmac=TmmQSbShHz9CdQm0NkEjx1Dyh_Y984R9LpNrpvH2D_U").build());
+        postDatabaseReference = firebaseDatabase.getReference().child(universityKey).child(getString(R.string.posts));
+        retrievePostsFromFirebase();
 
-        postList.add(Post.builder().description("Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage,")
-                .comments(Arrays.asList(Comment.builder().text("Great job!").userId("user3@example.com").build(), Comment.builder().text("Nice work!").userId("user4@example.com").build()))
-                .likedByUserIds(new ArrayList<>(Arrays.asList("tst1", "tst1", "tst1", "tst1", "tst1", "tst1", "tst1")))
-                .userId("test@northeastern.edu")
-                .imageUrl("https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI").build());
+//        // TODO FETCH FROM API LATER
+//        postList.add(Post.builder().description("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book")
+//                .comments(Arrays.asList(Comment.builder().text("nice post").userId("tst1@g.com").build(), Comment.builder().text("great location").userId("tst2@g.com").build()))
+//                .likedByUserIds(new ArrayList<>(Arrays.asList("tst1", "tst1", "tst1", "tst1", "tst1")))
+//                .userId("test@northeastern.edu")
+//                .imageUrl("https://fastly.picsum.photos/id/1050/200/300.jpg?hmac=mMZp1DAD5EpHCZh-YBwfvrg5w327V3DoJQ8CmRAKF70").build());
+//        postList.add(Post.builder().description("It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.")
+//                .comments(Arrays.asList(Comment.builder().text("Awesome!").userId("user1@example.com").build(), Comment.builder().text("Love it!").userId("user2@example.com").build()))
+//                .likedByUserIds(new ArrayList<>(Arrays.asList("tst1", "tst1", "tst1", "tst1", "tst1", "tst1", "tst1", "tst1", "tst1")))
+//
+//                .userId("test@northeastern.edu")
+//                .imageUrl("https://fastly.picsum.photos/id/237/200/300.jpg?hmac=TmmQSbShHz9CdQm0NkEjx1Dyh_Y984R9LpNrpvH2D_U").build());
+//
+//        postList.add(Post.builder().description("Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage,")
+//                .comments(Arrays.asList(Comment.builder().text("Great job!").userId("user3@example.com").build(), Comment.builder().text("Nice work!").userId("user4@example.com").build()))
+//                .likedByUserIds(new ArrayList<>(Arrays.asList("tst1", "tst1", "tst1", "tst1", "tst1", "tst1", "tst1")))
+//                .userId("test@northeastern.edu")
+//                .imageUrl("https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI").build());
 
 
     }
+
+
+    public void createPostOnFirebase(Post post) {
+        String key = postDatabaseReference.push().getKey();
+        Uri imageUri = Uri.fromFile(photoFileClicked);
+
+        // TODO check if photoFileClicked is null
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference imageRef = storageRef.child("images/" + key + ".jpg");
+
+        UploadTask uploadTask = imageRef.putFile(imageUri);
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                String imageUrl = uri.toString();
+                post.setImageUrl(imageUrl);
+
+                postDatabaseReference.child(key).setValue(post)
+                        .addOnSuccessListener(aVoid -> {
+                            System.out.println("Message added to Firebase");
+                            Toast.makeText(requireContext(), "Message Sent ", Toast.LENGTH_SHORT).show();
+//                        receiverUsername.setText("");
+                            retrievePostsFromFirebase();
+
+                        })
+                        .addOnFailureListener(e -> {
+                            System.out.println("Error adding message to Firebase");
+                            e.printStackTrace();
+                        });
+            });
+        }).addOnFailureListener(e -> {
+            System.out.println("Error uploading image to Firebase");
+            e.printStackTrace();
+        });
+    }
+
+    public void retrievePostsFromFirebase() {
+        postDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Post> posts = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Post post = snapshot.getValue(Post.class);
+                    posts.add(post);
+                }
+
+                // Assuming postList is a member variable of your class
+                postList.clear();
+                postList.addAll(posts);
+
+                // Notify the adapter of the data change TODO if this can be improved
+                postAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle any errors
+                int c=4;
+            }
+        });
+    }
+
+
+
 }
