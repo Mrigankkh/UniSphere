@@ -73,7 +73,7 @@ public class HomeFragment extends Fragment {
     ImageCapture imageCapture;
     private FirebaseDatabase firebaseDatabase;
 
-    File photoFileClicked;
+    Uri photoUriData;
 
     View popupView;
 
@@ -189,7 +189,7 @@ public class HomeFragment extends Fragment {
                     buttonUpload.setVisibility(View.GONE);
                     ImageView imageViewPreview = popupView.findViewById(R.id.imageViewPreview);
                     imageViewPreview.setImageURI(Uri.fromFile(photoFile));
-                    photoFileClicked = photoFile;
+                    photoUriData = Uri.fromFile(photoFile);
                     imageViewPreview.setVisibility(View.VISIBLE);
 
                 }
@@ -223,6 +223,7 @@ public class HomeFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
             Uri uri = data.getData();
+            this.photoUriData = uri;
             ImageView imageViewPreview = popupView.findViewById(R.id.imageViewPreview);
             imageViewPreview.setImageURI(uri);
             imageViewPreview.setVisibility(View.VISIBLE);
@@ -338,13 +339,12 @@ public class HomeFragment extends Fragment {
 
     public void createPostOnFirebase(Post post) {
         String key = postDatabaseReference.push().getKey();
-        Uri imageUri = Uri.fromFile(photoFileClicked);
 
         // TODO check if photoFileClicked is null
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference imageRef = storageRef.child("images/" + key + ".jpg");
 
-        UploadTask uploadTask = imageRef.putFile(imageUri);
+        UploadTask uploadTask = imageRef.putFile(photoUriData);
         uploadTask.addOnSuccessListener(taskSnapshot -> {
             imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                 String imageUrl = uri.toString();
