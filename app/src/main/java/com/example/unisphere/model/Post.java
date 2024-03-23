@@ -3,6 +3,7 @@ package com.example.unisphere.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import lombok.Builder;
 
@@ -10,6 +11,16 @@ public class Post implements Serializable {
     public String imageUrl;
     public String description;
     public String userId;
+
+    public String getKeyFirebase() {
+        return keyFirebase;
+    }
+
+    public void setKeyFirebase(String keyFirebase) {
+        this.keyFirebase = keyFirebase;
+    }
+
+    public String keyFirebase;
 
     public Post() {
         likedByUserIds=new ArrayList<>();

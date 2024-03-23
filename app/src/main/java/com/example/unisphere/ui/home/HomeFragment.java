@@ -350,6 +350,12 @@ public class HomeFragment extends Fragment {
                 String imageUrl = uri.toString();
                 post.setImageUrl(imageUrl);
 
+                // Update the local list of posts
+                postList.add(0, post);
+
+                // Notify the adapter that a new item has been inserted at position 0
+                postAdapter.notifyItemInserted(0);
+
                 postDatabaseReference.child(key).setValue(post)
                         .addOnSuccessListener(aVoid -> {
                             System.out.println("Message added to Firebase");
@@ -388,8 +394,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle any errors
-                int c=4;
+
             }
         });
     }
