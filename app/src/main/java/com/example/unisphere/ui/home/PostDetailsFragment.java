@@ -1,6 +1,7 @@
 package com.example.unisphere.ui.home;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,8 @@ public class PostDetailsFragment extends Fragment {
     private Post post;
 
     private  TextView textViewCommentBox;
+
+    private CommentAdapter commentAdapter;
 
 
     // TODO: Fetch current user ID from SharedPreferences
@@ -85,7 +88,7 @@ public class PostDetailsFragment extends Fragment {
 
             RecyclerView recyclerViewComments = view.findViewById(R.id.recyclerViewComments);
             recyclerViewComments.setLayoutManager(new LinearLayoutManager(requireContext()));
-            CommentAdapter commentAdapter = new CommentAdapter(comments);
+            commentAdapter = new CommentAdapter(comments);
             recyclerViewComments.setAdapter(commentAdapter);
 
         }
@@ -107,7 +110,19 @@ public class PostDetailsFragment extends Fragment {
                 Comment newComment = new Comment(currentUserId,commentText);
                 comments.add(newComment);
                 textViewCommentBox.setText("");
-                postRef.child("comments").setValue(comments);
+                commentAdapter.notifyDataSetChanged();
+                Toast.makeText(requireContext(), "Comment posted successfully", Toast.LENGTH_SHORT).show();
+
+                postRef.child("comments").setValue(comments)
+                        .addOnSuccessListener(aVoid -> {
+                            post.setComments(comments);
+                            commentAdapter.notifyDataSetChanged();
+                            Toast.makeText(requireContext(), "Comment posted successfully", Toast.LENGTH_SHORT).show();
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(requireContext(), "Failed to post comment: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.e("PostDetailsFragment", "Failed to post comment", e);
+                        });
             }
 
             @Override

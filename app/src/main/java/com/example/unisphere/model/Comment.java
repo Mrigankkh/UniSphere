@@ -10,6 +10,9 @@ public class Comment {
         this.userId = userId;
         this.text = text;
     }
+    public Comment() {
+
+    }
 
     public String getUserId() {
         return userId;
