@@ -354,7 +354,6 @@ public class HomeFragment extends Fragment {
                         .addOnSuccessListener(aVoid -> {
                             System.out.println("Message added to Firebase");
                             Toast.makeText(requireContext(), "Message Sent ", Toast.LENGTH_SHORT).show();
-//                        receiverUsername.setText("");
                             retrievePostsFromFirebase();
 
                         })
