@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,8 +18,11 @@ import com.example.unisphere.R;
 import com.example.unisphere.adapter.CommentAdapter;
 import com.example.unisphere.model.Comment;
 import com.example.unisphere.model.Post;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -28,7 +33,13 @@ public class PostDetailsFragment extends Fragment {
 
     private Post post;
 
+    private  TextView textViewCommentBox;
 
+
+    // TODO: Fetch current user ID from SharedPreferences
+
+    String currentUserId = "test@northeastern.edu";
+    String university="northeastern";
 
 
     public static PostDetailsFragment newInstance(Post post) {
@@ -56,6 +67,12 @@ public class PostDetailsFragment extends Fragment {
         TextView textViewDescription = view.findViewById(R.id.textView_post_description);
         TextView textViewLikeCount = view.findViewById(R.id.like_count);
         TextView textViewCommentCount = view.findViewById(R.id.comment_count);
+        textViewCommentBox  = view.findViewById(R.id.editText_comment);
+        Button buttonPostComment= view.findViewById(R.id.button_post_comment);
+        buttonPostComment.setOnClickListener((viewButton) -> {
+            postComment(post,textViewCommentBox.getText().toString());
+        });
+
 
 
         if (post != null) {
@@ -75,6 +92,31 @@ public class PostDetailsFragment extends Fragment {
 
 
         return view;
+    }
+
+
+    private void postComment(Post post,String commentText) {
+
+
+        DatabaseReference postRef = FirebaseDatabase.getInstance().getReference().child(university).child("posts").child(post.getKeyFirebase());
+
+        postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Comment> comments = post.getComments();
+                Comment newComment = new Comment(currentUserId,commentText);
+                comments.add(newComment);
+                textViewCommentBox.setText("");
+                postRef.child("comments").setValue(comments);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+
+
+        });
     }
 
 

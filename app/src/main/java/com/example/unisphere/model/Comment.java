@@ -2,10 +2,14 @@ package com.example.unisphere.model;
 
 import lombok.Builder;
 
-@Builder(toBuilder = true)
 public class Comment {
     private String userId;
     private String text;
+
+    public Comment(String userId, String text) {
+        this.userId = userId;
+        this.text = text;
+    }
 
     public String getUserId() {
         return userId;
