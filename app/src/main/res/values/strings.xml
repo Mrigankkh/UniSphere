@@ -21,6 +21,7 @@
     <string name="title_create_event">Create New Event</string>
     <string name="title_edit_event">Edit Event</string>
 
+    <string name="posts">posts</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

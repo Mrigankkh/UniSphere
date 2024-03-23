@@ -1,15 +1,20 @@
 package com.example.unisphere.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Builder;
 
-@Builder(toBuilder = true)
 public class Post implements Serializable {
-    private String imageUrl;
-    private String description;
-    private String userId;
+    public String imageUrl;
+    public String description;
+    public String userId;
+
+    public Post() {
+        likedByUserIds=new ArrayList<>();
+        comments = new ArrayList<>();
+    }
 
     public List<String> getLikedByUserIds() {
         return likedByUserIds;
