@@ -1,7 +1,5 @@
 package com.example.unisphere.model;
 
-import lombok.Builder;
-
 public class Comment {
     private String userId;
     private String text;

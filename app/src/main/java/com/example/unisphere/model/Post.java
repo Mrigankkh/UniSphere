@@ -3,9 +3,6 @@ package com.example.unisphere.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-
-import lombok.Builder;
 
 public class Post implements Serializable {
     public String imageUrl;

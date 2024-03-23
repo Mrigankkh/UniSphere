@@ -35,7 +35,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unisphere.R;
 import com.example.unisphere.adapter.PostAdapter;
-import com.example.unisphere.model.Comment;
 import com.example.unisphere.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -43,7 +42,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -53,12 +51,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 
@@ -206,8 +201,12 @@ public class HomeFragment extends Fragment {
         buttonPost.setOnClickListener(view -> {
             String description = editTextDescription.getText().toString().trim();
 
-            // Perform post action
-            // TODO: IMPLEMENT SUBMITTING FORM
+
+            if (photoUriData == null) {
+                Toast.makeText(requireContext(), "Please select or take a picture before posting", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             Post post = new Post();
             post.description=description;
             post.userId = userId;
@@ -348,6 +347,7 @@ public class HomeFragment extends Fragment {
         uploadTask.addOnSuccessListener(taskSnapshot -> {
             imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                 String imageUrl = uri.toString();
+                photoUriData = null;
                 post.setImageUrl(imageUrl);
                 post.setKeyFirebase(key);
 
