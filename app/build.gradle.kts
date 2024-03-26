@@ -105,5 +105,6 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
     implementation("de.hdodenhof:circleimageview:3.1.0")
 
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
 }

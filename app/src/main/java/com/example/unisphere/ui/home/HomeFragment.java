@@ -32,6 +32,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.unisphere.R;
 import com.example.unisphere.adapter.PostAdapter;
@@ -79,6 +80,9 @@ public class HomeFragment extends Fragment {
 
     private DatabaseReference postDatabaseReference;
 
+    private SwipeRefreshLayout swipeRefreshLayout;
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -104,6 +108,14 @@ public class HomeFragment extends Fragment {
 
         FloatingActionButton fab = homeView.findViewById(R.id.fab);
         fab.setOnClickListener(view -> showAddPostPopup());
+
+        swipeRefreshLayout = homeView.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            // Your refresh code here, for example, fetching new data from Firebase
+            retrievePostsFromFirebase();
+            swipeRefreshLayout.setRefreshing(false);
+        });
+
 
 
         return homeView;
