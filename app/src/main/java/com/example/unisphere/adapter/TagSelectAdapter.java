@@ -22,6 +22,10 @@ public class TagSelectAdapter extends RecyclerView.Adapter<TagSelectViewHolder> 
     private List<Tag> tagList;
     private RecyclerView recyclerView;
 
+    public List<Boolean> getSelectedTags() {
+        return selectedTags;
+    }
+
     // data is passed into the constructor
     private List<Boolean> selectedTags;  // List to track selected state
 

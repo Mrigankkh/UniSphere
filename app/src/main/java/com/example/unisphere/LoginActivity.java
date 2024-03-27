@@ -228,7 +228,8 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
      */
     private void addUserDataToSharedPreferences(User user) throws RuntimeException {
         SharedPreferences preferences = getSharedPreferences("USER_DATA", MODE_PRIVATE);
-        preferences.edit().putString("username", user.getName()).putString("university", user.getEmailID()).putString("email", user.getEmailID())
+        //TODO: University name is hardcoded
+        preferences.edit().putString("username", user.getName()).putString("university", "Northeastern University").putString("email", user.getEmailID())
                 .putString("user_role", user.getUserRole()).putString("phone_number", user.getPhoneNumber()).putStringSet("tags", new HashSet<>()).apply();
         ;
         if (user.getUserRole().equals("student")) {
