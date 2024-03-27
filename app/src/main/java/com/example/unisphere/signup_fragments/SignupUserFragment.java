@@ -19,12 +19,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.unisphere.R;
-import com.example.unisphere.adapter.CommentAdapter;
-import com.example.unisphere.adapter.TagSelectAdapter;
-import com.example.unisphere.model.Tag;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.List;
 
 //TODO: Fix the backstack.
 

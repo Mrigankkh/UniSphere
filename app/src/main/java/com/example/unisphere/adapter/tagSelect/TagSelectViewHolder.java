@@ -1,4 +1,4 @@
-package com.example.unisphere.adapter;
+package com.example.unisphere.adapter.tagSelect;
 
 import android.view.View;
 import android.widget.TextView;

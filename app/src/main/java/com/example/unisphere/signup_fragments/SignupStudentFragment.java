@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
@@ -32,7 +31,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.unisphere.R;
-import com.example.unisphere.adapter.TagSelectAdapter;
+import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
 import com.example.unisphere.model.Student;
 
 import com.example.unisphere.model.Tag;
@@ -58,10 +57,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class SignupStudentFragment extends Fragment {

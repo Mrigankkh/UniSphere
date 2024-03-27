@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -17,11 +19,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.unisphere.R;
-import com.example.unisphere.adapter.TagSelectAdapter;
+import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
 import com.example.unisphere.model.Tag;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,6 +40,7 @@ public class SearchFragment extends Fragment {
 
     private TagSelectAdapter tagSelectAdapter;
     private SharedPreferences preferences;
+    private NavController navController;
 
     FirebaseStorage storage;
     private DatabaseReference universityReference;
@@ -135,7 +137,7 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
+        navController = Navigation.findNavController(view);
         searchButton = view.findViewById(R.id.searchBtn);
         recyclerViewTags = view.findViewById(R.id.recyclerViewSearchByTag);
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(requireContext());
@@ -155,6 +157,9 @@ public class SearchFragment extends Fragment {
             Toast.makeText(this.getContext(), "You must enter a search criteria!", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        navController.navigate(R.id.action_navigation_search_to_search_results);
+
 
 
     }
