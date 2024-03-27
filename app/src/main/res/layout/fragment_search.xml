@@ -7,7 +7,7 @@
     tools:context=".ui.search.SearchFragment">
 
     <EditText
-        android:id="@+id/search_bar"
+        android:id="@+id/searchByNameInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -58,10 +58,10 @@
         android:text="Search By Tags"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/searchByNameInput" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/searchBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"

@@ -22,17 +22,26 @@ public class TagSelectAdapter extends RecyclerView.Adapter<TagSelectViewHolder> 
     private List<Tag> tagList;
     private RecyclerView recyclerView;
 
-    public List<Boolean> getSelectedTags() {
+    public List<Tag> getSelectedTags() {
+        List<Tag>selectedTags = new ArrayList<>();
+        for(int i=0;i< tagList.size();i++)
+        {
+            if(isTagSelected.get(i))
+            {
+                selectedTags.add(tagList.get(i));
+            }
+        }
+
         return selectedTags;
     }
 
     // data is passed into the constructor
-    private List<Boolean> selectedTags;  // List to track selected state
+    private List<Boolean> isTagSelected;  // List to track selected state
 
     public TagSelectAdapter(List<Tag> tagList, RecyclerView recyclerView) {
         this.tagList = tagList;
         this.recyclerView = recyclerView;
-        selectedTags = new ArrayList<>(Collections.nCopies(tagList.size(), false));  // Initialize selectedTags with all false
+        isTagSelected = new ArrayList<>(Collections.nCopies(tagList.size(), false));  // Initialize selectedTags with all false
 
 
     }
@@ -51,7 +60,7 @@ public class TagSelectAdapter extends RecyclerView.Adapter<TagSelectViewHolder> 
         Tag tag = tagList.get(position);
         holder.itemView.setOnClickListener(this);  // Set click listener on the entire item view
         holder.bind(tag);
-        holder.itemView.setBackgroundColor(selectedTags.get(position) ? Color.parseColor("#5D3FD3") : Color.parseColor("#DDDDDD")); // Set background based on selection
+        holder.itemView.setBackgroundColor(isTagSelected.get(position) ? Color.parseColor("#5D3FD3") : Color.parseColor("#DDDDDD")); // Set background based on selection
 
     }
 
@@ -67,8 +76,8 @@ public class TagSelectAdapter extends RecyclerView.Adapter<TagSelectViewHolder> 
 
 //            v.setBackgroundColor(Color.parseColor("#5D3FD3")); // Set clicked color (red here)
 
-            selectedTags.set(clickedPosition, !selectedTags.get(clickedPosition));  // Toggle selected state
-            v.setBackgroundColor(selectedTags.get(clickedPosition) ? Color.parseColor("#5D3FD3") : Color.parseColor("#DDDDDD"));  // Set color based on selection
+            isTagSelected.set(clickedPosition, !isTagSelected.get(clickedPosition));  // Toggle selected state
+            v.setBackgroundColor(isTagSelected.get(clickedPosition) ? Color.parseColor("#5D3FD3") : Color.parseColor("#DDDDDD"));  // Set color based on selection
 
         }
     }

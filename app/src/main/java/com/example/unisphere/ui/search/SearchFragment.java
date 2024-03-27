@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.unisphere.R;
@@ -44,6 +46,8 @@ public class SearchFragment extends Fragment {
     private FirebaseDatabase firebaseDatabase;
     private String universityKey;
     private RecyclerView recyclerViewTags;
+    private Button searchButton;
+    private EditText searchByNameInput;
 
     private void setup() {
 
@@ -132,11 +136,26 @@ public class SearchFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
+        searchButton = view.findViewById(R.id.searchBtn);
         recyclerViewTags = view.findViewById(R.id.recyclerViewSearchByTag);
-
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(requireContext());
         layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
         recyclerViewTags.setLayoutManager(layoutManager);
+        searchByNameInput = view.findViewById(R.id.searchByNameInput);
+        searchButton.setOnClickListener(v -> search());
+
+    }
+
+    private void search()
+    {
+        List<Tag> selectedTags =  tagSelectAdapter.getSelectedTags();
+        String name = searchByNameInput.getText().toString().trim();
+        if(selectedTags.size()==0 && name.isEmpty())
+        {
+            Toast.makeText(this.getContext(), "You must enter a search criteria!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
 
     }
 }
