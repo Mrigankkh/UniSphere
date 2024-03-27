@@ -1,5 +1,17 @@
 package com.example.unisphere.model;
 
 public class Tag {
+    public Tag(String tagName) {
+        this.tagName = tagName;
+    }
 
+    public String getTagName() {
+        return tagName;
+    }
+
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
+    }
+
+    private String tagName;
 }

@@ -17,6 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
 import android.util.Log;
@@ -30,10 +32,14 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.unisphere.R;
+import com.example.unisphere.adapter.TagSelectAdapter;
 import com.example.unisphere.model.Student;
 
+import com.example.unisphere.model.Tag;
 import com.example.unisphere.model.User;
 
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -52,7 +58,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class SignupStudentFragment extends Fragment {
@@ -60,8 +69,9 @@ public class SignupStudentFragment extends Fragment {
 
     private NavController navController;
     private FirebaseDatabase firebaseDatabase;
-    FirebaseStorage storage ;
+    FirebaseStorage storage;
     private DatabaseReference programReference;
+    private DatabaseReference tagReference;
     private DatabaseReference universityReference;
     private DatabaseReference userReference;
 
@@ -71,6 +81,7 @@ public class SignupStudentFragment extends Fragment {
     private Button uploadProfilePictureButton;
     private Uri profilePicture;
     private ImageView profilePictureView;
+    private RecyclerView recyclerViewTags;
     private FloatingActionButton nextButton;
     private String universityKey;
     private StorageReference imageRef;
@@ -79,9 +90,54 @@ public class SignupStudentFragment extends Fragment {
     private FloatingActionButton prevButton;
     private ActivityResultLauncher<Intent> galleryLauncher;
     private FirebaseAuth firebaseAuth;
+    private List<Tag> tagList;
+
+    private TagSelectAdapter tagSelectAdapter;
 
     public SignupStudentFragment() {
         // Required empty public constructor
+    }
+
+
+    /**
+     * Get the list of predefined tags offered by the university.
+     */
+    public void loadTagList() {
+        if (universityName == null) {
+            Toast.makeText(getContext(), "Error! Please go back!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        universityReference.orderByChild("name").equalTo(universityName).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                universityKey = (String) snapshot.getChildren().iterator().next().getKey();
+                tagReference = universityReference.child(universityKey).child("tags");
+                tagReference.addValueEventListener(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        tagList = getTagListFromSnapshots(dataSnapshot);
+                        tagSelectAdapter = new TagSelectAdapter(tagList, recyclerViewTags);
+                        recyclerViewTags.setAdapter(tagSelectAdapter);
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
     }
 
     /**
@@ -135,19 +191,20 @@ public class SignupStudentFragment extends Fragment {
         setup();
 
         galleryLauncher = this.registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                    if (result.getResultCode() == getActivity().RESULT_OK) {
-                        // Handle gallery pick result
-                        Intent data = result.getData();
-                        if (data != null && data.getData() != null) {
-                            profilePicture = data.getData();
-                            profilePictureView.setImageURI(profilePicture);
-                        }
-                    }
-                });
+            if (result.getResultCode() == getActivity().RESULT_OK) {
+                // Handle gallery pick result
+                Intent data = result.getData();
+                if (data != null && data.getData() != null) {
+                    profilePicture = data.getData();
+                    profilePictureView.setImageURI(profilePicture);
+                }
+            }
+        });
         universityName = preferences.getString("university", "Northeastern University");
         email = preferences.getString("email", null);
         universityReference = firebaseDatabase.getReference();
 
+        loadTagList();
         loadProgramList();
 
     }
@@ -204,6 +261,17 @@ public class SignupStudentFragment extends Fragment {
         }
         return programs;
     }
+
+    private List<Tag> getTagListFromSnapshots(DataSnapshot dataSnapshot) {
+        int i = 0;
+        List<Tag> tags = new ArrayList<>();
+        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+            String data = snapshot.child("name").getValue(String.class);
+            tags.add(new Tag(data));
+        }
+        return tags;
+    }
+
 
     /**
      * Add the string array to a spinner adapter.
@@ -296,6 +364,8 @@ public class SignupStudentFragment extends Fragment {
     }
 
     private void initializeUIComponents(View view) {
+        recyclerViewTags = view.findViewById(R.id.recyclerViewTags);
+
         navController = Navigation.findNavController(view);
         programSelector = view.findViewById(R.id.programSelector);
         uploadProfilePictureButton = view.findViewById(R.id.uploadProfilePictureButton);
@@ -304,6 +374,9 @@ public class SignupStudentFragment extends Fragment {
         nextButton = view.findViewById(R.id.signup_student_next_btn);
         prevButton = view.findViewById(R.id.signup_student_prev_btn);
 
+        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(requireContext());
+        layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
+        recyclerViewTags.setLayoutManager(layoutManager);
 
     }
 }

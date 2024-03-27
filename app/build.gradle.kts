@@ -82,6 +82,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui:$nav_version")
 
     implementation("com.google.firebase:firebase-firestore")
+    implementation ("com.google.android.flexbox:flexbox:3.0.0")
 
     // Kotlin
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")

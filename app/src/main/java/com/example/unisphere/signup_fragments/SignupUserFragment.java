@@ -19,7 +19,12 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.unisphere.R;
+import com.example.unisphere.adapter.CommentAdapter;
+import com.example.unisphere.adapter.TagSelectAdapter;
+import com.example.unisphere.model.Tag;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.List;
 
 //TODO: Fix the backstack.
 
@@ -39,6 +44,7 @@ public class SignupUserFragment extends Fragment {
     private Spinner userRoleSelector;
     private SharedPreferences preferences;
     private final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+
 //private File
 
     public SignupUserFragment() {
@@ -81,7 +87,6 @@ public class SignupUserFragment extends Fragment {
         userRoleSelector = (Spinner) view.findViewById(R.id.userRoleSelector);
         ArrayAdapter<CharSequence> userRoleAdapter = ArrayAdapter.createFromResource(this.getContext(), R.array.user_roles, android.R.layout.simple_spinner_dropdown_item);
         userRoleSelector.setAdapter(userRoleAdapter);
-
         userName = (EditText) view.findViewById(R.id.name);
         userEmail = (EditText) view.findViewById(R.id.newUserEmail);
         userPassword = (EditText) view.findViewById(R.id.newUserPassword);
@@ -100,15 +105,15 @@ public class SignupUserFragment extends Fragment {
      */
     public boolean validateInputs() throws Exception {
 
-        String email = userEmail.getText().toString();
-        if (!(email.matches(emailPattern) && email.length() > 0))
-            throw new Exception("Invalid Email!");
-        if (userPassword.getText().toString().length() < 6)
-            throw new Exception("Passwords must be at least 6 characters!");
-        if (!userConfirmPassword.getText().toString().equals(userPassword.getText().toString()))
-            throw new Exception("Passwords do not match!");
-        if (userName.getText().toString().length() < 3)
-            throw new Exception("Please enter a valid name");
+//        String email = userEmail.getText().toString();
+//        if (!(email.matches(emailPattern) && email.length() > 0))
+//            throw new Exception("Invalid Email!");
+//        if (userPassword.getText().toString().length() < 6)
+//            throw new Exception("Passwords must be at least 6 characters!");
+//        if (!userConfirmPassword.getText().toString().equals(userPassword.getText().toString()))
+//            throw new Exception("Passwords do not match!");
+//        if (userName.getText().toString().length() < 3)
+//            throw new Exception("Please enter a valid name");
         return true;
     }
 
