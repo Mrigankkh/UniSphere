@@ -35,19 +35,19 @@
             android:layout_marginTop="8dp"
             android:hint="Image Link" />
 
-        <Button
-            android:id="@+id/buttonUploadImage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Upload Image" />
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:scaleType="centerCrop" />
+            <ImageView
+                android:id="@+id/imageView_event"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:contentDescription="Upload Image"
+                android:scaleType="centerCrop"
+                android:src="@drawable/upload_image"/>
+            <Button
+                android:id="@+id/buttonUploadImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Upload Image" />
 
         <TextView
             android:layout_width="match_parent"

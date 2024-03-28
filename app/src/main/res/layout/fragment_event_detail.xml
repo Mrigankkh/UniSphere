@@ -79,6 +79,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/date_place_layout"
                     android:drawableStart="@drawable/ic_location"
+                    android:drawableTint="@color/design_default_color_primary"
                     android:drawablePadding="8dp"
                     android:gravity="start"
                     android:textSize="16sp"
@@ -89,7 +90,8 @@
                     android:id="@+id/formComponentsRv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/eventPlaceTv"></RelativeLayout>
+                    android:layout_below="@id/eventPlaceTv"
+                    android:padding="6dp"></RelativeLayout>
 
                 <!-- Add the option to write and post a comment here -->
                 <LinearLayout

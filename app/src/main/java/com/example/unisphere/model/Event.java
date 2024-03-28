@@ -5,9 +5,11 @@ import java.util.List;
 
 public class Event implements Serializable {
 
+    private String userId;
+    private String eventId;
     private String eventTitle;
     private String eventDescription;
-    private String organizerImage;
+    private String eventImage;
     private String eventStartDate;
     private String eventEndDate;
     private String eventPlace;
@@ -21,10 +23,12 @@ public class Event implements Serializable {
     public Event() {
     }
 
-    public Event(String eventTitle, String eventDescription, String organizerImage, String eventStartDate, String eventEndDate, String eventPlace, String inputTextLabel, String inputTextButtonLabel, String radioLabel, List<String> radioOptions, String radioButtonLabel) {
+    public Event(String userId, String eventId, String eventTitle, String eventDescription, String eventImage, String eventStartDate, String eventEndDate, String eventPlace, String inputTextLabel, String inputTextButtonLabel, String radioLabel, List<String> radioOptions, String radioButtonLabel) {
+        this.userId = userId;
+        this.eventId = eventId;
         this.eventTitle = eventTitle;
         this.eventDescription = eventDescription;
-        this.organizerImage = organizerImage;
+        this.eventImage = eventImage;
         this.eventStartDate = eventStartDate;
         this.eventEndDate = eventEndDate;
         this.eventPlace = eventPlace;
@@ -33,6 +37,22 @@ public class Event implements Serializable {
         this.radioLabel = radioLabel;
         this.radioOptions = radioOptions;
         this.radioButtonLabel = radioButtonLabel;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
     }
 
     public String getEventTitle() {
@@ -51,12 +71,12 @@ public class Event implements Serializable {
         this.eventDescription = eventDescription;
     }
 
-    public String getOrganizerImage() {
-        return organizerImage;
+    public String getEventImage() {
+        return eventImage;
     }
 
-    public void setOrganizerImage(String organizerImage) {
-        this.organizerImage = organizerImage;
+    public void setEventImage(String eventImage) {
+        this.eventImage = eventImage;
     }
 
     public String getEventStartDate() {
@@ -121,22 +141,5 @@ public class Event implements Serializable {
 
     public void setRadioButtonLabel(String radioButtonLabel) {
         this.radioButtonLabel = radioButtonLabel;
-    }
-
-    @Override
-    public String toString() {
-        return "Event{" +
-                "eventTitle='" + eventTitle + '\'' +
-                ", eventDescription='" + eventDescription + '\'' +
-                ", organizerImage='" + organizerImage + '\'' +
-                ", eventStartDate='" + eventStartDate + '\'' +
-                ", eventEndDate='" + eventEndDate + '\'' +
-                ", eventPlace='" + eventPlace + '\'' +
-                ", inputTextLabel='" + inputTextLabel + '\'' +
-                ", inputTextButtonLabel='" + inputTextButtonLabel + '\'' +
-                ", radioLabel='" + radioLabel + '\'' +
-                ", radioOptions=" + radioOptions +
-                ", radioButtonLabel='" + radioButtonLabel + '\'' +
-                '}';
     }
 }
