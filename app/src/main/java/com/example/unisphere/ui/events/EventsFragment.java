@@ -18,11 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link EventsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class EventsFragment extends Fragment {
 
     private static final String ARG_EVENT = "event";
@@ -35,12 +31,7 @@ public class EventsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static EventsFragment newInstance(String param1, String param2) {
-        EventsFragment fragment = new EventsFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

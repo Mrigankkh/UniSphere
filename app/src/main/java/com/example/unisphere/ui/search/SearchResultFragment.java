@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -19,7 +20,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.unisphere.R;
+import com.example.unisphere.adapter.EventAdapter;
+import com.example.unisphere.adapter.searchResult.SearchResultAdapter;
 import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
+import com.example.unisphere.model.Event;
 import com.example.unisphere.model.Tag;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
@@ -39,7 +43,8 @@ public class SearchResultFragment extends Fragment {
 
     private NavController navController;
     private RecyclerView searchResultsRecyclerView;
-
+    private ArrayList<String> tempUserEmails;
+    private SearchResultAdapter searchResultAdapter;
 
     public SearchResultFragment() {
         // Required empty public constructor
@@ -49,7 +54,11 @@ public class SearchResultFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle arguments = getArguments();
+        tempUserEmails = (ArrayList<String>) arguments.getSerializable("search_results");
 
+
+        // Use the receivedList here
     }
 
     @Override
@@ -63,8 +72,15 @@ public class SearchResultFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         this.searchResultsRecyclerView = view.findViewById(R.id.recyclerView_search_results);
-
+        searchResultsRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 1));
+        searchResultAdapter = new SearchResultAdapter(requireContext(), tempUserEmails, this::onUserClick);
+        searchResultsRecyclerView.setAdapter(searchResultAdapter);
 
     }
+
+    private void onUserClick(int position) {
+        Toast.makeText(this.getContext(), "User was pressed", Toast.LENGTH_SHORT).show();
+    }
+
 
 }

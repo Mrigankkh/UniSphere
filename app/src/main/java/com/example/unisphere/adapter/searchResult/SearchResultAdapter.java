@@ -19,15 +19,14 @@ import java.util.List;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultViewHolder> {
     Context context;
-    List<User> users;
+    List<String> users;
     View rootView;
 
     private ClickListener clickListener;
 
-    public SearchResultAdapter(Context context, List<User> users, View rootView, ClickListener clickListener) {
+    public SearchResultAdapter(Context context, List<String> users, ClickListener clickListener) {
         this.context = context;
         this.users = users;
-        this.rootView = rootView;
         this.clickListener = clickListener;
     }
 
@@ -39,8 +38,8 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultViewHo
 
     @Override
     public void onBindViewHolder(@NonNull SearchResultViewHolder holder, int position) {
-        User user = users.get(position);
-        holder.searchedUserName.setText(user.getName());
+        String user = users.get(position);
+        holder.searchedUserName.setText(user);
         Picasso.get()
                 .load(R.drawable.no_events)
                 .resize(400, 400)

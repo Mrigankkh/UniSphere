@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.unisphere.R;
 import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
 import com.example.unisphere.model.Tag;
+import com.example.unisphere.model.User;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.firebase.database.DataSnapshot;
@@ -31,7 +32,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
+
 import java.util.List;
+
+import java.util.stream.Collectors;
 
 
 public class SearchFragment extends Fragment {
@@ -50,6 +54,7 @@ public class SearchFragment extends Fragment {
     private RecyclerView recyclerViewTags;
     private Button searchButton;
     private EditText searchByNameInput;
+    private Bundle bundle = new Bundle();
 
     private void setup() {
 
@@ -148,19 +153,78 @@ public class SearchFragment extends Fragment {
 
     }
 
-    private void search()
-    {
-        List<Tag> selectedTags =  tagSelectAdapter.getSelectedTags();
+    private void search() {
+        List<String> selectedTags = tagSelectAdapter.getSelectedTags().stream()
+                .map(Tag::getTagName)
+                .collect(Collectors.toList());
         String name = searchByNameInput.getText().toString().trim();
-        if(selectedTags.size()==0 && name.isEmpty())
-        {
+        if (selectedTags.size() == 0 && name.isEmpty()) {
             Toast.makeText(this.getContext(), "You must enter a search criteria!", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        navController.navigate(R.id.action_navigation_search_to_search_results);
+        universityReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String universityName = preferences.getString("university", null);
+                List<User> userSearchResults = new ArrayList<>();
+                List<String> userSearchResultsEmail = new ArrayList<>();
+                universityKey = (String) snapshot.getChildren().iterator().next().getKey();
+
+                universityReference.orderByChild("name").equalTo(universityName).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        universityKey = (String) snapshot.getChildren().iterator().next().getKey();
+                        tagReference = universityReference.child(universityKey).child("tags");
+                        tagReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                ArrayList<String> allUsers = new ArrayList<>();
+                                boolean isFirstTag = true;
+                                for (DataSnapshot tagSnapshot : snapshot.getChildren()) {
+                                    String tagName = (String) tagSnapshot.child("name").getValue();
+                                    if (selectedTags.contains(tagName)) {
+                                        List<String> users = (List<String>) tagSnapshot.child("users").getValue();
+                                        if (isFirstTag) {
+                                            allUsers.addAll(users);
+                                            isFirstTag = false;
+                                        } else {
+                                            if (!allUsers.isEmpty()) {
+                                                allUsers.retainAll(users);
+                                            }
+                                        }
+                                    }
+                                }
+
+
+                                bundle.putSerializable("search_results", allUsers);
+                                navController.navigate(R.id.action_navigation_search_to_search_results, bundle);
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
 
 
 
-    }
-}
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        }}

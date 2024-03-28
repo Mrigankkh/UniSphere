@@ -19,9 +19,9 @@ public class SearchResultViewHolder extends RecyclerView.ViewHolder {
     ImageView searchedUserProfilePicture;
     TextView searchedUserName;
     Context context;
-    List<User> users;
+    List<String> users;
 
-    public SearchResultViewHolder(@NonNull View itemView, Context context, List<User> users, SearchResultAdapter.ClickListener clickListener) {
+    public SearchResultViewHolder(@NonNull View itemView, Context context, List<String> users, SearchResultAdapter.ClickListener clickListener) {
         super(itemView);
         this.context = context;
         this.searchedUserProfilePicture = itemView.findViewById(R.id.searchedUserProfilePicture);
