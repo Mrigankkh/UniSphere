@@ -32,7 +32,7 @@ public abstract class User {
     }
 
     public Collection<String> getUserTags() {
-        return new ArrayList<>();
+        return userTags;
     }
 
     public String getUserRole() {
@@ -48,10 +48,10 @@ public abstract class User {
 
     private String phoneNumber;
     private String profilePictureURL;
-    private Collection<Tag> userTags;
+    private Collection<String> userTags;
     private String userRole;
 
-    public User(String name, String emailID, String phoneNumber, String profilePictureURL, Collection<Tag> userTags, String userRole) {
+    public User(String name, String emailID, String phoneNumber, String profilePictureURL, Collection<String> userTags, String userRole) {
 //        this.university = university;
         this.name = name;
         this.emailID = emailID;

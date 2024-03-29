@@ -58,7 +58,10 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class SignupStudentFragment extends Fragment {
@@ -295,6 +298,42 @@ public class SignupStudentFragment extends Fragment {
         return true;
     }
 
+
+    public void addUserToTags(String userKey, List<String> selectedTags)
+    {
+        // Assuming there is a tag reference since it was previously used to load the tags
+
+        tagReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Map<String, Object> updates = new HashMap<>();
+                for (DataSnapshot tagSnapshot : snapshot.getChildren()) {
+                    String tagName = (String) tagSnapshot.child("name").getValue();
+                    if (selectedTags.contains(tagName)) {
+                        List<String> existingUsers = (List<String>) tagSnapshot.child("users").getValue();
+                        if (existingUsers == null) {
+                            existingUsers = new ArrayList<>(); // Initialize if users list doesn't exist
+                        }
+                        existingUsers.add(userKey);
+                        updates.put(tagSnapshot.getKey() + "/users", existingUsers); // Update with the entire list
+
+                    }
+                }
+                if (!updates.isEmpty()) {
+                    tagReference.updateChildren(updates); // Write all updates at once
+                }
+
+
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });    }
+
     /**
      * Handle sign up complete event
      *
@@ -307,10 +346,14 @@ public class SignupStudentFragment extends Fragment {
             return;
         }
         String fireStoreProfilePictureURL = "/" + universityName + "/" + "Users" + "/" + email + "/" + "profile_picture/profile_picture.jpg";
-
-        User user = new Student(preferences.getString("username", "NULL"), preferences.getString("email", "NULL"), preferences.getString("phone", "NULL"), fireStoreProfilePictureURL, new ArrayList<>(), "Student", new Date());
+        List<String> selectedTags = tagSelectAdapter.getSelectedTags().stream()
+                .map(Tag::getTagName)
+                .collect(Collectors.toList());
+        User user = new Student(preferences.getString("username", "NULL"), preferences.getString("email", "NULL"), preferences.getString("phone", "NULL"), fireStoreProfilePictureURL, selectedTags, "Student", new Date());
 
         String userKey = universityReference.child(universityKey).child("users").push().getKey();
+        // Add this userkey in each selected tag
+
         userReference = universityReference.child(universityKey).child("users").child(userKey);
         String password = preferences.getString("password", null);
         preferences.edit().remove("password").apply();
@@ -324,6 +367,7 @@ public class SignupStudentFragment extends Fragment {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Log.d("TAG", "User added successfully!");
+                                    addUserToTags(userKey, selectedTags);
                                     imageRef = storage.getReference().child(fireStoreProfilePictureURL);
                                     imageRef.putFile(profilePicture).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                         @Override

@@ -56,6 +56,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        //Check if user exists.
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
         }
@@ -68,6 +69,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
         this.firebaseDatabase = FirebaseDatabase.getInstance("https://unisphere-340ac-default-rtdb.firebaseio.com/");
         this.storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
+
         email = (EditText) findViewById(R.id.email);
         password = (EditText) findViewById(R.id.password);
 

@@ -46,7 +46,7 @@ public class SearchFragment extends Fragment {
     private SharedPreferences preferences;
     private NavController navController;
 
-    FirebaseStorage storage;
+
     private DatabaseReference universityReference;
     private DatabaseReference tagReference;
     private FirebaseDatabase firebaseDatabase;
@@ -59,7 +59,6 @@ public class SearchFragment extends Fragment {
     private void setup() {
 
         this.firebaseDatabase = FirebaseDatabase.getInstance("https://unisphere-340ac-default-rtdb.firebaseio.com/");
-        this.storage = FirebaseStorage.getInstance();
         this.preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
 
 
@@ -169,7 +168,6 @@ public class SearchFragment extends Fragment {
                 String universityName = preferences.getString("university", null);
                 List<User> userSearchResults = new ArrayList<>();
                 List<String> userSearchResultsEmail = new ArrayList<>();
-                universityKey = (String) snapshot.getChildren().iterator().next().getKey();
 
                 universityReference.orderByChild("name").equalTo(universityName).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -186,12 +184,14 @@ public class SearchFragment extends Fragment {
                                     String tagName = (String) tagSnapshot.child("name").getValue();
                                     if (selectedTags.contains(tagName)) {
                                         List<String> users = (List<String>) tagSnapshot.child("users").getValue();
-                                        if (isFirstTag) {
-                                            allUsers.addAll(users);
-                                            isFirstTag = false;
-                                        } else {
-                                            if (!allUsers.isEmpty()) {
-                                                allUsers.retainAll(users);
+                                        if (users != null) {
+                                            if (isFirstTag) {
+                                                allUsers.addAll(users);
+                                                isFirstTag = false;
+                                            } else {
+                                                if (!allUsers.isEmpty()) {
+                                                    allUsers.retainAll(users);
+                                                }
                                             }
                                         }
                                     }
@@ -218,8 +218,6 @@ public class SearchFragment extends Fragment {
                 });
 
 
-
-
             }
 
             @Override
@@ -227,4 +225,5 @@ public class SearchFragment extends Fragment {
 
             }
         });
-        }}
+    }
+}
