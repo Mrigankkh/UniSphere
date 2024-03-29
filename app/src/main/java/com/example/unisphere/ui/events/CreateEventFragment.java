@@ -1,8 +1,12 @@
 package com.example.unisphere.ui.events;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,11 +18,15 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.example.unisphere.R;
 import com.example.unisphere.model.Event;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -28,14 +36,15 @@ import java.util.List;
 
 public class CreateEventFragment extends Fragment {
 
+    private static final int PICK_IMAGE_REQUEST = 1;
     private static final String ARG_EVENT = "event";
-    private Event event;
     private String UNIVERSITY = "northeastern";
     private String userId = "ogs@northeastern.edu";
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventDatabaseReference;
 
     private ImageView eventImageView;
+    private Uri eventImageUri;
 
     public static CreateEventFragment newInstance(Event event) {
         CreateEventFragment fragment = new CreateEventFragment();
@@ -48,11 +57,6 @@ public class CreateEventFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            event = (Event) getArguments().getSerializable(ARG_EVENT);
-            System.out.println(event);
-        }
-
         firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
         eventDatabaseReference = firebaseDatabase.getReference().child(UNIVERSITY).child(getString(R.string.events));
     }
@@ -65,7 +69,6 @@ public class CreateEventFragment extends Fragment {
         EditText editTextTitle = view.findViewById(R.id.editTextTitle);
         EditText editTextDescription = view.findViewById(R.id.editTextDescription);
         EditText editTextPlace = view.findViewById(R.id.editTextPlace);
-        EditText editTextImageLink = view.findViewById(R.id.editTextImageLink);
         Button uploadImageBtn = view.findViewById(R.id.buttonUploadImage);
         eventImageView = view.findViewById(R.id.imageView_event);
 
@@ -140,7 +143,7 @@ public class CreateEventFragment extends Fragment {
                 String eventTitle = editTextTitle.getText().toString();
                 String eventDescription = editTextDescription.getText().toString();
                 String eventPlace = editTextPlace.getText().toString();
-                String eventImageUrl = editTextImageLink.getText().toString();
+
                 // "2024-03-04T12:33:58"
                 String dateFrom = dateFromTv.getText().toString();
                 String timeFrom = timeFromTv.getText().toString();
@@ -192,7 +195,7 @@ public class CreateEventFragment extends Fragment {
 
                 Event newEvent = new Event(userId, null, eventTitle,
                         eventDescription,
-                        eventImageUrl,
+                        null,
                         eventStartDateTime,
                         eventEndDateTime,
                         eventPlace,
@@ -201,17 +204,58 @@ public class CreateEventFragment extends Fragment {
                         radioLabel,
                         radioOptionsList,
                         radioBtnLabel);
-
-                createEventOnFirebase(newEvent);
+                uploadImageAndAddToEvent(newEvent);
+                returnToEventDetailFragment(newEvent);
             }
         });
 
         return view;
     }
 
+    private void uploadImageAndAddToEvent(Event event) {
+        String key = eventDatabaseReference.push().getKey();
+        event.setEventId(key);
+        if (this.eventImageUri == null) {
+            // No image to upload
+            createEventOnFirebase(event);
+            return;
+        }
+
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference imageRef = storageRef.child("events/images/" + event.getEventTitle() + key + ".jpg");
+
+        UploadTask uploadTask = imageRef.putFile(this.eventImageUri);
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                String imageUrl = uri.toString();
+                event.setEventImage(imageUrl);
+                createEventOnFirebase(event);
+            });
+        }).addOnFailureListener(e -> {
+            System.out.println("Error uploading image to Firebase");
+            e.printStackTrace();
+        });
+    }
+
     public void onClickUploadImageLayout(View v) {
-        String imageUrl = "https://firebasestorage.googleapis.com/v0/b/unisphere-340ac.appspot.com/o/images%2F-NtmBGMNH_rIUgmrCDRE.jpg?alt=media&token=93edda13-80e1-47ff-9363-2e51556fb62f";
-        Picasso.get().load(imageUrl).resize(400, 300).into(eventImageView);
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+            this.eventImageUri = uri;
+            Picasso.get().load(this.eventImageUri).resize(400, 300).into(eventImageView);
+        }
+    }
+
+    private void returnToEventDetailFragment(Event event) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ARG_EVENT, event);
+        Navigation.findNavController(requireView()).navigate(R.id.eventDetailsFragment, bundle);
     }
 
     private void showDatePicker(DatePickerDialog.OnDateSetListener dateSetListener) {
@@ -254,8 +298,7 @@ public class CreateEventFragment extends Fragment {
     }
 
     public void createEventOnFirebase(Event event) {
-        String key = eventDatabaseReference.push().getKey();
-        event.setEventId(key);
+        String key = event.getEventId();
         eventDatabaseReference.child(key).setValue(event)
                 .addOnSuccessListener(aVoid -> {
                     System.out.println("Event added to Firebase");

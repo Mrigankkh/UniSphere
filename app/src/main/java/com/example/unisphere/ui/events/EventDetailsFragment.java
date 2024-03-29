@@ -4,6 +4,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,8 +16,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -70,9 +73,12 @@ public class EventDetailsFragment extends Fragment {
         }
 
         RecyclerView commentsListRv = view.findViewById(R.id.recyclerViewComments);
+        if(event.getEventImage()==null || event.getEventImage().isEmpty()) {
+            Picasso.get().load(R.drawable.no_image_available).resize(400, 300).into(eventImage);
+        } else {
+            Picasso.get().load(event.getEventImage()).resize(400, 300).into(eventImage);
+        }
 
-        String imageUrl = "https://fastly.picsum.photos/id/1050/200/300.jpg?hmac=mMZp1DAD5EpHCZh-YBwfvrg5w327V3DoJQ8CmRAKF70";
-        Picasso.get().load(imageUrl).into(eventImage);
         eventTitle.setText(event.getEventTitle());
         eventDescription.setText(event.getEventDescription());
         eventDateTv.setText(Util.convertDateTime(event.getEventStartDate()) + " to " + Util.convertDateTime(event.getEventEndDate()));

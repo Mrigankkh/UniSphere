@@ -14,9 +14,6 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_margin="8dp"
-            app:cardBackgroundColor="#D5D5D5"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +26,7 @@
                 <ImageView
                     android:id="@+id/imageView_event"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="300dp"
                     android:contentDescription="@null"
                     android:scaleType="centerCrop" />
 
@@ -79,12 +76,12 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/date_place_layout"
                     android:drawableStart="@drawable/ic_location"
-                    android:drawableTint="@color/design_default_color_primary"
                     android:drawablePadding="8dp"
+                    android:drawableTint="@color/design_default_color_primary"
                     android:gravity="start"
-                    android:textSize="16sp"
+                    android:padding="6dp"
                     android:textColor="@color/purple_500"
-                    android:padding="6dp"/>
+                    android:textSize="16sp" />
 
                 <RelativeLayout
                     android:id="@+id/formComponentsRv"
@@ -133,7 +130,7 @@
                     android:layout_below="@id/recyclerViewComments"
                     android:padding="8dp"
                     android:text="Edit Event"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
             </RelativeLayout>
 
 

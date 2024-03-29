@@ -62,8 +62,6 @@ public class EventsFragment extends Fragment {
         eventAdapter = new EventAdapter(requireContext(), events, eventsView.findViewById(android.R.id.content), this::onEventClick);
         recyclerView.setAdapter(eventAdapter);
         fabAddEvent = eventsView.findViewById(R.id.fabAddEvent);
-        noEventsIv = eventsView.findViewById(R.id.noEventsIv);
-        noEventsTv = eventsView.findViewById(R.id.noEventsTv);
         String userType = "organization";
         if (userType.equals("organization")) {
             fabAddEvent.setVisibility(View.VISIBLE);
@@ -103,14 +101,6 @@ public class EventsFragment extends Fragment {
 
                 // Notify the adapter of the data change TODO if this can be improved
                 eventAdapter.notifyDataSetChanged();
-
-                if (events == null || events.isEmpty()) {
-                    noEventsIv.setVisibility(View.VISIBLE);
-                    noEventsTv.setVisibility(View.VISIBLE);
-                } else {
-                    noEventsIv.setVisibility(View.GONE);
-                    noEventsTv.setVisibility(View.GONE);
-                }
             }
 
             @Override
