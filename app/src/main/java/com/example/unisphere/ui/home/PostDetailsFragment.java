@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,7 +33,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class PostDetailsFragment extends Fragment {
+public class PostDetailsFragment extends Fragment implements EditPostDialogFragment.EditPostListener {
 
     private static final String ARG_POST = "post";
 
@@ -56,6 +57,8 @@ public class PostDetailsFragment extends Fragment {
 
     TextView likeCount;
 
+    TextView textViewDescription;
+
 
     public static PostDetailsFragment newInstance(Post post) {
         PostDetailsFragment fragment = new PostDetailsFragment();
@@ -63,6 +66,15 @@ public class PostDetailsFragment extends Fragment {
         args.putSerializable(ARG_POST, post);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onPostEdited(Post updatedPost) {
+        // Update the post detail
+        this.post = updatedPost;
+        // Update the UI with the new post detail
+        textViewDescription.setText(post.getDescription());
+
     }
 
     @Override
@@ -85,7 +97,7 @@ public class PostDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_post_detail, container, false);
 
         ImageView imageViewPost = view.findViewById(R.id.imageView_post);
-        TextView textViewDescription = view.findViewById(R.id.textView_post_description);
+        this.textViewDescription = view.findViewById(R.id.textView_post_description);
         this.likeCount = view.findViewById(R.id.like_count);
         TextView textViewCommentCount = view.findViewById(R.id.comment_count);
         textViewCommentBox  = view.findViewById(R.id.editText_comment);
@@ -93,7 +105,8 @@ public class PostDetailsFragment extends Fragment {
 
         FloatingActionButton fabEdit = view.findViewById(R.id.fab_edit);
         fabEdit.setOnClickListener(v -> {
-            EditPostDialogFragment dialogFragment = new EditPostDialogFragment(post);
+            EditPostDialogFragment dialogFragment = new EditPostDialogFragment(post, Navigation.findNavController(requireView()));
+            dialogFragment.setEditPostListener(this);
             dialogFragment.show(getChildFragmentManager(), "EditPostDialogFragment");
         });
 

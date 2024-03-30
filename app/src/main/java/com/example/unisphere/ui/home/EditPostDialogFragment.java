@@ -1,5 +1,6 @@
 package com.example.unisphere.ui.home;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.unisphere.R;
@@ -29,9 +31,12 @@ public class EditPostDialogFragment extends DialogFragment {
 
     private Post post;
 
+    private NavController navController;
 
-    public EditPostDialogFragment(Post post) {
+
+    public EditPostDialogFragment(Post post,NavController navController) {
         this.post = post;
+        this.navController = navController;
     }
 
     @Override
@@ -47,12 +52,16 @@ public class EditPostDialogFragment extends DialogFragment {
 
         buttonDelete.setOnClickListener(v -> {
             // TODO: Implement delete logic
-            Navigation.findNavController(requireView()).navigate(R.id.navigation_home);
+            navController.navigate(R.id.navigation_home);
             dismiss();
         });
 
         buttonSaveChanges.setOnClickListener(v -> {
             editPostOnFirebase(post);
+            if (editPostListener != null) {
+                post.setDescription(editText.getText().toString());
+                editPostListener.onPostEdited(post);
+            }
             dismiss();
         });
 
@@ -80,5 +89,17 @@ public class EditPostDialogFragment extends DialogFragment {
             }
         });
     }
+
+    private EditPostListener editPostListener;
+
+    public void setEditPostListener(EditPostListener editPostListener) {
+        this.editPostListener = editPostListener;
+    }
+
+
+    public interface EditPostListener {
+        void onPostEdited(Post post);
+    }
+
 
 }
