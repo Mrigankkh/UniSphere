@@ -10,17 +10,14 @@ import java.util.HashSet;
 import java.util.List;
 
 public class Student extends User {
-    private Date dateOfBirth;
 
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
+
     // private final String program;
 
 
-    public Student(String name, String emailID, String phoneNumber, String profilePictureURL, Collection<String> userTags, String userRole, Date dateOfBirth) {
-        super( name, emailID, phoneNumber, profilePictureURL, userTags, "Student");
-        this.dateOfBirth = dateOfBirth;
+    public Student(String name, String emailID, String phoneNumber, String profilePictureURL, Collection<String> userTags, String userRole) {
+        super(name, emailID, phoneNumber, profilePictureURL, userTags, "Student");
+
     }
 
 //    public static StudentBuilder getBuilder() {

@@ -175,8 +175,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                                         currStudentSnapshot.child("emailID").getValue(String.class),
                                         currStudentSnapshot.child("phoneNumber").getValue(String.class),
                                        null, new HashSet<>(),
-                                        currStudentSnapshot.child("userRole").getValue(String.class),
-                                     null);
+                                        currStudentSnapshot.child("userRole").getValue(String.class));
 
 
                                 System.out.println("User is student");
@@ -233,9 +232,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
         preferences.edit().putString("username", user.getName()).putString("university", "Northeastern University").putString("email", user.getEmailID())
                 .putString("user_role", user.getUserRole()).putString("phone_number", user.getPhoneNumber()).putStringSet("tags", new HashSet<>()).apply();
         ;
-        if (user.getUserRole().equals("student")) {
-            preferences.edit().putString("DoB", ((Student) user).getDateOfBirth().toString()).apply();
-        }
+
     }
 
     /**
