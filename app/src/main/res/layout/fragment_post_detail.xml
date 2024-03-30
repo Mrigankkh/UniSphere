@@ -124,6 +124,17 @@
                         android:layout_below="@id/comment_layout"
                         android:padding="16dp" />
 
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/fab_edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_margin="16dp"
+                        android:src="@mipmap/ic_edit_foreground"
+                        app:backgroundTint="#14F1DB"
+                        app:elevation="6dp"
+                        app:pressedTranslationZ="12dp" />
+
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
