@@ -51,7 +51,7 @@ public class EditPostDialogFragment extends DialogFragment {
         editText.setText(post.getDescription());
 
         buttonDelete.setOnClickListener(v -> {
-            // TODO: Implement delete logic
+            deletePostFromFirebase(post);
             navController.navigate(R.id.navigation_home);
             dismiss();
         });
@@ -88,6 +88,22 @@ public class EditPostDialogFragment extends DialogFragment {
                 Log.e("EditPost", "Failed to edit post", error.toException());
             }
         });
+    }
+
+    public void deletePostFromFirebase(Post post) {
+        DatabaseReference postRef = FirebaseDatabase.getInstance().getReference().child("northeastern")
+                .child("posts").child(post.getKeyFirebase());
+
+        postRef.removeValue()
+                .addOnSuccessListener(aVoid -> {
+                    // Post deleted successfully
+                    Log.d("EditPost", "Post deleted successfully");
+                    dismiss();
+                })
+                .addOnFailureListener(e -> {
+                    // Failed to delete post
+                    Log.e("EditPost", "Failed to delete post", e);
+                });
     }
 
     private EditPostListener editPostListener;
