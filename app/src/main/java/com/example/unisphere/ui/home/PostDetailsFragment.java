@@ -42,12 +42,18 @@ public class PostDetailsFragment extends Fragment {
     private CommentAdapter commentAdapter;
 
 
+
+
     // TODO: Fetch current user ID from SharedPreferences
 
     String currentUserId;
     String university;
 
     SharedPreferences sharedPreferences;
+
+    ImageView likeIcon;
+
+    TextView likeCount;
 
 
     public static PostDetailsFragment newInstance(Post post) {
@@ -79,9 +85,11 @@ public class PostDetailsFragment extends Fragment {
 
         ImageView imageViewPost = view.findViewById(R.id.imageView_post);
         TextView textViewDescription = view.findViewById(R.id.textView_post_description);
-        TextView textViewLikeCount = view.findViewById(R.id.like_count);
+        this.likeCount = view.findViewById(R.id.like_count);
         TextView textViewCommentCount = view.findViewById(R.id.comment_count);
         textViewCommentBox  = view.findViewById(R.id.editText_comment);
+        this.likeIcon = view.findViewById(R.id.like_icon);
+
         Button buttonPostComment= view.findViewById(R.id.button_post_comment);
         buttonPostComment.setOnClickListener((viewButton) -> {
             postComment(post,textViewCommentBox.getText().toString());
@@ -92,10 +100,20 @@ public class PostDetailsFragment extends Fragment {
         if (post != null) {
             Picasso.get().load(post.getImageUrl()).into(imageViewPost);
             textViewDescription.setText(post.getDescription());
-            textViewLikeCount.setText(String.valueOf(post.getLikedByUserIds().size()));
+            likeCount.setText(String.valueOf(post.getLikedByUserIds().size()));
             textViewCommentCount.setText(String.valueOf(post.getComments().size()));
 
             List<Comment> comments = post.getComments();
+            if (post.getLikedByUserIds().contains(currentUserId)) {
+                likeIcon.setImageResource(R.drawable.ic_like_filled_foreground);
+            } else {
+                likeIcon.setImageResource(R.drawable.ic_like_foreground);
+            }
+
+            likeIcon.setOnClickListener(v -> {
+                toggleLike(post);
+            });
+
 
             RecyclerView recyclerViewComments = view.findViewById(R.id.recyclerViewComments);
             recyclerViewComments.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -106,6 +124,50 @@ public class PostDetailsFragment extends Fragment {
 
 
         return view;
+    }
+
+
+
+
+
+    private void toggleLike(Post post) {
+
+
+        DatabaseReference postRef = FirebaseDatabase.getInstance().getReference().child(university).child("posts").child(post.getKeyFirebase());
+
+        postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<String> likedByUserIds = post.getLikedByUserIds();
+                if (likedByUserIds.contains(currentUserId)) {
+                    // User already liked the post, remove like
+                    likedByUserIds.remove(currentUserId);
+                } else {
+                    // User has not liked the post, add like
+                    likedByUserIds.add(currentUserId);
+                }
+
+                // Update the like count text view
+                likeCount.setText(String.valueOf(likedByUserIds.size()));
+
+                // Update the like icon based on the like status
+                if (likedByUserIds.contains(currentUserId)) {
+                    likeIcon.setImageResource(R.drawable.ic_like_filled_foreground);
+                } else {
+                    likeIcon.setImageResource(R.drawable.ic_like_foreground);
+                }
+
+                // Update the likedByUserIds field in the database
+                postRef.child("likedByUserIds").setValue(likedByUserIds);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+
+
+        });
     }
 
 
