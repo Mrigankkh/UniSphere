@@ -166,9 +166,8 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                         String userKey = (String) snapshot.getChildren().iterator().next().getKey();
 
                         //TODO: check if snapshot exists first
-                        if (snapshot.child(userKey).child("userRole").getValue(String.class).equals("student")) {
+                        if (snapshot.child(userKey).child("userRole").getValue(String.class).equals("Student")) {
 
-                            System.out.println("User is student");
                             DataSnapshot currStudentSnapshot = snapshot.child(userKey);
                             try {
                                 user = new Student(
@@ -177,12 +176,12 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                                         currStudentSnapshot.child("phoneNumber").getValue(String.class),
                                        null, new HashSet<>(),
                                         currStudentSnapshot.child("userRole").getValue(String.class),
-                                        new SimpleDateFormat("dd/mm/yyyy")
-                                                .parse(currStudentSnapshot.child("dateOfBirth").getValue(String.class)));
+                                     null);
 
 
+                                System.out.println("User is student");
 
-                            } catch (ParseException e) {
+                            } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }
 
