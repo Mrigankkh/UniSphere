@@ -69,6 +69,7 @@ dependencies {
 
 
     implementation("com.squareup.picasso:picasso:2.8")
+    implementation("androidx.gridlayout:gridlayout:1.0.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -81,6 +82,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui:$nav_version")
 
     implementation("com.google.firebase:firebase-firestore")
+    implementation ("com.google.android.flexbox:flexbox:3.0.0")
 
     // Kotlin
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")

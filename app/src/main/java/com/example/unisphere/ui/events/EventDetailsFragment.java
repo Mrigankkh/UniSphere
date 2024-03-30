@@ -3,6 +3,7 @@ package com.example.unisphere.ui.events;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +16,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unisphere.R;
+import com.example.unisphere.adapter.CommentAdapter;
+import com.example.unisphere.model.Comment;
 import com.example.unisphere.model.Event;
 import com.example.unisphere.service.Util;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -31,6 +41,10 @@ public class EventDetailsFragment extends Fragment {
 
     private static final String ARG_EVENT = "event";
     private Event event;
+    private String UNIVERSITY = "northeastern";
+    private String userId = "ogs@northeastern.edu";
+    private CommentAdapter commentAdapter;
+    private TextView commentsET;
 
     public static EventDetailsFragment newInstance(Event event) {
         EventDetailsFragment fragment = new EventDetailsFragment();
@@ -45,48 +59,55 @@ public class EventDetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             event = (Event) getArguments().getSerializable(ARG_EVENT);
-            System.out.println(event);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        System.out.println("onCreateView");
         View view = inflater.inflate(R.layout.fragment_event_detail, container, false);
         ImageView eventImage = view.findViewById(R.id.imageView_event);
         TextView eventTitle = view.findViewById(R.id.eventTitleTv);
         TextView eventDescription = view.findViewById(R.id.textView_event_description);
         TextView eventDateTv = view.findViewById(R.id.eventDateTv);
         TextView eventPlaceTv = view.findViewById(R.id.eventPlaceTv);
-        EditText commentsET = view.findViewById(R.id.editText_comment);
+        commentsET = view.findViewById(R.id.editText_comment);
         Button commentsBtn = view.findViewById(R.id.button_post_comment);
+        commentsBtn.setOnClickListener((viewButton) -> {
+            addComment(event, commentsET.getText().toString());
+        });
         Button editEventBtn = view.findViewById(R.id.editEventBtn);
 
         editEventBtn.setOnClickListener(v -> gotoEditEvent(v));
         // Add condition to check userType == Organizer of this event
-        if(event!=null) {
+        if (event != null) {
             editEventBtn.setVisibility(View.VISIBLE);
         }
 
         RecyclerView commentsListRv = view.findViewById(R.id.recyclerViewComments);
+        List<Comment> comments = event.getComments();
+        commentsListRv.setLayoutManager(new LinearLayoutManager(requireContext()));
+        commentAdapter = new CommentAdapter(comments);
+        commentsListRv.setAdapter(commentAdapter);
 
-        String imageUrl = "https://fastly.picsum.photos/id/1050/200/300.jpg?hmac=mMZp1DAD5EpHCZh-YBwfvrg5w327V3DoJQ8CmRAKF70";
-        Picasso.get().load(imageUrl).into(eventImage);
+        if (event.getEventImage() == null || event.getEventImage().isEmpty()) {
+            Picasso.get().load(R.drawable.no_image_available).resize(400, 300).into(eventImage);
+        } else {
+            Picasso.get().load(event.getEventImage()).resize(400, 300).into(eventImage);
+        }
+
         eventTitle.setText(event.getEventTitle());
         eventDescription.setText(event.getEventDescription());
         eventDateTv.setText(Util.convertDateTime(event.getEventStartDate()) + " to " + Util.convertDateTime(event.getEventEndDate()));
         eventPlaceTv.setText(event.getEventPlace());
 
         RelativeLayout parentLayout = view.findViewById(R.id.formComponentsRv);
-
         createFormComponents(parentLayout);
-
         return view;
     }
 
     private void gotoEditEvent(View v) {
-        if(event!=null) {
+        if (event != null) {
             Bundle bundle = new Bundle();
             bundle.putSerializable(ARG_EVENT, event);
             Navigation.findNavController(requireView()).navigate(R.id.editEventFragment, bundle);
@@ -154,7 +175,7 @@ public class EventDetailsFragment extends Fragment {
                 RadioButton selectedRadioButton = requireView().findViewById(radioGroup.getCheckedRadioButtonId());
 
                 // Get input text
-//                String inputText = radioGroup.getCheckedRadioButtonId().toString().trim();
+                String inputText = selectedRadioButton.getText().toString();
 
                 // Check if radio button and input field are selected/filled
 //                if (selectedRadioButton != null && !inputText.isEmpty()) {
@@ -234,5 +255,36 @@ public class EventDetailsFragment extends Fragment {
         parentLayout.addView(editLabel);
         parentLayout.addView(editText);
         parentLayout.addView(textSubmitButton);
+    }
+
+    private void addComment(Event event, String commentText) {
+        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference().child(UNIVERSITY).child("events").child(event.getEventId());
+
+        eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Comment> comments = event.getComments();
+                Comment newComment = new Comment(userId, commentText);
+                comments.add(newComment);
+                commentsET.setText("");
+                commentAdapter.notifyDataSetChanged();
+                Toast.makeText(requireContext(), "Comment posted successfully", Toast.LENGTH_SHORT).show();
+
+                eventRef.child("comments").setValue(comments)
+                        .addOnSuccessListener(aVoid -> {
+                            event.setComments(comments);
+                            commentAdapter.notifyDataSetChanged();
+                            Toast.makeText(requireContext(), "Comment posted successfully", Toast.LENGTH_SHORT).show();
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(requireContext(), "Failed to post comment: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.e("EventDetailsFragment", "Failed to post comment", e);
+                        });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 }

@@ -18,7 +18,7 @@ public class Student extends User {
     // private final String program;
 
 
-    public Student(String name, String emailID, String phoneNumber, String profilePictureURL, Collection<Tag> userTags, String userRole, Date dateOfBirth) {
+    public Student(String name, String emailID, String phoneNumber, String profilePictureURL, Collection<String> userTags, String userRole, Date dateOfBirth) {
         super( name, emailID, phoneNumber, profilePictureURL, userTags, "Student");
         this.dateOfBirth = dateOfBirth;
     }

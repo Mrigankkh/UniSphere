@@ -39,6 +39,7 @@ public class SignupUserFragment extends Fragment {
     private Spinner userRoleSelector;
     private SharedPreferences preferences;
     private final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+
 //private File
 
     public SignupUserFragment() {
@@ -81,13 +82,12 @@ public class SignupUserFragment extends Fragment {
         userRoleSelector = (Spinner) view.findViewById(R.id.userRoleSelector);
         ArrayAdapter<CharSequence> userRoleAdapter = ArrayAdapter.createFromResource(this.getContext(), R.array.user_roles, android.R.layout.simple_spinner_dropdown_item);
         userRoleSelector.setAdapter(userRoleAdapter);
-
         userName = (EditText) view.findViewById(R.id.name);
         userEmail = (EditText) view.findViewById(R.id.newUserEmail);
         userPassword = (EditText) view.findViewById(R.id.newUserPassword);
         userConfirmPassword = (EditText) view.findViewById(R.id.newUserConfirmPassword);
         FloatingActionButton nextButton = view.findViewById(R.id.signup_user_next_btn);
-        nextButton.setOnClickListener(this::signupStudent);
+        nextButton.setOnClickListener(this::signupUser);
 
 
     }
@@ -100,24 +100,24 @@ public class SignupUserFragment extends Fragment {
      */
     public boolean validateInputs() throws Exception {
 
-        String email = userEmail.getText().toString();
-        if (!(email.matches(emailPattern) && email.length() > 0))
-            throw new Exception("Invalid Email!");
-        if (userPassword.getText().toString().length() < 6)
-            throw new Exception("Passwords must be at least 6 characters!");
-        if (!userConfirmPassword.getText().toString().equals(userPassword.getText().toString()))
-            throw new Exception("Passwords do not match!");
-        if (userName.getText().toString().length() < 3)
-            throw new Exception("Please enter a valid name");
+//        String email = userEmail.getText().toString();
+//        if (!(email.matches(emailPattern) && email.length() > 0))
+//            throw new Exception("Invalid Email!");
+//        if (userPassword.getText().toString().length() < 6)
+//            throw new Exception("Passwords must be at least 6 characters!");
+//        if (!userConfirmPassword.getText().toString().equals(userPassword.getText().toString()))
+//            throw new Exception("Passwords do not match!");
+//        if (userName.getText().toString().length() < 3)
+//            throw new Exception("Please enter a valid name");
         return true;
     }
 
     /**
-     * If the user is a student, navigates to the SignupStudentFragment.
+     *
      *
      * @param view
      */
-    public void signupStudent(View view) {
+    public void signupUser(View view) {
 
         //Check if inputs are valid
         try {
@@ -131,10 +131,7 @@ public class SignupUserFragment extends Fragment {
         }
 
 
-        //  User.UserBuilder studentBuilder = Student.getBuilder().name(userName.getText().toString()).email(userEmail.getText().toString()).university(new University()).hashedPassword("password");
-
-
-        addStudentInformationToSharedPreferences();
+        addUserInformationToSharedPreferences();
 
         navController.navigate(R.id.action_fragment_signup_user_to_fragment_signup_student);
         //navController.popBackStack();
@@ -144,7 +141,7 @@ public class SignupUserFragment extends Fragment {
     /**
      * Add all the entered fields into shared preferences.
      */
-    private void addStudentInformationToSharedPreferences() {
+    private void addUserInformationToSharedPreferences() {
         preferences.edit().putString("username", userName.getText().toString()).putString("university", universitySelector.getSelectedItem().toString()).
                 putString("email", userEmail.getText().toString())
                 .putString("user_role", userRoleSelector.getSelectedItem().toString()).putString("password", userPassword.getText().toString()).apply();

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.unisphere.R;
 import com.example.unisphere.model.Comment;
 
-public class CommentViewHolder  extends RecyclerView.ViewHolder {
+public class    CommentViewHolder  extends RecyclerView.ViewHolder {
     TextView textViewComment;
     TextView textViewEmail;
 

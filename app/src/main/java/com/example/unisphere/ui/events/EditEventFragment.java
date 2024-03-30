@@ -1,8 +1,12 @@
 package com.example.unisphere.ui.events;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +18,16 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.unisphere.R;
 import com.example.unisphere.model.Event;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -26,8 +37,16 @@ import java.util.List;
 
 public class EditEventFragment extends Fragment {
 
+    private static final int PICK_IMAGE_REQUEST = 1;
     private static final String ARG_EVENT = "event";
     private Event event;
+    private String UNIVERSITY = "northeastern";
+    private String userId = "ogs@northeastern.edu";
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference eventDatabaseReference;
+
+    private ImageView eventImageView;
+    private Uri eventImageUri;
 
     public static EditEventFragment newInstance(Event event) {
         EditEventFragment fragment = new EditEventFragment();
@@ -42,8 +61,9 @@ public class EditEventFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             event = (Event) getArguments().getSerializable(ARG_EVENT);
-            System.out.println(event);
         }
+        firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
+        eventDatabaseReference = firebaseDatabase.getReference().child(UNIVERSITY).child(getString(R.string.events));
     }
 
     @Override
@@ -51,39 +71,15 @@ public class EditEventFragment extends Fragment {
                              Bundle savedInstanceState) {
         System.out.println("onCreateView");
         View view = inflater.inflate(R.layout.fragment_edit_event, container, false);
-//        ImageView eventImage = view.findViewById(R.id.imageView_event);
-//        TextView eventTitle = view.findViewById(R.id.eventTitleTv);
-//        TextView eventDescription = view.findViewById(R.id.textView_event_description);
-//        TextView eventDateTv = view.findViewById(R.id.eventDateTv);
-//        TextView eventPlaceTv = view.findViewById(R.id.eventPlaceTv);
-//        EditText commentsET = view.findViewById(R.id.editText_comment);
-//        Button commentsBtn = view.findViewById(R.id.button_post_comment);
-//        RecyclerView commentsListRv = view.findViewById(R.id.recyclerViewComments);
-//
-//        String imageUrl = "https://fastly.picsum.photos/id/1050/200/300.jpg?hmac=mMZp1DAD5EpHCZh-YBwfvrg5w327V3DoJQ8CmRAKF70";
-//        Picasso.get().load(imageUrl).into(eventImage);
-//        eventTitle.setText(event.getEventTitle());
-//        eventDescription.setText(event.getEventTitle());
-//        eventDateTv.setText(Util.convertDateTime(event.getEventDate()));
-//        eventPlaceTv.setText(event.getEventPlace());
-//
-//        RelativeLayout parentLayout = view.findViewById(R.id.formComponentsRv);
-
         EditText editTextTitle = view.findViewById(R.id.editTextTitle);
         EditText editTextDescription = view.findViewById(R.id.editTextDescription);
         EditText editTextPlace = view.findViewById(R.id.editTextPlace);
-        EditText editTextImageLink = view.findViewById(R.id.editTextImageLink);
         Button uploadImageBtn = view.findViewById(R.id.buttonUploadImage);
-        ImageView eventImageView = view.findViewById(R.id.imageView);
+        eventImageView = view.findViewById(R.id.imageView_event);
 
-        uploadImageBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String imageUrl = editTextImageLink.getText().toString();
-                if(!checkBlank(imageUrl))
-                    Picasso.get().load(imageUrl).into(eventImageView);
-            }
-        });
+        eventImageView.setOnClickListener(v -> onClickUploadImageLayout(v));
+        uploadImageBtn.setOnClickListener(v -> onClickUploadImageLayout(v));
+
 
         EditText dateFromTv = view.findViewById(R.id.fromDateTv);
         EditText dateToTv = view.findViewById(R.id.toDateTv);
@@ -146,27 +142,32 @@ public class EditEventFragment extends Fragment {
             }
         });
 
-        if(event!=null) {
+        if (event != null) {
             editTextTitle.setText(event.getEventTitle());
             editTextDescription.setText(event.getEventDescription());
             editTextPlace.setText(event.getEventPlace());
-            editTextImageLink.setText(event.getOrganizerImage());
-            //Picasso.get().load(event.getOrganizerImage()).into(eventImageView);
+
+            if (event.getEventImage() != null && !event.getEventImage().isEmpty()) {
+                Picasso.get().load(event.getEventImage()).into(eventImageView);
+            }
+
             String[] fromDT = event.getEventStartDate().split("T");
             dateFromTv.setText(fromDT[0]);
-            timeFromTv.setText(fromDT[1].substring(0, fromDT[1].length()-3));
+            timeFromTv.setText(fromDT[1].substring(0, fromDT[1].length() - 3));
             String[] toDT = event.getEventEndDate().split("T");
             dateToTv.setText(toDT[0]);
-            timeToTv.setText(toDT[1].substring(0, toDT[1].length()-3));
+            timeToTv.setText(toDT[1].substring(0, toDT[1].length() - 3));
             qsnEditText.setText(event.getInputTextLabel());
             qsnBtnEditText.setText(event.getInputTextButtonLabel());
-            if(!checkBlank(event.getInputTextLabel())) {
+            if (!checkBlank(event.getInputTextLabel())) {
                 addQsnCheckBox.setChecked(true);
             }
             radioLabelEditText.setText(event.getRadioLabel());
-            radioOptionsEditText.setText(String.join(",", event.getRadioOptions()));
+            if (event.getRadioOptions() != null && !event.getRadioOptions().isEmpty()) {
+                radioOptionsEditText.setText(String.join(",", event.getRadioOptions()));
+            }
             radioBtnLabelEditText.setText(event.getRadioButtonLabel());
-            if(!checkBlank(event.getRadioLabel())) {
+            if (!checkBlank(event.getRadioLabel())) {
                 addRadioCheckBox.setChecked(true);
             }
         }
@@ -178,15 +179,14 @@ public class EditEventFragment extends Fragment {
                 String eventTitle = editTextTitle.getText().toString();
                 String eventDescription = editTextDescription.getText().toString();
                 String eventPlace = editTextPlace.getText().toString();
-                String eventImageUrl = editTextImageLink.getText().toString();
                 // "2024-03-04T12:33:58"
                 String dateFrom = dateFromTv.getText().toString();
                 String timeFrom = timeFromTv.getText().toString();
-                String eventStartDateTime = dateFrom + "T" + timeFrom;
+                String eventStartDateTime = dateFrom + "T" + timeFrom + ":00";
 
                 String dateTo = dateToTv.getText().toString();
                 String timeTo = timeToTv.getText().toString();
-                String eventEndDateTime = dateTo + "T" + timeTo;
+                String eventEndDateTime = dateTo + "T" + timeTo + ":00";
 
                 String radioLabel = null;
                 String radioOptions = null;
@@ -228,10 +228,8 @@ public class EditEventFragment extends Fragment {
                     return;
                 }
 
-                //TODO: Update current Event in db
                 event.setEventTitle(eventTitle);
                 event.setEventDescription(eventDescription);
-                event.setOrganizerImage(eventImageUrl);
                 event.setEventStartDate(eventStartDateTime);
                 event.setEventEndDate(eventEndDateTime);
                 event.setEventPlace(eventPlace);
@@ -240,13 +238,68 @@ public class EditEventFragment extends Fragment {
                 event.setRadioLabel(radioLabel);
                 event.setRadioOptions(radioOptionsList);
                 event.setRadioButtonLabel(radioBtnLabel);
-
-                System.out.println(event);
-
+                uploadImageAndAddToEvent(event);
+                Toast.makeText(requireContext(), "Event is successfully updated", Toast.LENGTH_SHORT).show();
+                returnToEventDetailFragment(event);
             }
         });
 
         return view;
+    }
+
+    public void onClickUploadImageLayout(View v) {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+            this.eventImageUri = uri;
+            Picasso.get().load(this.eventImageUri).resize(400, 300).into(eventImageView);
+        }
+    }
+
+    private void uploadImageAndAddToEvent(Event event) {
+        String key = event.getEventId();
+        if (this.eventImageUri == null) {
+            // No image to upload
+            updateEventOnFirebase(event);
+            return;
+        }
+
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference imageRef = storageRef.child("events/images/" + event.getEventTitle() + key + ".jpg");
+
+        // Create metadata with overwrite behavior
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setContentType("image/jpeg")
+                .setCustomMetadata("key", key)
+                .build();
+
+        UploadTask uploadTask = imageRef.putFile(this.eventImageUri, metadata);
+
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                String imageUrl = uri.toString();
+                event.setEventImage(imageUrl);
+                updateEventOnFirebase(event);
+            });
+        }).addOnFailureListener(e -> {
+            System.out.println("Error uploading image to Firebase");
+            e.printStackTrace();
+        });
+    }
+
+
+    private void returnToEventDetailFragment(Event updatedEvent) {
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable(ARG_EVENT, updatedEvent);
+//        Navigation.findNavController(requireView()).navigate(R.id.eventDetailsFragment, bundle);
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.popBackStack();
     }
 
     private void showDatePicker(DatePickerDialog.OnDateSetListener dateSetListener) {
@@ -286,6 +339,18 @@ public class EditEventFragment extends Fragment {
                 return false;
         }
         return true;
+    }
+
+    public void updateEventOnFirebase(Event event) {
+        String key = event.getEventId();
+        eventDatabaseReference.child(key).setValue(event)
+                .addOnSuccessListener(aVoid -> {
+                    System.out.println("Event added to Firebase");
+                })
+                .addOnFailureListener(e -> {
+                    System.out.println("Error adding message to Firebase");
+                    e.printStackTrace();
+                });
     }
 
     boolean checkBlank(String value) {

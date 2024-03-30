@@ -42,12 +42,20 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         holder.eventTitleTv.setText(event.getEventTitle());
         holder.eventPlaceTv.setText(event.getEventPlace());
         holder.eventDateTv.setText(Util.convertDateTime(event.getEventStartDate()) + "-" + Util.convertDateTime(event.getEventEndDate()));
+        if (event.getEventImage() == null || event.getEventImage().isEmpty()) {
+            Picasso.get()
+                    .load(R.drawable.no_image_available)
+                    .resize(400, 400)
+                    .centerCrop()
+                    .into(holder.orgImage);
+        } else {
+            Picasso.get()
+                    .load(event.getEventImage())
+                    .resize(400, 400)
+                    .centerCrop()
+                    .into(holder.orgImage);
+        }
 
-        Picasso.get()
-                .load(R.drawable.no_events)
-                .resize(400, 400)
-                .centerCrop()
-                .into(holder.orgImage);
     }
 
     @Override
