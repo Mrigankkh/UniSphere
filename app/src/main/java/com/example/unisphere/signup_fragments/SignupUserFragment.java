@@ -87,7 +87,7 @@ public class SignupUserFragment extends Fragment {
         userPassword = (EditText) view.findViewById(R.id.newUserPassword);
         userConfirmPassword = (EditText) view.findViewById(R.id.newUserConfirmPassword);
         FloatingActionButton nextButton = view.findViewById(R.id.signup_user_next_btn);
-        nextButton.setOnClickListener(this::signupStudent);
+        nextButton.setOnClickListener(this::signupUser);
 
 
     }
@@ -113,11 +113,11 @@ public class SignupUserFragment extends Fragment {
     }
 
     /**
-     * If the user is a student, navigates to the SignupStudentFragment.
+     *
      *
      * @param view
      */
-    public void signupStudent(View view) {
+    public void signupUser(View view) {
 
         //Check if inputs are valid
         try {
@@ -131,10 +131,7 @@ public class SignupUserFragment extends Fragment {
         }
 
 
-        //  User.UserBuilder studentBuilder = Student.getBuilder().name(userName.getText().toString()).email(userEmail.getText().toString()).university(new University()).hashedPassword("password");
-
-
-        addStudentInformationToSharedPreferences();
+        addUserInformationToSharedPreferences();
 
         navController.navigate(R.id.action_fragment_signup_user_to_fragment_signup_student);
         //navController.popBackStack();
@@ -144,7 +141,7 @@ public class SignupUserFragment extends Fragment {
     /**
      * Add all the entered fields into shared preferences.
      */
-    private void addStudentInformationToSharedPreferences() {
+    private void addUserInformationToSharedPreferences() {
         preferences.edit().putString("username", userName.getText().toString()).putString("university", universitySelector.getSelectedItem().toString()).
                 putString("email", userEmail.getText().toString())
                 .putString("user_role", userRoleSelector.getSelectedItem().toString()).putString("password", userPassword.getText().toString()).apply();

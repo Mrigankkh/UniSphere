@@ -81,6 +81,7 @@ public class SignupStudentFragment extends Fragment {
     private Button uploadProfilePictureButton;
     private Uri profilePicture;
     private ImageView profilePictureView;
+    private String userRole;
     private RecyclerView recyclerViewTags;
     private FloatingActionButton nextButton;
     private String universityKey;
@@ -203,6 +204,7 @@ public class SignupStudentFragment extends Fragment {
         universityName = preferences.getString("university", "Northeastern University");
         email = preferences.getString("email", null);
         universityReference = firebaseDatabase.getReference();
+        userRole =  preferences.getString("userRole", "Student");
 
         loadTagList();
         loadProgramList();
@@ -418,6 +420,11 @@ public class SignupStudentFragment extends Fragment {
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(requireContext());
         layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
         recyclerViewTags.setLayoutManager(layoutManager);
+
+        if(userRole.equals("Organization"))
+        {
+            //Hide program selector
+        }
 
     }
 }
