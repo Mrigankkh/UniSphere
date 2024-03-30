@@ -74,6 +74,8 @@ public class PostDetailsFragment extends Fragment implements EditPostDialogFragm
         this.post = updatedPost;
         // Update the UI with the new post detail
         textViewDescription.setText(post.getDescription());
+        Toast.makeText(requireContext(), "Post edited !", Toast.LENGTH_SHORT).show();
+
 
     }
 
@@ -105,7 +107,7 @@ public class PostDetailsFragment extends Fragment implements EditPostDialogFragm
 
         FloatingActionButton fabEdit = view.findViewById(R.id.fab_edit);
         fabEdit.setOnClickListener(v -> {
-            EditPostDialogFragment dialogFragment = new EditPostDialogFragment(post, Navigation.findNavController(requireView()));
+            EditPostDialogFragment dialogFragment = new EditPostDialogFragment(post, Navigation.findNavController(requireView()),university);
             dialogFragment.setEditPostListener(this);
             dialogFragment.show(getChildFragmentManager(), "EditPostDialogFragment");
         });

@@ -33,17 +33,23 @@ public class EditPostDialogFragment extends DialogFragment {
 
     private NavController navController;
 
+    private String university;
 
-    public EditPostDialogFragment(Post post,NavController navController) {
+    private DatabaseReference postRef;
+
+
+    public EditPostDialogFragment(Post post,NavController navController,String university) {
         this.post = post;
         this.navController = navController;
+        this.university = university;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_post, container, false);
-
+        postRef = FirebaseDatabase.getInstance().getReference().child(university)
+                .child("posts").child(post.getKeyFirebase());
         editText = view.findViewById(R.id.editText_post);
         buttonDelete = view.findViewById(R.id.button_delete);
         buttonSaveChanges = view.findViewById(R.id.button_save_changes);
@@ -70,8 +76,6 @@ public class EditPostDialogFragment extends DialogFragment {
 
     // Update the post's fields
     public void editPostOnFirebase(Post post) {
-        DatabaseReference postRef = FirebaseDatabase.getInstance().getReference().child("northeastern")
-                .child("posts").child(post.getKeyFirebase());
 
         postRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -91,8 +95,6 @@ public class EditPostDialogFragment extends DialogFragment {
     }
 
     public void deletePostFromFirebase(Post post) {
-        DatabaseReference postRef = FirebaseDatabase.getInstance().getReference().child("northeastern")
-                .child("posts").child(post.getKeyFirebase());
 
         postRef.removeValue()
                 .addOnSuccessListener(aVoid -> {
