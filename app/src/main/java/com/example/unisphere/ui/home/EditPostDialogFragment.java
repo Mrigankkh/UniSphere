@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.fragment.app.DialogFragment;
+import androidx.navigation.Navigation;
 
 import com.example.unisphere.R;
 import com.example.unisphere.model.Post;
@@ -19,6 +20,7 @@ public class EditPostDialogFragment extends DialogFragment {
     private Button buttonSaveChanges;
 
     private Post post;
+
 
     public EditPostDialogFragment(Post post) {
         this.post = post;
@@ -37,6 +39,7 @@ public class EditPostDialogFragment extends DialogFragment {
 
         buttonDelete.setOnClickListener(v -> {
             // TODO: Implement delete logic
+            Navigation.findNavController(requireView()).navigate(R.id.navigation_home);
             dismiss();
         });
 

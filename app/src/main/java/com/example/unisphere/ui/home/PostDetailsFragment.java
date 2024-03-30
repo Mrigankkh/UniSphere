@@ -98,6 +98,8 @@ public class PostDetailsFragment extends Fragment {
         });
 
 
+
+
         Button buttonPostComment= view.findViewById(R.id.button_post_comment);
         buttonPostComment.setOnClickListener((viewButton) -> {
             postComment(post,textViewCommentBox.getText().toString());
@@ -106,6 +108,10 @@ public class PostDetailsFragment extends Fragment {
 
 
         if (post != null) {
+            // only display edit option to author
+            if(!currentUserId.equals(post.getUserId())){
+                fabEdit.setVisibility(View.GONE);
+            }
             Picasso.get().load(post.getImageUrl()).into(imageViewPost);
             textViewDescription.setText(post.getDescription());
             likeCount.setText(String.valueOf(post.getLikedByUserIds().size()));
