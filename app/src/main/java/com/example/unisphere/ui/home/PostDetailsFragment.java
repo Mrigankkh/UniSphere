@@ -22,6 +22,7 @@ import com.example.unisphere.R;
 import com.example.unisphere.adapter.CommentAdapter;
 import com.example.unisphere.model.Comment;
 import com.example.unisphere.model.Post;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -89,6 +90,13 @@ public class PostDetailsFragment extends Fragment {
         TextView textViewCommentCount = view.findViewById(R.id.comment_count);
         textViewCommentBox  = view.findViewById(R.id.editText_comment);
         this.likeIcon = view.findViewById(R.id.like_icon);
+
+        FloatingActionButton fabEdit = view.findViewById(R.id.fab_edit);
+        fabEdit.setOnClickListener(v -> {
+            EditPostDialogFragment dialogFragment = new EditPostDialogFragment(post);
+            dialogFragment.show(getChildFragmentManager(), "EditPostDialogFragment");
+        });
+
 
         Button buttonPostComment= view.findViewById(R.id.button_post_comment);
         buttonPostComment.setOnClickListener((viewButton) -> {
