@@ -1,17 +1,25 @@
 package com.example.unisphere.ui.home;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.navigation.Navigation;
 
 import com.example.unisphere.R;
 import com.example.unisphere.model.Post;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class EditPostDialogFragment extends DialogFragment {
 
@@ -44,10 +52,33 @@ public class EditPostDialogFragment extends DialogFragment {
         });
 
         buttonSaveChanges.setOnClickListener(v -> {
-            // TODO: Implement save changes logic
+            editPostOnFirebase(post);
             dismiss();
         });
 
         return view;
     }
+
+    // Update the post's fields
+    public void editPostOnFirebase(Post post) {
+        DatabaseReference postRef = FirebaseDatabase.getInstance().getReference().child("northeastern")
+                .child("posts").child(post.getKeyFirebase());
+
+        postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+
+                    snapshot.getRef().child("description").setValue(editText.getText().toString());
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("EditPost", "Failed to edit post", error.toException());
+            }
+        });
+    }
+
 }
