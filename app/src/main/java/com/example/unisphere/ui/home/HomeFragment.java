@@ -1,10 +1,13 @@
 package com.example.unisphere.ui.home;
 
+import static android.content.Context.MODE_PRIVATE;
 import static android.os.Environment.DIRECTORY_PICTURES;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -48,6 +51,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -74,13 +78,15 @@ public class HomeFragment extends Fragment {
     View popupView;
 
     // TODO: change this to get from profile
-    String universityKey = "northeastern";
+    String universityKey;
 
-    String userId = "test@northeastern.edu";
+    String userId;
 
     private DatabaseReference postDatabaseReference;
 
     private SwipeRefreshLayout swipeRefreshLayout;
+
+    private SharedPreferences preferences;
 
 
     @Override
@@ -318,32 +324,19 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
+
+        // TODO CHECK THESE VALUES ARE NOT NULL IN END
+        this.userId = preferences.getString("email","test@northeastern.edu");
+        this.universityKey = preferences.getString("university","northeastern");
+
+
         super.onCreate(savedInstanceState);
         postList = new ArrayList<>();
         firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
 
         postDatabaseReference = firebaseDatabase.getReference().child(universityKey).child(getString(R.string.posts));
         retrievePostsFromFirebase();
-
-//        // TODO FETCH FROM API LATER
-//        postList.add(Post.builder().description("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book")
-//                .comments(Arrays.asList(Comment.builder().text("nice post").userId("tst1@g.com").build(), Comment.builder().text("great location").userId("tst2@g.com").build()))
-//                .likedByUserIds(new ArrayList<>(Arrays.asList("tst1", "tst1", "tst1", "tst1", "tst1")))
-//                .userId("test@northeastern.edu")
-//                .imageUrl("https://fastly.picsum.photos/id/1050/200/300.jpg?hmac=mMZp1DAD5EpHCZh-YBwfvrg5w327V3DoJQ8CmRAKF70").build());
-//        postList.add(Post.builder().description("It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.")
-//                .comments(Arrays.asList(Comment.builder().text("Awesome!").userId("user1@example.com").build(), Comment.builder().text("Love it!").userId("user2@example.com").build()))
-//                .likedByUserIds(new ArrayList<>(Arrays.asList("tst1", "tst1", "tst1", "tst1", "tst1", "tst1", "tst1", "tst1", "tst1")))
-//
-//                .userId("test@northeastern.edu")
-//                .imageUrl("https://fastly.picsum.photos/id/237/200/300.jpg?hmac=TmmQSbShHz9CdQm0NkEjx1Dyh_Y984R9LpNrpvH2D_U").build());
-//
-//        postList.add(Post.builder().description("Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage,")
-//                .comments(Arrays.asList(Comment.builder().text("Great job!").userId("user3@example.com").build(), Comment.builder().text("Nice work!").userId("user4@example.com").build()))
-//                .likedByUserIds(new ArrayList<>(Arrays.asList("tst1", "tst1", "tst1", "tst1", "tst1", "tst1", "tst1")))
-//                .userId("test@northeastern.edu")
-//                .imageUrl("https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI").build());
-
 
     }
 
@@ -355,36 +348,46 @@ public class HomeFragment extends Fragment {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference imageRef = storageRef.child("images/" + key + ".jpg");
 
-        UploadTask uploadTask = imageRef.putFile(photoUriData);
-        uploadTask.addOnSuccessListener(taskSnapshot -> {
-            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                String imageUrl = uri.toString();
-                photoUriData = null;
-                post.setImageUrl(imageUrl);
-                post.setKeyFirebase(key);
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), photoUriData);
 
-                // Update the local list of posts
-                postList.add(0, post);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+            byte[] data = baos.toByteArray();
 
-                // Notify the adapter that a new item has been inserted at position 0
-                postAdapter.notifyItemInserted(0);
+            UploadTask uploadTask = imageRef.putBytes(data);
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    String imageUrl = uri.toString();
+                    photoUriData = null;
+                    post.setImageUrl(imageUrl);
+                    post.setKeyFirebase(key);
 
-                postDatabaseReference.child(key).setValue(post)
-                        .addOnSuccessListener(aVoid -> {
-                            System.out.println("Message added to Firebase");
-                            Toast.makeText(requireContext(), "Message Sent ", Toast.LENGTH_SHORT).show();
-                            retrievePostsFromFirebase();
+                    // Update the local list of posts
+                    postList.add(0, post);
 
-                        })
-                        .addOnFailureListener(e -> {
-                            System.out.println("Error adding message to Firebase");
-                            e.printStackTrace();
-                        });
+                    // Notify the adapter that a new item has been inserted at position 0
+                    postAdapter.notifyItemInserted(0);
+
+                    postDatabaseReference.child(key).setValue(post)
+                            .addOnSuccessListener(aVoid -> {
+                                System.out.println("Message added to Firebase");
+                                Toast.makeText(requireContext(), "Message Sent ", Toast.LENGTH_SHORT).show();
+                                retrievePostsFromFirebase();
+
+                            })
+                            .addOnFailureListener(e -> {
+                                System.out.println("Error adding message to Firebase");
+                                e.printStackTrace();
+                            });
+                });
+            }).addOnFailureListener(e -> {
+                System.out.println("Error uploading image to Firebase");
+                e.printStackTrace();
             });
-        }).addOnFailureListener(e -> {
-            System.out.println("Error uploading image to Firebase");
+        } catch (IOException e) {
             e.printStackTrace();
-        });
+        }
     }
 
     public void retrievePostsFromFirebase() {
