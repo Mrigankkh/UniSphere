@@ -1,5 +1,8 @@
 package com.example.unisphere.ui.home;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,8 +44,10 @@ public class PostDetailsFragment extends Fragment {
 
     // TODO: Fetch current user ID from SharedPreferences
 
-    String currentUserId = "test@northeastern.edu";
-    String university="northeastern";
+    String currentUserId;
+    String university;
+
+    SharedPreferences sharedPreferences;
 
 
     public static PostDetailsFragment newInstance(Post post) {
@@ -56,6 +61,12 @@ public class PostDetailsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
+
+        // TODO CHECK THESE VALUES ARE NOT NULL IN END
+        this.currentUserId = sharedPreferences.getString("email","test@northeastern.edu");
+        this.university = sharedPreferences.getString("university","northeastern");
+
         if (getArguments() != null) {
             post = (Post) getArguments().getSerializable(ARG_POST);
         }

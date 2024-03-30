@@ -1,7 +1,10 @@
 package com.example.unisphere.adapter;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,12 +42,21 @@ public class PostViewHolder extends RecyclerView.ViewHolder  {
 
     // TODO: Fetch current user ID from SharedPreferences
 
-    String currentUserId = "test@northeastern.edu";
-    String university="northeastern";
+    String currentUserId;
+    String university;
+
+    SharedPreferences sharedPreferences;
 
     public PostViewHolder(@NonNull View itemView, Context context, List<Post> postList, PostAdapter.ClickListener clickListener) {
         super(itemView);
         this.context = context;
+
+        sharedPreferences = context.getSharedPreferences("USER_DATA", MODE_PRIVATE);
+
+        // TODO CHECK THESE VALUES ARE NOT NULL IN END
+        this.currentUserId = sharedPreferences.getString("email","test@northeastern.edu");
+        this.university = sharedPreferences.getString("university","northeastern");
+
         this.cardView = itemView.findViewById(R.id.post_list_container);
         this.postImage =  itemView.findViewById(R.id.imageView_post);
         this.description = itemView.findViewById(R.id.textView_post_description);
