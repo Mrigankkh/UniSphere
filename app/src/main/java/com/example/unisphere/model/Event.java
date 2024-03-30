@@ -1,6 +1,7 @@
 package com.example.unisphere.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Event implements Serializable {
@@ -18,12 +19,14 @@ public class Event implements Serializable {
     private String radioLabel;
     private List<String> radioOptions;
     private String radioButtonLabel;
+    private List<Comment> comments;
 
 
     public Event() {
+        this.comments = new ArrayList<>();
     }
 
-    public Event(String userId, String eventId, String eventTitle, String eventDescription, String eventImage, String eventStartDate, String eventEndDate, String eventPlace, String inputTextLabel, String inputTextButtonLabel, String radioLabel, List<String> radioOptions, String radioButtonLabel) {
+    public Event(String userId, String eventId, String eventTitle, String eventDescription, String eventImage, String eventStartDate, String eventEndDate, String eventPlace, String inputTextLabel, String inputTextButtonLabel, String radioLabel, List<String> radioOptions, String radioButtonLabel, List<Comment> comments) {
         this.userId = userId;
         this.eventId = eventId;
         this.eventTitle = eventTitle;
@@ -37,6 +40,7 @@ public class Event implements Serializable {
         this.radioLabel = radioLabel;
         this.radioOptions = radioOptions;
         this.radioButtonLabel = radioButtonLabel;
+        this.comments = comments;
     }
 
     public String getUserId() {
@@ -141,5 +145,33 @@ public class Event implements Serializable {
 
     public void setRadioButtonLabel(String radioButtonLabel) {
         this.radioButtonLabel = radioButtonLabel;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "userId='" + userId + '\'' +
+                ", eventId='" + eventId + '\'' +
+                ", eventTitle='" + eventTitle + '\'' +
+                ", eventDescription='" + eventDescription + '\'' +
+                ", eventImage='" + eventImage + '\'' +
+                ", eventStartDate='" + eventStartDate + '\'' +
+                ", eventEndDate='" + eventEndDate + '\'' +
+                ", eventPlace='" + eventPlace + '\'' +
+                ", inputTextLabel='" + inputTextLabel + '\'' +
+                ", inputTextButtonLabel='" + inputTextButtonLabel + '\'' +
+                ", radioLabel='" + radioLabel + '\'' +
+                ", radioOptions=" + radioOptions +
+                ", radioButtonLabel='" + radioButtonLabel + '\'' +
+                ", comments=" + comments +
+                '}';
     }
 }

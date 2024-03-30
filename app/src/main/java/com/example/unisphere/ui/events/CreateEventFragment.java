@@ -203,7 +203,7 @@ public class CreateEventFragment extends Fragment {
                         qsnBtnLabel,
                         radioLabel,
                         radioOptionsList,
-                        radioBtnLabel);
+                        radioBtnLabel, null);
                 uploadImageAndAddToEvent(newEvent);
                 returnToEventDetailFragment(newEvent);
             }

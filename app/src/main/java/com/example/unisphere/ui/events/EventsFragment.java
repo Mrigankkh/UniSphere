@@ -62,6 +62,8 @@ public class EventsFragment extends Fragment {
         eventAdapter = new EventAdapter(requireContext(), events, eventsView.findViewById(android.R.id.content), this::onEventClick);
         recyclerView.setAdapter(eventAdapter);
         fabAddEvent = eventsView.findViewById(R.id.fabAddEvent);
+        noEventsIv = eventsView.findViewById(R.id.noEventsIv);
+        noEventsTv = eventsView.findViewById(R.id.noEventsTv);
         String userType = "organization";
         if (userType.equals("organization")) {
             fabAddEvent.setVisibility(View.VISIBLE);
@@ -101,6 +103,12 @@ public class EventsFragment extends Fragment {
 
                 // Notify the adapter of the data change TODO if this can be improved
                 eventAdapter.notifyDataSetChanged();
+//                if(events.size()>0) {
+//                    noEventsIv.setVisibility(View.GONE);
+//                    noEventsTv.setVisibility(View.GONE);
+//                    recyclerView.setVisibility(View.VISIBLE);
+//                }
+
             }
 
             @Override
@@ -126,7 +134,7 @@ public class EventsFragment extends Fragment {
                 "Register",
                 "Are you going to join the event?",
                 options,
-                "Go!"));
+                "Go!", null));
         events.add(new Event(userId, null, "Trivia Night2",
                 "This will be a game night for all the college students. Pizza will be served.",
                 null,
@@ -137,7 +145,7 @@ public class EventsFragment extends Fragment {
                 "Register",
                 "Are you going to join the event?",
                 options,
-                "Go!"));
+                "Go!", null));
         events.add(new Event(userId, null, "Trivia Night3",
                 "This will be a game night for all the college students. Pizza will be served.",
                 null,
@@ -148,7 +156,7 @@ public class EventsFragment extends Fragment {
                 "Register",
                 "Are you going to join the event?",
                 options,
-                "Go!"));
+                "Go!", null));
         events.add(new Event(userId, null, "Trivia Night4",
                 "This will be a game night for all the college students. Pizza will be served.",
                 null,
@@ -159,7 +167,7 @@ public class EventsFragment extends Fragment {
                 "Register",
                 "Are you going to join the event?",
                 options,
-                "Go!"));
+                "Go!", null));
         events.add(new Event(userId, null, "Trivia Night5",
                 "This will be a game night for all the college students. Pizza will be served.",
                 null,
@@ -170,7 +178,7 @@ public class EventsFragment extends Fragment {
                 "Register",
                 "Are you going to join the event?",
                 options,
-                "Go!"));
+                "Go!", null));
         events.add(new Event(userId, null, "Trivia Night6",
                 "This will be a game night for all the college students. Pizza will be served.",
                 null,
@@ -181,7 +189,7 @@ public class EventsFragment extends Fragment {
                 "Register",
                 "Are you going to join the event?",
                 options,
-                "Go!"));
+                "Go!", null));
     }
 
 }
