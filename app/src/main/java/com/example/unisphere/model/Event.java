@@ -20,6 +20,10 @@ public class Event implements Serializable {
     private List<String> radioOptions;
     private String radioButtonLabel;
     private List<Comment> comments;
+    private String pollResults;
+    private String pollCsvLink;
+    private String questionResults;
+    private String questionCsvLink;
 
 
     public Event() {
@@ -155,23 +159,36 @@ public class Event implements Serializable {
         this.comments = comments;
     }
 
-    @Override
-    public String toString() {
-        return "Event{" +
-                "userId='" + userId + '\'' +
-                ", eventId='" + eventId + '\'' +
-                ", eventTitle='" + eventTitle + '\'' +
-                ", eventDescription='" + eventDescription + '\'' +
-                ", eventImage='" + eventImage + '\'' +
-                ", eventStartDate='" + eventStartDate + '\'' +
-                ", eventEndDate='" + eventEndDate + '\'' +
-                ", eventPlace='" + eventPlace + '\'' +
-                ", inputTextLabel='" + inputTextLabel + '\'' +
-                ", inputTextButtonLabel='" + inputTextButtonLabel + '\'' +
-                ", radioLabel='" + radioLabel + '\'' +
-                ", radioOptions=" + radioOptions +
-                ", radioButtonLabel='" + radioButtonLabel + '\'' +
-                ", comments=" + comments +
-                '}';
+    public String getPollResults() {
+        return pollResults;
     }
+
+    public void setPollResults(String pollResults) {
+        this.pollResults = pollResults;
+    }
+
+    public String getQuestionResults() {
+        return questionResults;
+    }
+
+    public void setQuestionResults(String questionResults) {
+        this.questionResults = questionResults;
+    }
+
+    public String getPollCsvLink() {
+        return pollCsvLink;
+    }
+
+    public void setPollCsvLink(String pollCsvLink) {
+        this.pollCsvLink = pollCsvLink;
+    }
+
+    public String getQuestionCsvLink() {
+        return questionCsvLink;
+    }
+
+    public void setQuestionCsvLink(String questionCsvLink) {
+        this.questionCsvLink = questionCsvLink;
+    }
+
 }

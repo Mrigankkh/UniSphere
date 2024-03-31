@@ -1,5 +1,7 @@
 package com.example.unisphere.ui.events;
 
+import static com.example.unisphere.service.Util.checkBlank;
+
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -244,7 +246,15 @@ public class EditEventFragment extends Fragment {
             }
         });
 
+        Button deleteEventBtn = view.findViewById(R.id.deleteEventBtn);
+        deleteEventBtn.setOnClickListener(v -> deleteEventFromFirebase(event));
+
+
         return view;
+    }
+
+    private void deleteEventFromFirebase(View v, Event event) {
+
     }
 
     public void onClickUploadImageLayout(View v) {
@@ -302,6 +312,16 @@ public class EditEventFragment extends Fragment {
         fragmentManager.popBackStack();
     }
 
+
+    private void returnToEventListFragment() {
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable(ARG_EVENT, updatedEvent);
+//        Navigation.findNavController(requireView()).navigate(R.id.eventDetailsFragment, bundle);
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.popBackStack();
+        fragmentManager.popBackStack();
+    }
+
     private void showDatePicker(DatePickerDialog.OnDateSetListener dateSetListener) {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -353,8 +373,18 @@ public class EditEventFragment extends Fragment {
                 });
     }
 
-    boolean checkBlank(String value) {
-        return value == null || value.isEmpty() || value.trim().isEmpty();
+    public void deleteEventFromFirebase(Event event) {
+        String key = event.getEventId();
+        eventDatabaseReference.child(key).removeValue()
+                .addOnSuccessListener(aVoid -> {
+                    System.out.println("Event deleted from Firebase");
+                })
+                .addOnFailureListener(e -> {
+                    System.out.println("Error deleting event from Firebase");
+                    e.printStackTrace();
+                });
+
+        returnToEventListFragment();
     }
 
 }
