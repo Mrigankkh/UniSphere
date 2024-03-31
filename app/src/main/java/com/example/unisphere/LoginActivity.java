@@ -1,25 +1,21 @@
 package com.example.unisphere;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.unisphere.model.Student;
-import com.example.unisphere.model.University;
 import com.example.unisphere.model.User;
 import com.example.unisphere.service.AuthService;
-
 import com.example.unisphere.service.LoginCallback;
 import com.google.firebase.auth.FirebaseAuth;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,11 +24,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.File;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -174,7 +165,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                                         currStudentSnapshot.child("name").getValue(String.class),
                                         currStudentSnapshot.child("emailID").getValue(String.class),
                                         currStudentSnapshot.child("phoneNumber").getValue(String.class),
-                                       null, new HashSet<>(),
+                                        null, new HashSet<>(),
                                         currStudentSnapshot.child("userRole").getValue(String.class));
 
 
@@ -190,7 +181,9 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                         }
 
                         addUserDataToSharedPreferences(user);
+
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                     }
 
@@ -249,13 +242,5 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
         return email.substring(email.indexOf('@'));
     }
 
-
-    private Uri getprofilePictureFromLink(String link) {
-        link  =" ";
-//        StorageReference profilepicReference = storage.getReference(link);
-
-return null;
-
-    }
 
 }

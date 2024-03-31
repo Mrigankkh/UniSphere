@@ -25,7 +25,9 @@
 <!--            android:defaultValue="null" />-->
         <action
             android:id="@+id/action_signupStudentFragment_to_mainActivity"
-            app:destination="@id/mainActivity" />
+            app:destination="@id/mainActivity"
+            app:popUpTo="@id/loginActivity"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_signupStudentFragment_to_signupUserFragment"
             app:destination="@id/signupUserFragment" />
@@ -42,6 +44,11 @@
         android:id="@+id/mainActivity"
         android:name="com.example.unisphere.MainActivity"
         android:label="MainActivity" />
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="com.example.unisphere.LoginActivity"
+        android:label="LoginActivity" />
+
 
 
 </navigation>
