@@ -122,12 +122,13 @@ public class SearchFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setup();
         universityReference = firebaseDatabase.getReference();
-        loadTagList();
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
         loadTagList();
     }
 
@@ -136,11 +137,22 @@ public class SearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        View view = inflater.inflate(R.layout.fragment_search, container, false);
+        if (view != null) {
+            searchButton = view.findViewById(R.id.searchBtn);
+            recyclerViewTags = view.findViewById(R.id.recyclerViewSearchByTag);
+            FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(requireContext());
+            layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
+            recyclerViewTags.setLayoutManager(layoutManager);
+            loadTagList();
+            searchButton.setOnClickListener(v -> search());
+        }
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+
         super.onViewCreated(view, savedInstanceState);
 
         navController = Navigation.findNavController(view);
@@ -150,6 +162,9 @@ public class SearchFragment extends Fragment {
         layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
         recyclerViewTags.setLayoutManager(layoutManager);
         searchButton.setOnClickListener(v -> search());
+
+
+
 
     }
 
