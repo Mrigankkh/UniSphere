@@ -1,5 +1,7 @@
 package com.example.unisphere.service;
 
+import android.widget.Toast;
+
 import com.example.unisphere.LoginActivity;
 import com.example.unisphere.MainActivity;
 import com.google.firebase.FirebaseApp;
@@ -46,8 +48,12 @@ public class AuthService {
                     loginCallback.onLoginSuccess(email);
                 } else {
                     //TODO: new Exception could just be string.
-                    loginCallback.onLoginFailure(new Exception("Authentication Failed"));
+
+
                 }
+            }
+            else {
+                loginCallback.onLoginFailure(new Exception("Authentication Failed"));
             }
 
         });

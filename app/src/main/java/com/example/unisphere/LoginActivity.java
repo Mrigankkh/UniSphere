@@ -23,7 +23,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Activity for the Login Screen through email ID and password.
@@ -124,8 +126,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
             authService.loginWithEmailAndPassword(emailString, passwordString, this);
 
         } catch (Exception e) {
-            System.out.println("Inside auth method");
-            //TODO: Exception handling
+
         }
 
     }
@@ -156,18 +157,22 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                         String userKey = (String) snapshot.getChildren().iterator().next().getKey();
 
 
-                        DataSnapshot currStudentSnapshot = snapshot.child(userKey);
+                        DataSnapshot currUserSnapshot = snapshot.child(userKey);
                         try {
+
+
                             user = new User(
-                                    currStudentSnapshot.child("name").getValue(String.class),
-                                    currStudentSnapshot.child("emailID").getValue(String.class),
-                                    null, new HashSet<>(),
-                                    currStudentSnapshot.child("userRole").getValue(String.class),
+                                    currUserSnapshot.child("name").getValue(String.class),
+                                    currUserSnapshot.child("emailID").getValue(String.class),
+                                    null,
+                                    getTagListFromSnapshots( currUserSnapshot.child("userTags"))
+                                    ,
+                                    currUserSnapshot.child("userRole").getValue(String.class),
                                     universityKey
                             );
-
-
-                            System.out.println("User is student");
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
 
                         } catch (Exception e) {
                             throw new RuntimeException(e);
@@ -176,9 +181,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
 
                         addUserDataToSharedPreferences(user);
 
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
+
                     }
 
                     @Override
@@ -227,7 +230,17 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
     }
 
     private String getEmailDomain(String email) {
-        return email.substring(email.indexOf('@'));
+        return email.substring(email.indexOf('@') + 1);
+    }
+
+    private List<String> getTagListFromSnapshots(DataSnapshot dataSnapshot) {
+        int i = 0;
+        List<String> tags = new ArrayList<>();
+        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+            String data = snapshot.child("name").getValue(String.class);
+            tags.add(data);
+        }
+        return tags;
     }
 
 

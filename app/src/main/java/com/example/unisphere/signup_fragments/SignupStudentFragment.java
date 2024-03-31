@@ -117,7 +117,7 @@ public class SignupStudentFragment extends Fragment {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                         tagList = getTagListFromSnapshots(dataSnapshot);
-                        tagSelectAdapter = new TagSelectAdapter(tagList, recyclerViewTags);
+                        tagSelectAdapter = new TagSelectAdapter(tagList,true, recyclerViewTags);
                         recyclerViewTags.setAdapter(tagSelectAdapter);
 
                     }

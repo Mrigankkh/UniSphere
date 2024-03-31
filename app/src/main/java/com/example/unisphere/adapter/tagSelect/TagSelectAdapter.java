@@ -19,13 +19,12 @@ public class TagSelectAdapter extends RecyclerView.Adapter<TagSelectViewHolder> 
 
     private List<Tag> tagList;
     private RecyclerView recyclerView;
+    private boolean selectMode;
 
     public List<Tag> getSelectedTags() {
-        List<Tag>selectedTags = new ArrayList<>();
-        for(int i=0;i< tagList.size();i++)
-        {
-            if(isTagSelected.get(i))
-            {
+        List<Tag> selectedTags = new ArrayList<>();
+        for (int i = 0; i < tagList.size(); i++) {
+            if (isTagSelected.get(i)) {
                 selectedTags.add(tagList.get(i));
             }
         }
@@ -36,9 +35,10 @@ public class TagSelectAdapter extends RecyclerView.Adapter<TagSelectViewHolder> 
     // data is passed into the constructor
     private List<Boolean> isTagSelected;  // List to track selected state
 
-    public TagSelectAdapter(List<Tag> tagList, RecyclerView recyclerView) {
+    public TagSelectAdapter(List<Tag> tagList, boolean selectMode, RecyclerView recyclerView) {
         this.tagList = tagList;
         this.recyclerView = recyclerView;
+        this.selectMode = selectMode;
         isTagSelected = new ArrayList<>(Collections.nCopies(tagList.size(), false));  // Initialize selectedTags with all false
 
 
@@ -56,10 +56,15 @@ public class TagSelectAdapter extends RecyclerView.Adapter<TagSelectViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull TagSelectViewHolder holder, int position) {
         Tag tag = tagList.get(position);
-        holder.itemView.setOnClickListener(this);  // Set click listener on the entire item view
-        holder.bind(tag);
-        holder.itemView.setBackgroundColor(isTagSelected.get(position) ? Color.parseColor("#5D3FD3") : Color.parseColor("#DDDDDD")); // Set background based on selection
+        if (!selectMode) {
+            holder.itemView.setOnClickListener(this);
+            holder.itemView.setBackgroundColor(Color.parseColor("#5D3FD3")); // Set background based on selection
 
+        } // Set click listener on the entire item view
+        else {
+            holder.itemView.setBackgroundColor(isTagSelected.get(position) ? Color.parseColor("#5D3FD3") : Color.parseColor("#DDDDDD")); // Set background based on selection
+        }
+        holder.bind(tag);
     }
 
     // total number of cells
@@ -67,6 +72,7 @@ public class TagSelectAdapter extends RecyclerView.Adapter<TagSelectViewHolder> 
     public int getItemCount() {
         return tagList.size();
     }
+
     @Override
     public void onClick(View v) {
         int clickedPosition = recyclerView.getChildAdapterPosition(v);  // Get clicked item position

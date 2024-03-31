@@ -87,6 +87,7 @@ public class ProfileFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 universityKey = (String) snapshot.getChildren().iterator().next().getKey();
+
                 tagReference = universityReference.child(universityKey).child("tags");
                 tagReference.addValueEventListener(new ValueEventListener() {
 
@@ -94,7 +95,7 @@ public class ProfileFragment extends Fragment {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                         tagList = getTagListFromSnapshots(dataSnapshot);
-                        tagSelectAdapter = new TagSelectAdapter(tagList, recyclerViewTags);
+                        tagSelectAdapter = new TagSelectAdapter(tagList,false, recyclerViewTags);
                         recyclerViewTags.setAdapter(tagSelectAdapter);
 
                     }
