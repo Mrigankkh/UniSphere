@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unisphere.R;
 import com.example.unisphere.model.Post;
+import com.example.unisphere.model.User;
+import com.example.unisphere.service.Util;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -24,9 +26,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostViewHolder> {
 
     private ClickListener clickListener;
 
-
-    // TODO: Fetch current user ID from SharedPreferences
-
     String currentUserId;
     String university;
 
@@ -37,12 +36,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostViewHolder> {
         this.list = list;
         this.rootView = rootView;
         this.clickListener = clickListener;
-
         sharedPreferences = context.getSharedPreferences("USER_DATA", MODE_PRIVATE);
-
-        // TODO CHECK THESE VALUES ARE NOT NULL IN END
-        this.currentUserId = sharedPreferences.getString("email","test@northeastern.edu");
-        this.university = sharedPreferences.getString("university","northeastern");
+        User userDataPreferences = Util.getUserDataFromSharedPreferences(sharedPreferences);
+        this.currentUserId = userDataPreferences.getEmailID();
+        this.university = userDataPreferences.getUniversity();
     }
 
     @NonNull

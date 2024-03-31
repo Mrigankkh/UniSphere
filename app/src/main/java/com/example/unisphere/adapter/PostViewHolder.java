@@ -3,7 +3,6 @@ package com.example.unisphere.adapter;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,14 +11,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unisphere.R;
-import com.example.unisphere.model.Comment;
 import com.example.unisphere.model.Post;
-import com.example.unisphere.ui.home.PostDetailsFragment;
+import com.example.unisphere.model.User;
+import com.example.unisphere.service.Util;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,8 +39,6 @@ public class PostViewHolder extends RecyclerView.ViewHolder  {
     ImageView likeIcon;
 
 
-    // TODO: Fetch current user ID from SharedPreferences
-
     String currentUserId;
     String university;
 
@@ -55,9 +50,10 @@ public class PostViewHolder extends RecyclerView.ViewHolder  {
 
         sharedPreferences = context.getSharedPreferences("USER_DATA", MODE_PRIVATE);
 
-        // TODO CHECK THESE VALUES ARE NOT NULL IN END
-        this.currentUserId = sharedPreferences.getString("email","test@northeastern.edu");
-        this.university = sharedPreferences.getString("university","northeastern");
+        User userDataPreferences = Util.getUserDataFromSharedPreferences(sharedPreferences);
+        this.currentUserId = userDataPreferences.getEmailID();
+        this.university = userDataPreferences.getUniversity();
+
 
         this.cardView = itemView.findViewById(R.id.post_list_container);
         this.usernameText = itemView.findViewById(R.id.textView_username);

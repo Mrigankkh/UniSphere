@@ -23,6 +23,8 @@ import com.example.unisphere.R;
 import com.example.unisphere.adapter.CommentAdapter;
 import com.example.unisphere.model.Comment;
 import com.example.unisphere.model.Post;
+import com.example.unisphere.model.User;
+import com.example.unisphere.service.Util;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,10 +45,6 @@ public class PostDetailsFragment extends Fragment implements EditPostDialogFragm
 
     private CommentAdapter commentAdapter;
 
-
-
-
-    // TODO: Fetch current user ID from SharedPreferences
 
     String currentUserId;
     String university;
@@ -84,9 +82,9 @@ public class PostDetailsFragment extends Fragment implements EditPostDialogFragm
         super.onCreate(savedInstanceState);
         sharedPreferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
 
-        // TODO CHECK THESE VALUES ARE NOT NULL IN END
-        this.currentUserId = sharedPreferences.getString("email","test@northeastern.edu");
-        this.university = sharedPreferences.getString("university","northeastern");
+        User userDataPreferences = Util.getUserDataFromSharedPreferences(sharedPreferences);
+        this.currentUserId = userDataPreferences.getEmailID();
+        this.university = userDataPreferences.getUniversity();
 
         if (getArguments() != null) {
             post = (Post) getArguments().getSerializable(ARG_POST);

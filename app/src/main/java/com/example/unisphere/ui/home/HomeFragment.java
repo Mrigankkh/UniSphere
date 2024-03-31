@@ -40,6 +40,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.unisphere.R;
 import com.example.unisphere.adapter.PostAdapter;
 import com.example.unisphere.model.Post;
+import com.example.unisphere.model.User;
+import com.example.unisphere.service.Util;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.database.DataSnapshot;
@@ -325,11 +327,9 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
-
-        // TODO CHECK THESE VALUES ARE NOT NULL IN END
-        this.userId = preferences.getString("email","test@northeastern.edu");
-        this.universityKey = preferences.getString("university","Northeastern University");
-
+        User userDataPreferences = Util.getUserDataFromSharedPreferences(preferences);
+        this.userId = userDataPreferences.getEmailID();
+        this.universityKey = userDataPreferences.getUniversity();
 
         super.onCreate(savedInstanceState);
         postList = new ArrayList<>();
