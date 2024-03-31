@@ -65,7 +65,15 @@ public  class User {
     }
 
 
-
-
-
+    @Override
+    public String toString() {
+        return "User{" +
+                "university='" + university + '\'' +
+                ", name='" + name + '\'' +
+                ", emailID='" + emailID + '\'' +
+                ", profilePictureURL='" + profilePictureURL + '\'' +
+                ", userTags=" + userTags +
+                ", userRole='" + userRole + '\'' +
+                '}';
+    }
 }

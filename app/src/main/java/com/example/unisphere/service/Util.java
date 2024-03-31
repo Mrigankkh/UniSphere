@@ -6,8 +6,10 @@ import com.example.unisphere.model.User;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -46,5 +48,14 @@ public class Util {
 
     public static boolean checkBlank(String value) {
         return value == null || value.isEmpty() || value.trim().isEmpty();
+    }
+
+    public static User getUserDataFromSharedPreferences(SharedPreferences preferences) {
+        String username = preferences.getString(KEY_USERNAME, "");
+        String university = preferences.getString(KEY_UNIVERSITY, "");
+        String email = preferences.getString(KEY_EMAIL, "");
+        String userRole = preferences.getString(KEY_USER_ROLE, "");
+        Set<String> tags = preferences.getStringSet(KEY_TAGS, new HashSet<>());
+        return new User(username, email, null, tags, userRole, university);
     }
 }
