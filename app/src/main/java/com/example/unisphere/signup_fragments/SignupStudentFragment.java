@@ -373,6 +373,7 @@ public class SignupStudentFragment extends Fragment {
                                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                             FirebaseUser user = firebaseAuth.getCurrentUser();
                                             navController.navigate(R.id.action_signupStudentFragment_to_mainActivity);
+
                                            // getActivity().finish();
                                         }
                                     });
