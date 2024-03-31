@@ -53,7 +53,7 @@ public class SearchResultFragment extends Fragment {
     private ArrayList<String> searchedUserKeys;
     private SearchResultAdapter searchResultAdapter;
     List<SearchedUser> searchedUsers;
-    FirebaseStorage storage;
+
     private DatabaseReference universityReference;
     private FirebaseDatabase firebaseDatabase;
 
