@@ -103,6 +103,7 @@ public class HomeFragment extends Fragment {
     }
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -326,6 +327,8 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setRetainInstance(true);
+
         preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
         User userDataPreferences = Util.getUserDataFromSharedPreferences(preferences);
         this.userId = userDataPreferences.getEmailID();
@@ -404,7 +407,7 @@ public class HomeFragment extends Fragment {
                 postList.clear();
                 postList.addAll(posts);
 
-                // Notify the adapter of the data change TODO if this can be improved
+                // Notify the adapter of the data change
                 postAdapter.notifyDataSetChanged();
             }
 

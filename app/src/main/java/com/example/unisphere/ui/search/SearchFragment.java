@@ -49,7 +49,6 @@ public class SearchFragment extends Fragment {
     private String universityKey;
     private RecyclerView recyclerViewTags;
     private Button searchButton;
-    private EditText searchByNameInput;
     private Bundle bundle = new Bundle();
 
     private void setup() {
@@ -127,6 +126,13 @@ public class SearchFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        loadTagList();
+    }
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -143,7 +149,6 @@ public class SearchFragment extends Fragment {
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(requireContext());
         layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
         recyclerViewTags.setLayoutManager(layoutManager);
-        searchByNameInput = view.findViewById(R.id.searchByNameInput);
         searchButton.setOnClickListener(v -> search());
 
     }
@@ -152,8 +157,7 @@ public class SearchFragment extends Fragment {
         List<String> selectedTags = tagSelectAdapter.getSelectedTags().stream()
                 .map(Tag::getTagName)
                 .collect(Collectors.toList());
-        String name = searchByNameInput.getText().toString().trim();
-        if (selectedTags.size() == 0 && name.isEmpty()) {
+        if (selectedTags.size() == 0 ) {
             Toast.makeText(this.getContext(), "You must enter a search criteria!", Toast.LENGTH_SHORT).show();
             return;
         }
