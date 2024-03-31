@@ -138,9 +138,9 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
     @Override
     public void onLoginSuccess(String email) {
 
-        String universityName = getUniversityFromDomain(getEmailDomain(email));
+        String domainName = getEmailDomain(email);
         univeresityReference = firebaseDatabase.getReference();
-        univeresityReference.orderByChild("name").equalTo("Northeastern University").addListenerForSingleValueEvent(new ValueEventListener() {
+        univeresityReference.orderByChild("domain").equalTo(domainName).addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -165,7 +165,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                                         currStudentSnapshot.child("emailID").getValue(String.class),
                                         null, new HashSet<>(),
                                         currStudentSnapshot.child("userRole").getValue(String.class),
-                                        "Northeastern University"
+                                        universityKey
                                 );
 
 
@@ -222,20 +222,14 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
     private void addUserDataToSharedPreferences(User user) throws RuntimeException {
         SharedPreferences preferences = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         //TODO: University name is hardcoded
-        preferences.edit().putString("username", user.getName()).putString("university", "Northeastern University").putString("email", user.getEmailID())
-                .putString("user_role", user.getUserRole()).putStringSet("tags", new HashSet<>()).apply();
+        preferences.edit()
+                .putString("username", user.getName())
+                .putString("university", user.getUniversity())
+                .putString("email", user.getEmailID())
+                .putString("user_role", user.getUserRole())
+                .putStringSet("tags", new HashSet<>()).apply();
         ;
 
-    }
-
-    /**
-     * Gets the university name from domain "university" in email@university.edu
-     *
-     * @param domain
-     * @return name of the university
-     */
-    private String getUniversityFromDomain(String domain) {
-        return "Northeastern University";
     }
 
     private String getEmailDomain(String email) {

@@ -1,11 +1,15 @@
 package com.example.unisphere.ui.events;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.unisphere.service.Util.USER_DATA;
 import static com.example.unisphere.service.Util.checkBlank;
+import static com.example.unisphere.service.Util.getUserDataFromSharedPreferences;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,6 +28,7 @@ import androidx.navigation.Navigation;
 
 import com.example.unisphere.R;
 import com.example.unisphere.model.Event;
+import com.example.unisphere.model.User;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -40,13 +45,12 @@ public class CreateEventFragment extends Fragment {
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final String ARG_EVENT = "event";
-    private String UNIVERSITY = "northeastern";
-    private String userId = "ogs@northeastern.edu";
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventDatabaseReference;
 
     private ImageView eventImageView;
     private Uri eventImageUri;
+    private User currentUser;
 
     public static CreateEventFragment newInstance(Event event) {
         CreateEventFragment fragment = new CreateEventFragment();
@@ -59,8 +63,12 @@ public class CreateEventFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences preferences = getActivity().getSharedPreferences(USER_DATA, MODE_PRIVATE);
+        currentUser = getUserDataFromSharedPreferences(preferences);
+
         firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
-        eventDatabaseReference = firebaseDatabase.getReference().child(UNIVERSITY).child(getString(R.string.events));
+        eventDatabaseReference = firebaseDatabase.getReference().child(currentUser.getUniversity()).child(getString(R.string.events));
     }
 
     @Override
@@ -195,7 +203,7 @@ public class CreateEventFragment extends Fragment {
                     return;
                 }
 
-                Event newEvent = new Event(userId, null, eventTitle,
+                Event newEvent = new Event(currentUser.getEmailID(), null, eventTitle,
                         eventDescription,
                         null,
                         eventStartDateTime,

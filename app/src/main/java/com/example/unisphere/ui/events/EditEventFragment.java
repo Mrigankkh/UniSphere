@@ -1,11 +1,15 @@
 package com.example.unisphere.ui.events;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.unisphere.service.Util.USER_DATA;
 import static com.example.unisphere.service.Util.checkBlank;
+import static com.example.unisphere.service.Util.getUserDataFromSharedPreferences;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,6 +28,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.unisphere.R;
 import com.example.unisphere.model.Event;
+import com.example.unisphere.model.User;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -42,13 +47,12 @@ public class EditEventFragment extends Fragment {
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final String ARG_EVENT = "event";
     private Event event;
-    private String UNIVERSITY = "northeastern";
-    private String userId = "ogs@northeastern.edu";
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventDatabaseReference;
 
     private ImageView eventImageView;
     private Uri eventImageUri;
+    private User currentUser;
 
     public static EditEventFragment newInstance(Event event) {
         EditEventFragment fragment = new EditEventFragment();
@@ -64,14 +68,15 @@ public class EditEventFragment extends Fragment {
         if (getArguments() != null) {
             event = (Event) getArguments().getSerializable(ARG_EVENT);
         }
+        SharedPreferences preferences = getActivity().getSharedPreferences(USER_DATA, MODE_PRIVATE);
+        currentUser = getUserDataFromSharedPreferences(preferences);
         firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
-        eventDatabaseReference = firebaseDatabase.getReference().child(UNIVERSITY).child(getString(R.string.events));
+        eventDatabaseReference = firebaseDatabase.getReference().child(currentUser.getUniversity()).child(getString(R.string.events));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        System.out.println("onCreateView");
         View view = inflater.inflate(R.layout.fragment_edit_event, container, false);
         EditText editTextTitle = view.findViewById(R.id.editTextTitle);
         EditText editTextDescription = view.findViewById(R.id.editTextDescription);
@@ -79,8 +84,8 @@ public class EditEventFragment extends Fragment {
         Button uploadImageBtn = view.findViewById(R.id.buttonUploadImage);
         eventImageView = view.findViewById(R.id.imageView_event);
 
-        eventImageView.setOnClickListener(v -> onClickUploadImageLayout(v));
-        uploadImageBtn.setOnClickListener(v -> onClickUploadImageLayout(v));
+        eventImageView.setOnClickListener(this::onClickUploadImageLayout);
+        uploadImageBtn.setOnClickListener(this::onClickUploadImageLayout);
 
 
         EditText dateFromTv = view.findViewById(R.id.fromDateTv);
@@ -305,18 +310,12 @@ public class EditEventFragment extends Fragment {
 
 
     private void returnToEventDetailFragment(Event updatedEvent) {
-//        Bundle bundle = new Bundle();
-//        bundle.putSerializable(ARG_EVENT, updatedEvent);
-//        Navigation.findNavController(requireView()).navigate(R.id.eventDetailsFragment, bundle);
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         fragmentManager.popBackStack();
     }
 
 
     private void returnToEventListFragment() {
-//        Bundle bundle = new Bundle();
-//        bundle.putSerializable(ARG_EVENT, updatedEvent);
-//        Navigation.findNavController(requireView()).navigate(R.id.eventDetailsFragment, bundle);
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         fragmentManager.popBackStack();
         fragmentManager.popBackStack();

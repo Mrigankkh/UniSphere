@@ -1,10 +1,14 @@
 package com.example.unisphere.ui.events;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.unisphere.service.Util.USER_DATA;
 import static com.example.unisphere.service.Util.checkBlank;
+import static com.example.unisphere.service.Util.getUserDataFromSharedPreferences;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -33,6 +37,7 @@ import com.example.unisphere.R;
 import com.example.unisphere.adapter.CommentAdapter;
 import com.example.unisphere.model.Comment;
 import com.example.unisphere.model.Event;
+import com.example.unisphere.model.User;
 import com.example.unisphere.service.Util;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -50,13 +55,14 @@ import java.util.List;
 public class EventDetailsFragment extends Fragment {
 
     private static final String ARG_EVENT = "event";
+    private static final String ORG_USER_ROLE = "Organization";
     private Event event;
-    private String UNIVERSITY = "northeastern";
-    private String userId = "ogs@northeastern.edu";
     private CommentAdapter commentAdapter;
     private TextView commentsET;
     private EditText pollResultsLinkET;
     private EditText qsnResultsLinkET;
+    private User currentUser;
+
 
     public static EventDetailsFragment newInstance(Event event) {
         EventDetailsFragment fragment = new EventDetailsFragment();
@@ -72,6 +78,8 @@ public class EventDetailsFragment extends Fragment {
         if (getArguments() != null) {
             event = (Event) getArguments().getSerializable(ARG_EVENT);
         }
+        SharedPreferences preferences = getActivity().getSharedPreferences(USER_DATA, MODE_PRIVATE);
+        currentUser = getUserDataFromSharedPreferences(preferences);
     }
 
     @Override
@@ -105,8 +113,8 @@ public class EventDetailsFragment extends Fragment {
         Button qsnResultsLinkBtn = view.findViewById(R.id.qsnResultsLinkBtn);
         qsnResultsLinkBtn.setOnClickListener(v -> copyTextToClipboard(qsnResultsLinkET));
 
-        // Add condition to check userType == Organizer of this event
-        if (event != null) {
+        // Add condition to check user == Organizer of this event
+        if (event != null && currentUser.getUserRole().equals(ORG_USER_ROLE) && event.getUserId().equals(currentUser.getEmailID())) {
             editEventBtn.setVisibility(View.VISIBLE);
             downloadPollResultBtn.setVisibility(View.VISIBLE);
             pollResultsLink.setVisibility(View.VISIBLE);
@@ -128,7 +136,7 @@ public class EventDetailsFragment extends Fragment {
 
         eventTitle.setText(event.getEventTitle());
         eventDescription.setText(event.getEventDescription());
-        eventDateTv.setText(Util.convertDateTime(event.getEventStartDate()) + " to " + Util.convertDateTime(event.getEventEndDate()));
+        eventDateTv.setText(String.format("%s to %s", Util.convertDateTime(event.getEventStartDate()), Util.convertDateTime(event.getEventEndDate())));
         eventPlaceTv.setText(event.getEventPlace());
 
         RelativeLayout parentLayout = view.findViewById(R.id.formComponentsRv);
@@ -169,7 +177,7 @@ public class EventDetailsFragment extends Fragment {
             Toast.makeText(requireContext(), "There are no responses yet!", Toast.LENGTH_SHORT).show();
         } else {
             StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-            StorageReference csvRef = storageRef.child("events/poll_results/PollResults-" + event.getEventTitle() + ".csv");
+            StorageReference csvRef = storageRef.child( "events/poll_results/PollResults-" + event.getEventTitle() + ".csv");
             StorageMetadata metadata = new StorageMetadata.Builder()
                     .setContentType("text/csv")
                     .build();
@@ -219,7 +227,7 @@ public class EventDetailsFragment extends Fragment {
         );
         radioLabelParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         radioLabel.setLayoutParams(radioLabelParams);
-        // Create the radio group
+
         RadioGroup radioGroup = new RadioGroup(requireContext());
         radioGroup.setId(View.generateViewId());
         RelativeLayout.LayoutParams radioParams = new RelativeLayout.LayoutParams(
@@ -239,7 +247,6 @@ public class EventDetailsFragment extends Fragment {
             radioGroup.addView(radioButton);
         }
 
-        // Create the submit button
         Button radioSubmitButton = new Button(requireContext());
         radioSubmitButton.setText(event.getRadioButtonLabel());
         radioSubmitButton.setId(View.generateViewId());
@@ -253,7 +260,6 @@ public class EventDetailsFragment extends Fragment {
         radioButtonParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         radioSubmitButton.setLayoutParams(radioButtonParams);
 
-        // Set click listener for submit button
         radioSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -264,7 +270,6 @@ public class EventDetailsFragment extends Fragment {
                     String selectedOptionText = selectedRadioButton.getText().toString();
                     saveRadioResponse(event, selectedOptionText);
                 } else {
-                    // Display error message if any field is empty
                     Toast.makeText(requireContext(), "Please select an option and enter text", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -276,7 +281,7 @@ public class EventDetailsFragment extends Fragment {
     }
 
     private void saveRadioResponse(Event event, String selectedOptionText) {
-        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference().child(UNIVERSITY).child("events").child(event.getEventId());
+        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference().child(currentUser.getUniversity()).child("events").child(event.getEventId());
         eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -285,7 +290,7 @@ public class EventDetailsFragment extends Fragment {
                 if (pollResults == null) {
                     pollResults = "";
                 }
-                pollResults += "\n" + event.getRadioLabel() + "," + selectedOptionText + "," + userId;
+                pollResults += "\n" + event.getRadioLabel() + "," + selectedOptionText + "," + currentUser.getEmailID();
                 pollResultsLinkET.setText("");
                 event.setPollResults(pollResults);
                 eventRef.child("pollResults").setValue(pollResults)
@@ -360,7 +365,7 @@ public class EventDetailsFragment extends Fragment {
     }
 
     private void saveQuestionResponse(Event event, String answerText) {
-        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference().child(UNIVERSITY).child("events").child(event.getEventId());
+        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference().child(currentUser.getUniversity()).child("events").child(event.getEventId());
         eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -369,7 +374,7 @@ public class EventDetailsFragment extends Fragment {
                     questionResults = "";
                 }
                 // TODO update userId to current user's id
-                questionResults += "\n" + event.getInputTextLabel() + "," + answerText + "," + userId;
+                questionResults += "\n" + event.getInputTextLabel() + "," + answerText + "," + currentUser.getEmailID();
                 qsnResultsLinkET.setText("");
                 event.setQuestionResults(questionResults);
                 eventRef.child("questionResults").setValue(questionResults)
@@ -388,13 +393,13 @@ public class EventDetailsFragment extends Fragment {
     }
 
     private void addComment(Event event, String commentText) {
-        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference().child(UNIVERSITY).child("events").child(event.getEventId());
+        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference().child(currentUser.getUniversity()).child("events").child(event.getEventId());
 
         eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Comment> comments = event.getComments();
-                Comment newComment = new Comment(userId, commentText);
+                Comment newComment = new Comment(currentUser.getEmailID(), commentText);
                 comments.add(newComment);
                 commentsET.setText("");
                 commentAdapter.notifyDataSetChanged();

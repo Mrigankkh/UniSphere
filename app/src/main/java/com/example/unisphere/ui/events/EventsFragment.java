@@ -1,18 +1,11 @@
 package com.example.unisphere.ui.events;
 
 import static android.content.Context.MODE_PRIVATE;
-
-import static com.example.unisphere.service.Util.KEY_EMAIL;
-import static com.example.unisphere.service.Util.KEY_PHONE_NUMBER;
-import static com.example.unisphere.service.Util.KEY_TAGS;
-import static com.example.unisphere.service.Util.KEY_UNIVERSITY;
-import static com.example.unisphere.service.Util.KEY_USERNAME;
-import static com.example.unisphere.service.Util.KEY_USER_ROLE;
+import static com.example.unisphere.service.Util.USER_DATA;
 import static com.example.unisphere.service.Util.getUserDataFromSharedPreferences;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,22 +30,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 public class EventsFragment extends Fragment {
 
     private static final String ARG_EVENT = "event";
+    private static final String ORG_USER_ROLE = "Organization";
     private List<Event> events;
     private RecyclerView recyclerView;
     private EventAdapter eventAdapter;
     private FloatingActionButton fabAddEvent;
     private ImageView noEventsIv;
     private TextView noEventsTv;
-    private String UNIVERSITY = "northeastern";
-    private String userId = "ogs@northeastern.edu";
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventDatabaseReference;
     private User currentUser;
@@ -64,13 +54,14 @@ public class EventsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+        SharedPreferences preferences = getActivity().getSharedPreferences(USER_DATA, MODE_PRIVATE);
+        currentUser = getUserDataFromSharedPreferences(preferences);
+
         firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
-        eventDatabaseReference = firebaseDatabase.getReference().child(UNIVERSITY).child(getString(R.string.events));
+        eventDatabaseReference = firebaseDatabase.getReference().child(currentUser.getUniversity()).child(getString(R.string.events));
         events = new ArrayList<>();
 
-        SharedPreferences preferences  = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
-        currentUser = getUserDataFromSharedPreferences(preferences);
-        System.out.println(currentUser);
     }
 
     @Override
@@ -84,8 +75,7 @@ public class EventsFragment extends Fragment {
         fabAddEvent = eventsView.findViewById(R.id.fabAddEvent);
         noEventsIv = eventsView.findViewById(R.id.noEventsIv);
         noEventsTv = eventsView.findViewById(R.id.noEventsTv);
-        String userType = "organization";
-        if (userType.equals("organization")) {
+        if (currentUser.getUserRole().equals(ORG_USER_ROLE)) {
             fabAddEvent.setVisibility(View.VISIBLE);
         } else {
             fabAddEvent.setVisibility(View.GONE);
@@ -144,7 +134,7 @@ public class EventsFragment extends Fragment {
         List<String> options = new ArrayList<>();
         options.add("Yes");
         options.add("No");
-        events.add(new Event(userId, null, "Trivia Night",
+        events.add(new Event(currentUser.getEmailID(), null, "Trivia Night",
                 "This will be a game night for all the college students. Pizza will be served.",
                 null,
                 "2024-03-04T18:30:00",
@@ -155,7 +145,7 @@ public class EventsFragment extends Fragment {
                 "Are you going to join the event?",
                 options,
                 "Go!", null));
-        events.add(new Event(userId, null, "Trivia Night2",
+        events.add(new Event(currentUser.getEmailID(), null, "Trivia Night2",
                 "This will be a game night for all the college students. Pizza will be served.",
                 null,
                 "2024-03-04T18:30:00",
@@ -166,7 +156,7 @@ public class EventsFragment extends Fragment {
                 "Are you going to join the event?",
                 options,
                 "Go!", null));
-        events.add(new Event(userId, null, "Trivia Night3",
+        events.add(new Event(currentUser.getEmailID(), null, "Trivia Night3",
                 "This will be a game night for all the college students. Pizza will be served.",
                 null,
                 "2024-03-04T18:30:00",
@@ -177,7 +167,7 @@ public class EventsFragment extends Fragment {
                 "Are you going to join the event?",
                 options,
                 "Go!", null));
-        events.add(new Event(userId, null, "Trivia Night4",
+        events.add(new Event(currentUser.getEmailID(), null, "Trivia Night4",
                 "This will be a game night for all the college students. Pizza will be served.",
                 null,
                 "2024-03-04T18:30:00",
@@ -188,7 +178,7 @@ public class EventsFragment extends Fragment {
                 "Are you going to join the event?",
                 options,
                 "Go!", null));
-        events.add(new Event(userId, null, "Trivia Night5",
+        events.add(new Event(currentUser.getEmailID(), null, "Trivia Night5",
                 "This will be a game night for all the college students. Pizza will be served.",
                 null,
                 "2024-03-04T18:30:00",
@@ -199,7 +189,7 @@ public class EventsFragment extends Fragment {
                 "Are you going to join the event?",
                 options,
                 "Go!", null));
-        events.add(new Event(userId, null, "Trivia Night6",
+        events.add(new Event(currentUser.getEmailID(), null, "Trivia Night6",
                 "This will be a game night for all the college students. Pizza will be served.",
                 null,
                 "2024-03-04T18:30:00",
