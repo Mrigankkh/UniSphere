@@ -49,8 +49,11 @@ public class AuthService {
                 } else {
                     //TODO: new Exception could just be string.
 
-                    loginCallback.onLoginFailure(new Exception("Authentication Failed"));
+
                 }
+            }
+            else {
+                loginCallback.onLoginFailure(new Exception("Authentication Failed"));
             }
 
         });

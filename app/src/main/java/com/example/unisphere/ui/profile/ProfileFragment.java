@@ -87,6 +87,7 @@ public class ProfileFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 universityKey = (String) snapshot.getChildren().iterator().next().getKey();
+
                 tagReference = universityReference.child(universityKey).child("tags");
                 tagReference.addValueEventListener(new ValueEventListener() {
 

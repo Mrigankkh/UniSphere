@@ -126,8 +126,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
             authService.loginWithEmailAndPassword(emailString, passwordString, this);
 
         } catch (Exception e) {
-            Toast.makeText(LoginActivity.this, "Email or password entered is invalid!", Toast.LENGTH_SHORT).show();
-            //TODO: Exception handling
+
         }
 
     }
