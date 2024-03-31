@@ -155,30 +155,24 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
 
                         String userKey = (String) snapshot.getChildren().iterator().next().getKey();
 
-                        //TODO: check if snapshot exists first
-                        if (snapshot.child(userKey).child("userRole").getValue(String.class).equals("Student")) {
 
-                            DataSnapshot currStudentSnapshot = snapshot.child(userKey);
-                            try {
-                                user = new User(
-                                        currStudentSnapshot.child("name").getValue(String.class),
-                                        currStudentSnapshot.child("emailID").getValue(String.class),
-                                        null, new HashSet<>(),
-                                        currStudentSnapshot.child("userRole").getValue(String.class),
-                                        universityKey
-                                );
+                        DataSnapshot currStudentSnapshot = snapshot.child(userKey);
+                        try {
+                            user = new User(
+                                    currStudentSnapshot.child("name").getValue(String.class),
+                                    currStudentSnapshot.child("emailID").getValue(String.class),
+                                    null, new HashSet<>(),
+                                    currStudentSnapshot.child("userRole").getValue(String.class),
+                                    universityKey
+                            );
 
 
-                                System.out.println("User is student");
+                            System.out.println("User is student");
 
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-
-
-                        } else if (snapshot.child("userRole").equals("organization")) {
-                            // Org code.
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
                         }
+
 
                         addUserDataToSharedPreferences(user);
 
