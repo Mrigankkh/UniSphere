@@ -35,6 +35,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder  {
     ImageView postImage;
     TextView likeCount;
     TextView commentCount;
+
+    TextView usernameText;
     Context context;
     List<Post> postList;
     ImageView likeIcon;
@@ -58,6 +60,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder  {
         this.university = sharedPreferences.getString("university","northeastern");
 
         this.cardView = itemView.findViewById(R.id.post_list_container);
+        this.usernameText = itemView.findViewById(R.id.textView_username);
         this.postImage =  itemView.findViewById(R.id.imageView_post);
         this.description = itemView.findViewById(R.id.textView_post_description);
         this.likeCount = itemView.findViewById(R.id.like_count);
