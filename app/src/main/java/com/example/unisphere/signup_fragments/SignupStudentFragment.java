@@ -32,11 +32,8 @@ import android.widget.Toast;
 
 import com.example.unisphere.R;
 import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
-import com.example.unisphere.model.Student;
-
 import com.example.unisphere.model.Tag;
 import com.example.unisphere.model.User;
-
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -351,7 +348,7 @@ public class SignupStudentFragment extends Fragment {
         List<String> selectedTags = tagSelectAdapter.getSelectedTags().stream()
                 .map(Tag::getTagName)
                 .collect(Collectors.toList());
-        User user = new Student(preferences.getString("username", "NULL"), preferences.getString("email", "NULL"), preferences.getString("phone", "NULL"), fireStoreProfilePictureURL, selectedTags, "Student");
+        User user = new User(preferences.getString("username", "NULL"), preferences.getString("email", "NULL"), fireStoreProfilePictureURL, selectedTags, "Student", preferences.getString("university", null));
 
         String userKey = universityReference.child(universityKey).child("users").push().getKey();
         // Add this userkey in each selected tag

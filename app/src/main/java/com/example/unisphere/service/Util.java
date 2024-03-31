@@ -1,14 +1,30 @@
 package com.example.unisphere.service;
 
+import android.content.SharedPreferences;
+
+import com.example.unisphere.model.User;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class Util {
 
     public static SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
     public static SimpleDateFormat USER_TIME_FORMAT = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+
+    public static final String KEY_USERNAME = "username";
+    public static final String KEY_UNIVERSITY = "university";
+    public static final String KEY_EMAIL = "email";
+    public static final String KEY_USER_ROLE = "user_role";
+    public static final String KEY_PHONE_NUMBER = "phone_number";
+    public static final String KEY_TAGS = "tags";
+    public static final String USER_DATA = "USER_DATA";
 
     public static String convertDateTime(String inputDateTime) {
         try {
@@ -32,5 +48,14 @@ public class Util {
 
     public static boolean checkBlank(String value) {
         return value == null || value.isEmpty() || value.trim().isEmpty();
+    }
+
+    public static User getUserDataFromSharedPreferences(SharedPreferences preferences) {
+        String username = preferences.getString(KEY_USERNAME, "");
+        String university = preferences.getString(KEY_UNIVERSITY, "");
+        String email = preferences.getString(KEY_EMAIL, "");
+        String userRole = preferences.getString(KEY_USER_ROLE, "");
+        Set<String> tags = preferences.getStringSet(KEY_TAGS, new HashSet<>());
+        return new User(username, email, null, tags, userRole, university);
     }
 }

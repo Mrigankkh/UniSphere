@@ -40,7 +40,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         Event event = events.get(position);
         holder.eventTitleTv.setText(event.getEventTitle());
-        holder.eventPlaceTv.setText(event.getEventPlace());
         holder.eventDateTv.setText(Util.convertDateTime(event.getEventStartDate()) + "-" + Util.convertDateTime(event.getEventEndDate()));
         if (event.getEventImage() == null || event.getEventImage().isEmpty()) {
             Picasso.get()
