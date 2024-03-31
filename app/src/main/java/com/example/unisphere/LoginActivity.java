@@ -11,7 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.unisphere.model.Student;
+
 import com.example.unisphere.model.User;
 import com.example.unisphere.service.AuthService;
 import com.example.unisphere.service.LoginCallback;
@@ -161,12 +161,13 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
 
                             DataSnapshot currStudentSnapshot = snapshot.child(userKey);
                             try {
-                                user = new Student(
+                                user = new User(
                                         currStudentSnapshot.child("name").getValue(String.class),
                                         currStudentSnapshot.child("emailID").getValue(String.class),
-                                        currStudentSnapshot.child("phoneNumber").getValue(String.class),
                                         null, new HashSet<>(),
-                                        currStudentSnapshot.child("userRole").getValue(String.class));
+                                        currStudentSnapshot.child("userRole").getValue(String.class),
+                                        "Northeastern University"
+                                        );
 
 
                                 System.out.println("User is student");
