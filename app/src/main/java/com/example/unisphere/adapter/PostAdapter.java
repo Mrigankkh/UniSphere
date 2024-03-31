@@ -57,6 +57,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostViewHolder> {
         holder.likeCount.setText(String.valueOf(postItem.getLikedByUserIds().size()));
         holder.commentCount.setText(String.valueOf(postItem.getComments().size()));
         holder.description.setText(postItem.getDescription());
+        holder.usernameText.setText(postItem.getUserId());
         Picasso.get().load(postItem.getImageUrl()).into(holder.postImage);
 
         if (postItem.getLikedByUserIds().contains(currentUserId)) {

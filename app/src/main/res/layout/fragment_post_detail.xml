@@ -44,11 +44,24 @@
                         android:text="Description"
                         android:textSize="18sp" />
 
+                    <TextView
+                        android:id="@+id/textView_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/imageView_post"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="16dp"
+                        android:text="Username"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp"
+                        android:textStyle="italic" />
+
+
                     <LinearLayout
                         android:id="@+id/likes_comments_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/textView_post_description"
+                        android:layout_below="@id/textView_username"
                         android:orientation="horizontal"
                         android:padding="16dp">
 

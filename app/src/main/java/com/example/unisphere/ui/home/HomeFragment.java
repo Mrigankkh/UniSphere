@@ -328,7 +328,7 @@ public class HomeFragment extends Fragment {
 
         // TODO CHECK THESE VALUES ARE NOT NULL IN END
         this.userId = preferences.getString("email","test@northeastern.edu");
-        this.universityKey = preferences.getString("university","northeastern");
+        this.universityKey = preferences.getString("university","Northeastern University");
 
 
         super.onCreate(savedInstanceState);

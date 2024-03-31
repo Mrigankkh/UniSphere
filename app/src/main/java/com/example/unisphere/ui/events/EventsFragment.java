@@ -8,6 +8,7 @@ import static com.example.unisphere.service.Util.KEY_TAGS;
 import static com.example.unisphere.service.Util.KEY_UNIVERSITY;
 import static com.example.unisphere.service.Util.KEY_USERNAME;
 import static com.example.unisphere.service.Util.KEY_USER_ROLE;
+import static com.example.unisphere.service.Util.getUserDataFromSharedPreferences;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -68,12 +69,8 @@ public class EventsFragment extends Fragment {
         events = new ArrayList<>();
 
         SharedPreferences preferences  = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
-        String username = preferences.getString(KEY_USERNAME, "");
-        String university = preferences.getString(KEY_UNIVERSITY, "");
-        String email = preferences.getString(KEY_EMAIL, "");
-        String userRole = preferences.getString(KEY_USER_ROLE, "");
-        String phoneNumber = preferences.getString(KEY_PHONE_NUMBER, "");
-        Set<String> tags = preferences.getStringSet(KEY_TAGS, new HashSet<>());
+        currentUser = getUserDataFromSharedPreferences(preferences);
+        System.out.println(currentUser);
     }
 
     @Override

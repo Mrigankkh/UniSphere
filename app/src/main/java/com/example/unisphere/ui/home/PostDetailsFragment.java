@@ -102,6 +102,8 @@ public class PostDetailsFragment extends Fragment implements EditPostDialogFragm
         this.textViewDescription = view.findViewById(R.id.textView_post_description);
         this.likeCount = view.findViewById(R.id.like_count);
         TextView textViewCommentCount = view.findViewById(R.id.comment_count);
+        TextView usernameText = view.findViewById(R.id.textView_username);
+
         textViewCommentBox  = view.findViewById(R.id.editText_comment);
         this.likeIcon = view.findViewById(R.id.like_icon);
 
@@ -131,6 +133,7 @@ public class PostDetailsFragment extends Fragment implements EditPostDialogFragm
             textViewDescription.setText(post.getDescription());
             likeCount.setText(String.valueOf(post.getLikedByUserIds().size()));
             textViewCommentCount.setText(String.valueOf(post.getComments().size()));
+            usernameText.setText(post.getUserId());
 
             List<Comment> comments = post.getComments();
             if (post.getLikedByUserIds().contains(currentUserId)) {
