@@ -100,15 +100,15 @@ public class SignupUserFragment extends Fragment {
      */
     public boolean validateInputs() throws Exception {
 
-//        String email = userEmail.getText().toString();
-//        if (!(email.matches(emailPattern) && email.length() > 0))
-//            throw new Exception("Invalid Email!");
-//        if (userPassword.getText().toString().length() < 6)
-//            throw new Exception("Passwords must be at least 6 characters!");
-//        if (!userConfirmPassword.getText().toString().equals(userPassword.getText().toString()))
-//            throw new Exception("Passwords do not match!");
-//        if (userName.getText().toString().length() < 3)
-//            throw new Exception("Please enter a valid name");
+        String email = userEmail.getText().toString();
+        if (!(email.matches(emailPattern) && email.length() > 0))
+            throw new Exception("Invalid Email!");
+        if (userPassword.getText().toString().length() < 6)
+            throw new Exception("Passwords must be at least 6 characters!");
+        if (!userConfirmPassword.getText().toString().equals(userPassword.getText().toString()))
+            throw new Exception("Passwords do not match!");
+        if (userName.getText().toString().length() < 3)
+            throw new Exception("Please enter a valid name");
         return true;
     }
 

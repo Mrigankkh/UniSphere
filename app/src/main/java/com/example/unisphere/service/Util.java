@@ -29,4 +29,8 @@ public class Util {
             return null;
         }
     }
+
+    public static boolean checkBlank(String value) {
+        return value == null || value.isEmpty() || value.trim().isEmpty();
+    }
 }

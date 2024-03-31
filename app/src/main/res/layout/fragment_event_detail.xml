@@ -131,6 +131,79 @@
                     android:padding="8dp"
                     android:text="Edit Event"
                     android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/downloadPollResultBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/editEventBtn"
+                    android:padding="8dp"
+                    android:text="Download Poll Results"
+                    android:visibility="gone"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_below="@id/downloadPollResultBtn"
+                    android:id="@+id/pollResultsLink"
+                    android:visibility="gone">
+
+                    <EditText
+                        android:id="@+id/pollResultsLinkET"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:hint="Click Download for link for Poll results file"
+                        android:padding="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:layout_weight="0.85"/>
+
+                    <Button
+                        android:id="@+id/pollResultsLinkBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_copy_link"
+                        android:layout_weight="0.15"/>
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/downloadQsnResultBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/pollResultsLink"
+                    android:padding="8dp"
+                    android:text="Download Question Results"
+                    android:visibility="gone"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_below="@id/downloadQsnResultBtn"
+                    android:id="@+id/qsnResultsLink"
+                    android:visibility="gone">
+
+                    <EditText
+                        android:id="@+id/qsnResultsLinkET"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:hint="Click Download for link for Question results file"
+                        android:padding="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:layout_weight="0.85" />
+
+                    <Button
+                        android:id="@+id/qsnResultsLinkBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_copy_link"
+                        android:layout_weight="0.15"/>
+
+                </LinearLayout>
+
             </RelativeLayout>
 
 

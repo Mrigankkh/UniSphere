@@ -1,5 +1,7 @@
 package com.example.unisphere.ui.events;
 
+import static com.example.unisphere.service.Util.checkBlank;
+
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -144,7 +146,6 @@ public class CreateEventFragment extends Fragment {
                 String eventDescription = editTextDescription.getText().toString();
                 String eventPlace = editTextPlace.getText().toString();
 
-                // "2024-03-04T12:33:58"
                 String dateFrom = dateFromTv.getText().toString();
                 String timeFrom = timeFromTv.getText().toString();
                 String eventStartDateTime = dateFrom + "T" + timeFrom;
@@ -157,6 +158,7 @@ public class CreateEventFragment extends Fragment {
                 String radioOptions = null;
                 String radioBtnLabel = null;
                 List<String> radioOptionsList = null;
+
                 if (addRadioCheckBox.isChecked()) {
                     radioLabel = radioLabelEditText.getText().toString();
                     radioOptions = radioOptionsEditText.getText().toString();
@@ -307,10 +309,6 @@ public class CreateEventFragment extends Fragment {
                     System.out.println("Error adding message to Firebase");
                     e.printStackTrace();
                 });
-    }
-
-    boolean checkBlank(String value) {
-        return value == null || value.isEmpty() || value.trim().isEmpty();
     }
 
 }

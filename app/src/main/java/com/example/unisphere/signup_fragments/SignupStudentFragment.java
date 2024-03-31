@@ -351,7 +351,7 @@ public class SignupStudentFragment extends Fragment {
         List<String> selectedTags = tagSelectAdapter.getSelectedTags().stream()
                 .map(Tag::getTagName)
                 .collect(Collectors.toList());
-        User user = new Student(preferences.getString("username", "NULL"), preferences.getString("email", "NULL"), preferences.getString("phone", "NULL"), fireStoreProfilePictureURL, selectedTags, "Student", new Date());
+        User user = new Student(preferences.getString("username", "NULL"), preferences.getString("email", "NULL"), preferences.getString("phone", "NULL"), fireStoreProfilePictureURL, selectedTags, "Student");
 
         String userKey = universityReference.child(universityKey).child("users").push().getKey();
         // Add this userkey in each selected tag
@@ -376,7 +376,7 @@ public class SignupStudentFragment extends Fragment {
                                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                             FirebaseUser user = firebaseAuth.getCurrentUser();
                                             navController.navigate(R.id.action_signupStudentFragment_to_mainActivity);
-
+                                           // getActivity().finish();
                                         }
                                     });
                                 }
