@@ -11,7 +11,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import com.example.unisphere.model.User;
 import com.example.unisphere.service.AuthService;
 import com.example.unisphere.service.LoginCallback;
@@ -167,7 +166,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                                         null, new HashSet<>(),
                                         currStudentSnapshot.child("userRole").getValue(String.class),
                                         "Northeastern University"
-                                        );
+                                );
 
 
                                 System.out.println("User is student");
@@ -224,7 +223,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
         SharedPreferences preferences = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         //TODO: University name is hardcoded
         preferences.edit().putString("username", user.getName()).putString("university", "Northeastern University").putString("email", user.getEmailID())
-                .putString("user_role", user.getUserRole()).putString("phone_number", user.getPhoneNumber()).putStringSet("tags", new HashSet<>()).apply();
+                .putString("user_role", user.getUserRole()).putStringSet("tags", new HashSet<>()).apply();
         ;
 
     }
