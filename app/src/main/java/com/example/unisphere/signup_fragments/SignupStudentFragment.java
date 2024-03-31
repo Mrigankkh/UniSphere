@@ -418,10 +418,6 @@ public class SignupStudentFragment extends Fragment {
         layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
         recyclerViewTags.setLayoutManager(layoutManager);
 
-        if(userRole.equals("Organization"))
-        {
-            //Hide program selector
-        }
 
     }
 }
