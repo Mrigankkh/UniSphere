@@ -18,7 +18,6 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
     ImageView orgImage;
     TextView eventTitleTv;
     TextView eventDateTv;
-    TextView eventPlaceTv;
     Context context;
     List<Event> events;
 
@@ -28,7 +27,6 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         this.orgImage = itemView.findViewById(R.id.orgIv);
         this.eventTitleTv = itemView.findViewById(R.id.eventTitleTv);
         this.eventDateTv = itemView.findViewById(R.id.eventTimeTv);
-        this.eventPlaceTv = itemView.findViewById(R.id.eventPlaceTv);
         this.events = events;
         itemView.setOnClickListener(v -> {
             int position = getAdapterPosition();

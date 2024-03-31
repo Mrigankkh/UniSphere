@@ -1,6 +1,17 @@
 package com.example.unisphere.ui.events;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import static com.example.unisphere.service.Util.KEY_EMAIL;
+import static com.example.unisphere.service.Util.KEY_PHONE_NUMBER;
+import static com.example.unisphere.service.Util.KEY_TAGS;
+import static com.example.unisphere.service.Util.KEY_UNIVERSITY;
+import static com.example.unisphere.service.Util.KEY_USERNAME;
+import static com.example.unisphere.service.Util.KEY_USER_ROLE;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.unisphere.R;
 import com.example.unisphere.adapter.EventAdapter;
 import com.example.unisphere.model.Event;
+import com.example.unisphere.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,7 +36,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class EventsFragment extends Fragment {
@@ -40,6 +54,7 @@ public class EventsFragment extends Fragment {
     private String userId = "ogs@northeastern.edu";
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventDatabaseReference;
+    private User currentUser;
 
     public EventsFragment() {
     }
@@ -51,6 +66,14 @@ public class EventsFragment extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
         eventDatabaseReference = firebaseDatabase.getReference().child(UNIVERSITY).child(getString(R.string.events));
         events = new ArrayList<>();
+
+        SharedPreferences preferences  = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        String username = preferences.getString(KEY_USERNAME, "");
+        String university = preferences.getString(KEY_UNIVERSITY, "");
+        String email = preferences.getString(KEY_EMAIL, "");
+        String userRole = preferences.getString(KEY_USER_ROLE, "");
+        String phoneNumber = preferences.getString(KEY_PHONE_NUMBER, "");
+        Set<String> tags = preferences.getStringSet(KEY_TAGS, new HashSet<>());
     }
 
     @Override

@@ -21,15 +21,15 @@
             android:id="@+id/orgIv"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_weight="0.15"
             android:layout_marginStart="6dp"
             android:layout_marginEnd="6dp"
+            android:layout_weight="0.2"
             tools:ignore="MissingClass" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
+            android:layout_weight="0.8"
             android:gravity="start"
             android:orientation="vertical">
 
@@ -43,22 +43,14 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/eventPlaceTv"
+                android:id="@+id/eventTimeTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:textSize="14sp"
-                android:drawableStart="@drawable/ic_location"
-                android:drawablePadding="8dp"/>
+                android:layout_marginTop="4dp"
+                android:textSize="12sp" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/eventTimeTv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.35"
-            android:gravity="center_vertical"
-            android:textSize="10sp" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

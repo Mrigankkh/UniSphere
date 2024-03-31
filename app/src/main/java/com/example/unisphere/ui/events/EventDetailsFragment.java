@@ -138,7 +138,7 @@ public class EventDetailsFragment extends Fragment {
 
     private void getQsnResultsFile() {
         String questionResults = event.getQuestionResults();
-        if(checkBlank(questionResults)) {
+        if (checkBlank(questionResults)) {
             Toast.makeText(requireContext(), "There are no responses yet!", Toast.LENGTH_SHORT).show();
         } else {
             StorageReference storageRef = FirebaseStorage.getInstance().getReference();
@@ -165,7 +165,7 @@ public class EventDetailsFragment extends Fragment {
 
     private void getPollResultsFile() {
         String pollResults = event.getPollResults();
-        if(checkBlank(pollResults)) {
+        if (checkBlank(pollResults)) {
             Toast.makeText(requireContext(), "There are no responses yet!", Toast.LENGTH_SHORT).show();
         } else {
             StorageReference storageRef = FirebaseStorage.getInstance().getReference();
@@ -282,7 +282,7 @@ public class EventDetailsFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String pollResults = event.getPollResults();
                 // TODO update userId to current user's id
-                if(pollResults==null) {
+                if (pollResults == null) {
                     pollResults = "";
                 }
                 pollResults += "\n" + event.getRadioLabel() + "," + selectedOptionText + "," + userId;
@@ -365,7 +365,7 @@ public class EventDetailsFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String questionResults = event.getQuestionResults();
-                if(questionResults == null) {
+                if (questionResults == null) {
                     questionResults = "";
                 }
                 // TODO update userId to current user's id
