@@ -3,8 +3,11 @@ package com.example.unisphere.ui.search;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -12,23 +15,9 @@ import androidx.navigation.NavController;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-
 import com.example.unisphere.R;
-import com.example.unisphere.adapter.EventAdapter;
 import com.example.unisphere.adapter.searchResult.SearchResultAdapter;
-import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
-import com.example.unisphere.model.Event;
-import com.example.unisphere.model.SearchedUser;
-import com.example.unisphere.model.Tag;
 import com.example.unisphere.model.User;
-import com.google.android.flexbox.FlexWrap;
-import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
@@ -41,7 +30,6 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 
 public class SearchResultFragment extends Fragment {
@@ -52,8 +40,8 @@ public class SearchResultFragment extends Fragment {
     private ArrayList<String> tempUserEmails;
     private ArrayList<String> searchedUserKeys;
     private SearchResultAdapter searchResultAdapter;
-    List<SearchedUser> searchedUsers;
-
+    List<User> searchedUsers;
+    FirebaseStorage storage;
     private DatabaseReference universityReference;
     private FirebaseDatabase firebaseDatabase;
 
@@ -108,10 +96,11 @@ public class SearchResultFragment extends Fragment {
         if (searchedUserKeys == null) {
             searchedUserKeys = new ArrayList<>();
         }
-      getSearchedUsers( searchedUserKeys);
+        getSearchedUsers(searchedUserKeys);
     }
+
     private void getSearchedUsers(ArrayList<String> searchedUserKeys) {
-        List<SearchedUser> searchedUsers = new ArrayList<>();
+        List<User> searchedUsers = new ArrayList<>();
         List<Task<DataSnapshot>> tasks = new ArrayList<>();
 
         universityReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -153,11 +142,13 @@ public class SearchResultFragment extends Fragment {
                                     if (userSnapshot.exists()) {
                                         String searchedUserName = userSnapshot.child("name").getValue(String.class);
                                         String searchedUserEmail = userSnapshot.child("emailID").getValue(String.class);
+                                        String searchedUserRole = userSnapshot.child("userRole").getValue(String.class);
+                                        String searchedUserUniversity = userSnapshot.child("university").getValue(String.class);
 
                                         StorageReference imageRef = storageRef.child("/Northeastern University/Users/" + searchedUserEmail + "/profile_picture/profile_picture.jpg");
                                         imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
 
-                                            searchedUsers.add(new SearchedUser(searchedUserName, uri));
+                                            searchedUsers.add(new User(searchedUserName, searchedUserEmail, uri.toString(), null, searchedUserRole, searchedUserUniversity));
 
                                             searchResultAdapter = new SearchResultAdapter(requireContext(), searchedUsers, new SearchResultAdapter.ClickListener() {
                                                 @Override
@@ -169,14 +160,13 @@ public class SearchResultFragment extends Fragment {
                                             searchResultAdapter.notifyDataSetChanged();  // Notify the adapter in a better way
 
                                         }).addOnFailureListener(error -> {
-                                            searchedUsers.add(new SearchedUser(searchedUserName, Uri.EMPTY));
+                                            //searchedUsers.add(new User(searchedUserName, Uri.EMPTY, searchedUserEmail));
                                         });
                                     } else {
                                         // Handle missing user data
                                     }
                                 }
                             }
-
 
 
                         });
@@ -197,72 +187,6 @@ public class SearchResultFragment extends Fragment {
 
 
     }
-//    private List<SearchedUser> getSearchedUsers( ArrayList<String> searchedUserKeys) {
-//
-//        List<SearchedUser> searchedUsers = new ArrayList<>();
-//        final CountDownLatch latch = new CountDownLatch(searchedUserKeys.size());
-//
-//        universityReference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                String universityName = preferences.getString("university", null);
-//                universityReference.orderByChild("name").equalTo(universityName).addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//
-//                        String universityKey = (String) snapshot.getChildren().iterator().next().getKey();
-//                        for (String searchedUserKey : searchedUserKeys) {
-//                            if(searchedUserKey==null)
-//                                continue;
-//                            universityReference.child(universityKey).child("users").child(searchedUserKey).addListenerForSingleValueEvent(new ValueEventListener() {
-//                                @Override
-//                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                                    String searchedUserName = snapshot.child("name").getValue(String.class);
-//                                    String searchedUserEmail = snapshot.child("emailID").getValue(String.class); // Change this later to userkey
-//                                    StorageReference imageRef = storageRef.child("/Northeastern University/Users/" + searchedUserEmail + "/profile_picture/profile_picture.jpg");
-//                                    imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-//                                        String imageUrl = uri.toString();
-//                                        searchedUsers.add(new SearchedUser(searchedUserName, uri));
-//
-//                                    }).addOnFailureListener(error -> {
-//                                        searchedUsers.add(new SearchedUser(searchedUserName, Uri.EMPTY));
-//                                    });
-//                                }
-//
-//                                @Override
-//                                public void onCancelled(@NonNull DatabaseError error) {
-//
-//                                }
-//                            });
-//                        }
-//                        latch.countDown();
-//                        searchResultAdapter = new SearchResultAdapter(requireContext(), searchedUsers, new SearchResultAdapter.ClickListener() {
-//                            @Override
-//                            public void onSearchResultClick(int position) {
-//
-//                            }
-//                        });
-//                        searchResultsRecyclerView.setAdapter(searchResultAdapter);
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
-//
-//
-//
-//        return searchedUsers;
-//
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
