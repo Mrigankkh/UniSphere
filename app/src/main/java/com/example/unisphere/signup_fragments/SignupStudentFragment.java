@@ -30,6 +30,8 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.unisphere.LoginActivity;
+import com.example.unisphere.MainActivity;
 import com.example.unisphere.R;
 import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
 import com.example.unisphere.model.Tag;
@@ -372,9 +374,9 @@ public class SignupStudentFragment extends Fragment {
                                         @Override
                                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                             FirebaseUser user = firebaseAuth.getCurrentUser();
-                                            navController.navigate(R.id.action_signupStudentFragment_to_mainActivity);
-
-                                           // getActivity().finish();
+                                            Intent intent = new Intent(getContext(), MainActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(intent);
                                         }
                                     });
                                 }
