@@ -85,7 +85,19 @@
     <fragment
         android:id="@+id/searchedUsersearchedUserProfileFragment"
         android:name="com.example.unisphere.ui.search.SearchedUsersearchedUserProfileFragment"
-        android:label="SearchedUsersearchedUserProfileFragment" />
+        android:label="SearchedUsersearchedUserProfileFragment" >
+
+        <action
+            android:id="@+id/action_searchedUsersearchedUserProfileFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.unisphere.ui.messenger.ChatFragment"
+        android:label="Chat"
+        tools:layout="@layout/fragment_chat" />
+
 
     <!--    <fragment-->
     <!--        android:id="@+id/navigation_signup_user"-->
