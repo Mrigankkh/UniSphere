@@ -1,20 +1,26 @@
 package com.example.unisphere.ui.messenger;
 
+import static android.app.PendingIntent.getActivity;
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.unisphere.R;
-
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import java.util.List;
 
 public class ChatSessionAdapter extends RecyclerView.Adapter<ChatSessionAdapter.ChatSessionViewHolder> {
-
     private List<String> chatPartners;
+
 
     public ChatSessionAdapter(List<String> chatPartners) {
         this.chatPartners = chatPartners;
@@ -29,8 +35,8 @@ public class ChatSessionAdapter extends RecyclerView.Adapter<ChatSessionAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ChatSessionViewHolder holder, int position) {
-        String chatPartner = chatPartners.get(position);
-        holder.bind(chatPartner);
+        String chatPartnerEmail = chatPartners.get(position);
+        holder.bind(chatPartnerEmail);
     }
 
     @Override
@@ -45,16 +51,35 @@ public class ChatSessionAdapter extends RecyclerView.Adapter<ChatSessionAdapter.
     }
 
     static class ChatSessionViewHolder extends RecyclerView.ViewHolder {
-
-        private TextView chatPartnerTextView;
+        private TextView userNameTextView;
+        private TextView chatPartnerEmailTextView;
 
         public ChatSessionViewHolder(@NonNull View itemView) {
             super(itemView);
-            chatPartnerTextView = itemView.findViewById(R.id.chat_partner_email_text_view);
+            userNameTextView = itemView.findViewById(R.id.user_name_text_view);
+            chatPartnerEmailTextView = itemView.findViewById(R.id.chat_partner_email_text_view);
         }
 
-        public void bind(String chatPartner) {
-            chatPartnerTextView.setText(chatPartner);
+        public void bind(String chatPartnerEmail) {
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Northeastern University/users");
+            userRef.orderByChild("emailID").equalTo(chatPartnerEmail).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                            String name = userSnapshot.child("name").getValue(String.class);
+                            userNameTextView.setText(name);
+                            chatPartnerEmailTextView.setText(chatPartnerEmail);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    userNameTextView.setText("User not found");
+                    chatPartnerEmailTextView.setText(chatPartnerEmail);
+                }
+            });
         }
     }
 }

@@ -22,13 +22,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MessengerFragment extends Fragment {
 
+    private static final String TAG = "MessengerFragment";
     private RecyclerView usersRecyclerView;
     private SharedPreferences sharedPreferences;
     private DatabaseReference chatsReference;
+    private ChatSessionAdapter adapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,41 +49,43 @@ public class MessengerFragment extends Fragment {
 
     private void setupRecyclerView() {
         usersRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        ChatSessionAdapter adapter = new ChatSessionAdapter(new ArrayList<>());
+        adapter = new ChatSessionAdapter(new ArrayList<>());
         usersRecyclerView.setAdapter(adapter);
     }
 
     private void loadChatSessions() {
         String loggedInUserEmail = sharedPreferences.getString("email", "");
         if (!loggedInUserEmail.isEmpty()) {
-            Log.d("ChatPartner", "Logged: " + loggedInUserEmail);
+            Log.d(TAG, "Logged in user: " + loggedInUserEmail);
             ValueEventListener chatSessionListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    List<String> chatPartners = new ArrayList<>();
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-                            String sessionKey = childSnapshot.getKey();
-                            if (sessionKey != null && sessionKey.contains(loggedInUserEmail.replace(".", ","))) {
-                                String partnerEmail = sessionKey.replace(loggedInUserEmail.replace(".", ","), "")
-                                        .replace("_", "").replace(",", ".");
-                                chatPartners.add(partnerEmail);
-                                Log.d("ChatPartner", "Chat with: " + partnerEmail);
+                    Set<String> chatPartnersSet = new HashSet<>();
+                    for (DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
+                        for (DataSnapshot userSnapshot : sessionSnapshot.getChildren()) {
+                            String senderEmail = userSnapshot.child("senderEmail").getValue(String.class);
+                            String recipientEmail = userSnapshot.child("recipientEmail").getValue(String.class);
+                            if (loggedInUserEmail.equals(senderEmail) && recipientEmail != null && !recipientEmail.equals(loggedInUserEmail)) {
+                                chatPartnersSet.add(recipientEmail);
+                                Log.d(TAG, "Recipient: " + recipientEmail);
+                            } else if (loggedInUserEmail.equals(recipientEmail) && senderEmail != null && !senderEmail.equals(loggedInUserEmail)) {
+                                chatPartnersSet.add(senderEmail);
+                                Log.d(TAG, "Sender: " + senderEmail);
                             }
                         }
                     }
-                    ChatSessionAdapter adapter = (ChatSessionAdapter) usersRecyclerView.getAdapter();
-                    if (adapter != null) {
-                        adapter.updateData(chatPartners);
-                    }
+                    List<String> chatPartnersList = new ArrayList<>(chatPartnersSet);
+                    adapter.updateData(chatPartnersList);
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.w("loadChat:onCancelled", databaseError.toException());
+                    Log.w(TAG, "loadChat:onCancelled", databaseError.toException());
                 }
             };
             chatsReference.addListenerForSingleValueEvent(chatSessionListener);
+        } else {
+            Log.w(TAG, "No logged in user email found.");
         }
     }
 }
