@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +17,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 public class ChatSessionAdapter extends RecyclerView.Adapter<ChatSessionAdapter.ChatSessionViewHolder> {
@@ -52,12 +57,14 @@ public class ChatSessionAdapter extends RecyclerView.Adapter<ChatSessionAdapter.
 
     static class ChatSessionViewHolder extends RecyclerView.ViewHolder {
         private TextView userNameTextView;
+        private ImageView userProfTextView;
         private TextView chatPartnerEmailTextView;
 
         public ChatSessionViewHolder(@NonNull View itemView) {
             super(itemView);
             userNameTextView = itemView.findViewById(R.id.user_name_text_view);
             chatPartnerEmailTextView = itemView.findViewById(R.id.chat_partner_email_text_view);
+            userProfTextView = itemView.findViewById(R.id.user_profile_image_view);
         }
 
         public void bind(String chatPartnerEmail) {
@@ -68,8 +75,22 @@ public class ChatSessionAdapter extends RecyclerView.Adapter<ChatSessionAdapter.
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                             String name = userSnapshot.child("name").getValue(String.class);
+                            String profileImagePath = userSnapshot.child("profilePicture").getValue(String.class);
+
                             userNameTextView.setText(name);
                             chatPartnerEmailTextView.setText(chatPartnerEmail);
+
+                            if (profileImagePath != null && !profileImagePath.isEmpty()) {
+                                if(profileImagePath.startsWith("http")) {
+                                    Picasso.get().load(profileImagePath).placeholder(R.drawable.ic_launcher_background).into(userProfTextView);
+                                } else {
+                                    StorageReference storageRef = FirebaseStorage.getInstance().getReference().child(profileImagePath);
+                                    storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                        Picasso.get().load(uri.toString()).placeholder(R.drawable.ic_launcher_background).into(userProfTextView);
+                                    }).addOnFailureListener(e -> {
+                                    });
+                                }
+                            }
                         }
                     }
                 }
