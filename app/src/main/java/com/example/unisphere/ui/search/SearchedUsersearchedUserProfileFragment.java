@@ -201,16 +201,6 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
                 .centerCrop()
                 .into(searchedUserProfilePicture);
 
-        Button startChatButton = view.findViewById(R.id.button_start_chat);
-        startChatButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("recipient", searchedUser);
-                navController.navigate(R.id.action_searchedUsersearchedUserProfileFragment_to_chatFragment, bundle);
-            }
-        });
-
 
     }
 
