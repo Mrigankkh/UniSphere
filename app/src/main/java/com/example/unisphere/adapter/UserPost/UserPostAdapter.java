@@ -31,7 +31,7 @@ public class UserPostAdapter extends RecyclerView.Adapter<UserPostViewHolder> {
     public UserPostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
        System.out.println("in here");
-        return new UserPostViewHolder(LayoutInflater.from(context).inflate(R.layout.user_post_item_view, parent, false), context, userPostUriList, clickListener);
+        return new UserPostViewHolder(LayoutInflater.from(context).inflate(R.layout.user_list_item, parent, false), context, userPostUriList, clickListener);
 
     }
 
