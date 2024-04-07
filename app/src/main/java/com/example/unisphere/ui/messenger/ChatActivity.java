@@ -7,6 +7,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -63,7 +65,7 @@ public class ChatActivity extends AppCompatActivity {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Implement the logic to send messages
+                sendMessage(chatPartnerEmail);
             }
         });
     }
@@ -95,4 +97,25 @@ public class ChatActivity extends AppCompatActivity {
         Collections.sort(emails);
         return emails.get(0).replace(".", ",") + "_" + emails.get(1).replace(".", ",");
     }
+
+    private void sendMessage(String chatPartnerEmail) {
+        String messageText = messageEditText.getText().toString().trim();
+        if (!messageText.isEmpty()) {
+            DatabaseReference messageRef = FirebaseDatabase.getInstance().getReference("chats");
+
+            String chatSessionKey = generateChatSessionKey(currentUserEmail, chatPartnerEmail);
+            DatabaseReference chatSessionRef = messageRef.child(chatSessionKey);
+
+            ChatMessage newMessage = new ChatMessage(messageText, currentUserEmail, System.currentTimeMillis());
+
+            chatSessionRef.push().setValue(newMessage).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    messageEditText.setText("");
+                } else {
+                    Toast.makeText(ChatActivity.this, "Failed to send message", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
 }
