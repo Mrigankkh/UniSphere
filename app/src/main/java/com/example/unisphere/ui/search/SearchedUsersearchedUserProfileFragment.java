@@ -4,7 +4,6 @@ package com.example.unisphere.ui.search;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +18,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unisphere.R;
+import com.example.unisphere.adapter.UserPost.UserPostAdapter;
 import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
 import com.example.unisphere.model.Tag;
 import com.example.unisphere.model.User;
@@ -50,6 +51,7 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
     private DatabaseReference universityReference;
     private DatabaseReference tagReference;
     private DatabaseReference userReference;
+    private DatabaseReference postReference;
     private FirebaseDatabase firebaseDatabase;
     private String universityKey;
     private ImageView searchedUserProfilePicture;
@@ -58,12 +60,64 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
     private TextView searchedUserProfileUniversity;
     private TextView searchedUserProfileUserRole;
     private RecyclerView recyclerViewTags;
+    private RecyclerView recyclerViewUserPostsPreview;
+    private UserPostAdapter userPostAdapter;
     private List<Tag> tagList;
 
     private TagSelectAdapter tagSelectAdapter;
     private User searchedUser;
     private String email;
+    private List<String> userPostUri;
 
+
+    private void getUserPosts(String email) {
+
+        String universityName = sharedPreferences.getString("university", null);
+        userPostUri = new ArrayList<>();
+        if (universityName == null) {
+            Toast.makeText(getContext(), "Error! Please go back!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        universityReference.orderByChild("name").equalTo(universityName).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                universityKey = (String) snapshot.getChildren().iterator().next().getKey();
+                postReference = universityReference.child(universityKey).child("posts");
+
+                postReference.orderByChild("userId").equalTo(email).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+
+                            userPostUri.add(dataSnapshot.child("imageUrl").getValue(String.class));
+                        }
+                        userPostAdapter = new UserPostAdapter(getContext(), userPostUri, recyclerViewUserPostsPreview,new UserPostAdapter.ClickListener() {
+                            @Override
+                            public void onPostClick(int position) {
+
+                            }
+                        });
+                        recyclerViewUserPostsPreview.setAdapter(userPostAdapter);
+//                        userPostAdapter.notifyDataSetChanged();
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                recyclerViewUserPostsPreview.setAdapter(userPostAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
 
     private List<Tag> getTagListFromSnapshots(DataSnapshot dataSnapshot) {
         int i = 0;
@@ -147,7 +201,7 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
         String email = searchedUser.getEmailID();
         StorageReference imageRef = storageRef.child("/Northeastern University/Users/" + email + "/searchedUserProfile_picture/searchedUserProfile_picture.jpg");
         loadTagList();
-
+        getUserPosts(email);
 
         imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
             Picasso.get()
@@ -179,6 +233,12 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(requireContext());
         layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
         recyclerViewTags.setLayoutManager(layoutManager);
+
+        recyclerViewUserPostsPreview = view.findViewById(R.id.searchedUserPostsRecyclerView);
+//        recyclerViewUserPostsPreview.setLayoutManager(new GridLayoutManager(getContext(), 4));
+        FlexboxLayoutManager layoutManager2 = new FlexboxLayoutManager(requireContext());
+        layoutManager2.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
+        recyclerViewUserPostsPreview.setLayoutManager(layoutManager2);
 
         searchedUserProfilePicture = view.findViewById(R.id.searchedUserProfilePicture);
         navController = Navigation.findNavController(view);
