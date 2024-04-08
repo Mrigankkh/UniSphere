@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.appcompat.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -29,20 +30,40 @@ import java.util.Set;
 public class MessengerFragment extends Fragment {
 
     private static final String TAG = "MessengerFragment";
-    private RecyclerView usersRecyclerView;
+    private RecyclerView usersRecyclerView, searchResultsRecyclerView;
     private SharedPreferences sharedPreferences;
-    private DatabaseReference chatsReference;
+    private DatabaseReference chatsReference, usersReference;
     private ChatSessionAdapter adapter;
+    private UsersAdapter searchResultsAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_direct_message_search, container, false);
         usersRecyclerView = view.findViewById(R.id.user_search_results_recycler_view);
         sharedPreferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        usersRecyclerView = view.findViewById(R.id.user_search_results_recycler_view);
+        searchResultsRecyclerView = view.findViewById(R.id.search_results_recycler_view);
+        SearchView searchView = view.findViewById(R.id.search_view);
+        String currentUserOrganization = sharedPreferences.getString("university", "");
         chatsReference = FirebaseDatabase.getInstance().getReference("chats");
 
         setupRecyclerView();
+        setupSearchResultsRecyclerView();
         loadChatSessions();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchUsers(query, currentUserOrganization);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                searchUsers(newText, currentUserOrganization);
+                return true;
+            }
+        });
 
         return view;
     }
@@ -51,6 +72,12 @@ public class MessengerFragment extends Fragment {
         usersRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new ChatSessionAdapter(new ArrayList<>());
         usersRecyclerView.setAdapter(adapter);
+    }
+
+    private void setupSearchResultsRecyclerView() {
+        searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        searchResultsAdapter = new UsersAdapter(new ArrayList<>());
+        searchResultsRecyclerView.setAdapter(searchResultsAdapter);
     }
 
     private void loadChatSessions() {
@@ -88,4 +115,33 @@ public class MessengerFragment extends Fragment {
             Log.w(TAG, "No logged in user email found.");
         }
     }
+
+    private void searchUsers(String searchText, String currentUserOrganization) {
+        if (searchText == null || searchText.isEmpty()) {
+            searchResultsAdapter.updateData(new ArrayList<>());
+            return;
+        }
+
+        usersReference = FirebaseDatabase.getInstance().getReference(currentUserOrganization + "/users");
+        usersReference.orderByChild("name").startAt(searchText).endAt(searchText + "\uf8ff")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        List<UserModel> searchResults = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            UserModel user = snapshot.getValue(UserModel.class);
+                            if (user != null && user.getUniversity().equals(currentUserOrganization)) {
+                                searchResults.add(user);
+                            }
+                        }
+                        searchResultsAdapter.updateData(searchResults);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.w(TAG, "searchUsers:onCancelled", databaseError.toException());
+                    }
+                });
+    }
+
 }

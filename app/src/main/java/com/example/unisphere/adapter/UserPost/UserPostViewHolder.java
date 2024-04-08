@@ -22,7 +22,7 @@ public class UserPostViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         this.context = context;
         this.userPostUriList = userPostUriList;
-        this.userPostPreview = itemView.findViewById(R.id.userPostPreview);
+        this.userPostPreview = itemView.findViewById(R.id.user_profile_image_view);
 
 //
 //        itemView.setOnClickListener(v -> {
