@@ -24,18 +24,15 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.unisphere.MainActivity;
 import com.example.unisphere.R;
 import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
 import com.example.unisphere.model.Tag;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,7 +40,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +56,6 @@ public class EditProfileFragment extends Fragment {
     FirebaseStorage storage;
     private DatabaseReference tagReference;
     private DatabaseReference universityReference;
-    private DatabaseReference userReference;
 
     private SharedPreferences preferences;
 
@@ -176,8 +171,9 @@ public class EditProfileFragment extends Fragment {
     }
 
     private void onPrevClicked(View view) {
-//        navController.navigate(R.id.action_signupStudentFragment_to_signupUserFragment);
-//        navController.clearBackStack(R.id.action_signupStudentFragment_to_signupUserFragment);
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.popBackStack();
+
     }
 
     /**
@@ -186,27 +182,13 @@ public class EditProfileFragment extends Fragment {
     private void setup() {
 
         this.firebaseDatabase = FirebaseDatabase.getInstance("https://unisphere-340ac-default-rtdb.firebaseio.com/");
-        this.firebaseAuth = FirebaseAuth.getInstance();
         this.storage = FirebaseStorage.getInstance();
         this.preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
 
 
     }
 
-    /**
-     * Gets a string array from a data snapshot.
-     *
-     * @param dataSnapshot is the datasnapshot containing data.
-     */
-    private String[] getListFromSnapshots(DataSnapshot dataSnapshot) {
-        int i = 0;
-        String[] programs = new String[(int) dataSnapshot.getChildrenCount()];
-        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-            String data = snapshot.getValue(String.class);
-            programs[i++] = data;
-        }
-        return programs;
-    }
+
 
     private List<Tag> getTagListFromSnapshots(DataSnapshot dataSnapshot) {
         int i = 0;
@@ -257,18 +239,9 @@ public class EditProfileFragment extends Fragment {
                     }
                 }
                 if (!updates.isEmpty()) {
-                    tagReference.updateChildren(updates).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            addUserToTags(userKey, selectedTags);
+                    tagReference.updateChildren(updates);
+                }
 
-                        }
-                    }); // Write all updates at once
-                }
-                else
-                {
-                    addUserToTags(userKey, selectedTags);
-                }
 
 
             }
@@ -316,6 +289,7 @@ public class EditProfileFragment extends Fragment {
 
     private void syncTags(String userKey, List<String> selectedTags) {
         removeUserFromAllTags(userKey,  selectedTags);
+        addUserToTags(userKey, selectedTags);
 
     }
 
@@ -348,8 +322,7 @@ public class EditProfileFragment extends Fragment {
                 });
                 syncTags(userKey, selectedTags);
 
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.popBackStack();
+
 
             }
 
@@ -360,17 +333,10 @@ public class EditProfileFragment extends Fragment {
         });
         // Add this userkey in each selected tag
 
-
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.popBackStack();
     }
 
-    private void addProfilePictureToFirebase(Uri profilePictureUri) {
-
-
-        imageRef = storage.getReference().child("/Northeastern University/Users/mrigank@northeastern.edu/profile_picture/profile_picture.jpg");
-        UploadTask uploadTask = imageRef.putFile(profilePictureUri);
-
-
-    }
 
     private void initializeUIComponents(View view) {
         recyclerViewTags = view.findViewById(R.id.recyclerViewEditTags);
