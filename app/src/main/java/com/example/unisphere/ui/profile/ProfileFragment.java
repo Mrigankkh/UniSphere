@@ -147,11 +147,7 @@ public class ProfileFragment extends Fragment {
 
 
         imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-            Picasso.get()
-                    .load(uri.toString())
-                    .resize(400, 400)
-                    .centerCrop()
-                    .into(profilePicture);
+            Picasso.get().load(uri.toString()).resize(400, 400).centerCrop().into(profilePicture);
 
 
         }).addOnFailureListener(error -> {
@@ -161,8 +157,7 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 
         // Inflate the layout for this fragment
