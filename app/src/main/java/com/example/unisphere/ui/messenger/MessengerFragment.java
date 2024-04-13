@@ -77,8 +77,10 @@ public class MessengerFragment extends Fragment implements UsersAdapter.OnUserCl
     }
 
     private void setupRecyclerView() {
+        sharedPreferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        String currentUserOrganization = sharedPreferences.getString("university", "");
         usersRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new ChatSessionAdapter(new ArrayList<>());
+        adapter = new ChatSessionAdapter(new ArrayList<>(), currentUserOrganization);
         usersRecyclerView.setAdapter(adapter);
     }
 
