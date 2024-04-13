@@ -194,6 +194,13 @@ public class ProfileFragment extends Fragment {
         profileEmail.setText(email);
         profileUserRole.setText(userRole);
 
+        editProfileBtn = view.findViewById(R.id.editProfileBtn);
+        editProfileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navController.navigate(R.id.action_navigation_profile_to_editProfileFragment);
+            }
+        });
 
     }
 
