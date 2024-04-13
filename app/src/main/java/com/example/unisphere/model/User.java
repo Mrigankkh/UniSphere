@@ -4,6 +4,7 @@ package com.example.unisphere.model;
 import android.net.Uri;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * Represents a user of the application.
  */
-public  class User {
+public  class User implements Serializable {
 
     public String getName() {
         return name;

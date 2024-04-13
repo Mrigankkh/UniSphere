@@ -36,7 +36,11 @@
         android:id="@+id/search_results"
         android:label="@string/title_search"
         android:name="com.example.unisphere.ui.search.SearchResultFragment"
-        tools:layout="@layout/fragment_search_result" />
+        tools:layout="@layout/fragment_search_result" >
+        <action
+            android:id="@+id/action_search_results_to_searchedUsersearchedUserProfileFragment"
+            app:destination="@id/searchedUsersearchedUserProfileFragment" />
+    </fragment>
 
 
     <fragment
@@ -78,6 +82,15 @@
         android:name="com.example.unisphere.ui.events.EditEventFragment"
         android:label="@string/title_edit_event"
         tools:layout="@layout/fragment_edit_event" />
+    <fragment
+        android:id="@+id/searchedUsersearchedUserProfileFragment"
+        android:name="com.example.unisphere.ui.search.SearchedUsersearchedUserProfileFragment"
+        android:label="SearchedUsersearchedUserProfileFragment" >
+    </fragment>
+
+    \
+
+
 
     <!--    <fragment-->
     <!--        android:id="@+id/navigation_signup_user"-->

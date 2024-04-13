@@ -1,9 +1,10 @@
-package com.example.unisphere.ui.profile;
+package com.example.unisphere.ui.search;
+
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.unisphere.R;
 import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
 import com.example.unisphere.model.Tag;
+import com.example.unisphere.model.User;
 import com.example.unisphere.service.AuthService;
-import com.example.unisphere.service.Notification;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.firebase.database.DataSnapshot;
@@ -39,11 +40,9 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+public class SearchedUsersearchedUserProfileFragment extends Fragment {
 
-public class ProfileFragment extends Fragment {
 
-
-    private Button tempLogout;
     private SharedPreferences sharedPreferences;
     private NavController navController;
     AuthService authService;
@@ -53,15 +52,17 @@ public class ProfileFragment extends Fragment {
     private DatabaseReference userReference;
     private FirebaseDatabase firebaseDatabase;
     private String universityKey;
-    private ImageView profilePicture;
-    private TextView profileUsername;
-    private TextView profileEmail;
-    private TextView profileUniversity;
-    private TextView profileUserRole;
+    private ImageView searchedUserProfilePicture;
+    private TextView searchedUserProfileUsername;
+    private TextView searchedUserProfileEmail;
+    private TextView searchedUserProfileUniversity;
+    private TextView searchedUserProfileUserRole;
     private RecyclerView recyclerViewTags;
     private List<Tag> tagList;
 
     private TagSelectAdapter tagSelectAdapter;
+    private User searchedUser;
+    private String email;
 
 
     private List<Tag> getTagListFromSnapshots(DataSnapshot dataSnapshot) {
@@ -135,14 +136,16 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle arguments = getArguments();
+        searchedUser = (User) arguments.getSerializable("Searched User");
         sharedPreferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
         authService = AuthService.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
         this.firebaseDatabase = FirebaseDatabase.getInstance("https://unisphere-340ac-default-rtdb.firebaseio.com/");
         universityReference = firebaseDatabase.getReference();
 
-        String email = sharedPreferences.getString("email", null);
-        StorageReference imageRef = storageRef.child("/Northeastern University/Users/" + email + "/profile_picture/profile_picture.jpg");
+        String email = searchedUser.getEmailID();
+        StorageReference imageRef = storageRef.child("/Northeastern University/Users/" + email + "/searchedUserProfile_picture/searchedUserProfile_picture.jpg");
         loadTagList();
 
 
@@ -151,7 +154,7 @@ public class ProfileFragment extends Fragment {
                     .load(uri.toString())
                     .resize(400, 400)
                     .centerCrop()
-                    .into(profilePicture);
+                    .into(searchedUserProfilePicture);
 
 
         }).addOnFailureListener(error -> {
@@ -166,48 +169,40 @@ public class ProfileFragment extends Fragment {
 
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        return inflater.inflate(R.layout.fragment_searched_user_profile, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        recyclerViewTags = view.findViewById(R.id.recyclerViewProfileTags);
+        recyclerViewTags = view.findViewById(R.id.recyclerViewsearchedUserProfileTags);
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(requireContext());
         layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
         recyclerViewTags.setLayoutManager(layoutManager);
 
-        tempLogout = view.findViewById(R.id.tempLogout);
-        profilePicture = view.findViewById(R.id.profilePicture);
-        tempLogout.setOnClickListener(View -> logOut());
+        searchedUserProfilePicture = view.findViewById(R.id.searchedUserProfilePicture);
         navController = Navigation.findNavController(view);
-        profileEmail = view.findViewById(R.id.profileEmail);
-        profileUniversity = view.findViewById(R.id.profileUniversity);
-        profileUserRole = view.findViewById(R.id.profileUserRole);
-        profileUsername = view.findViewById(R.id.profileUsername);
-        String university = sharedPreferences.getString("university", "NULL");
-        String username = sharedPreferences.getString("username", "NULL");
-        String email = sharedPreferences.getString("email", "NULL");
-        String userRole = sharedPreferences.getString("user_role", "NULL");
-
-        profileUniversity.setText(university);
-        profileUsername.setText(username);
-        profileEmail.setText(email);
-        profileUserRole.setText(userRole);
-
-
-    }
-
-    public void logOut() {
-
-        Intent serviceIntent = new Intent(getActivity(), Notification.class);
-        getActivity().stopService(serviceIntent);
-        sharedPreferences.edit().clear();
-        authService.signOut();
-        navController.clearBackStack(R.id.activity_login);
-        navController.navigate(R.id.action_navigation_profile_to_activity_login);
-        getActivity().finish();
+        searchedUserProfileEmail = view.findViewById(R.id.searchedUserProfileEmail);
+        searchedUserProfileUniversity = view.findViewById(R.id.searchedUserProfileUniversity);
+        searchedUserProfileUserRole = view.findViewById(R.id.searchedUserProfileUserRole);
+        searchedUserProfileUsername = view.findViewById(R.id.searchedUserProfileUsername);
+        String university = searchedUser.getUniversity();
+        String username = searchedUser.getName();
+        String email = searchedUser.getEmailID();
+        String userRole = searchedUser.getUserRole();
+        String searchedUserProfPic = searchedUser.getProfilePicture();
+        searchedUserProfileUniversity.setText(university);
+        searchedUserProfileUsername.setText(username);
+        searchedUserProfileEmail.setText(email);
+        searchedUserProfileUserRole.setText(userRole);
+        Picasso.get()
+                .load(searchedUserProfPic)
+                .resize(400, 400)
+                .centerCrop()
+                .into(searchedUserProfilePicture);
 
 
     }
+
+
 }

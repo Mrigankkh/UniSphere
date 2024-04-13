@@ -57,11 +57,11 @@ public class TagSelectAdapter extends RecyclerView.Adapter<TagSelectViewHolder> 
     public void onBindViewHolder(@NonNull TagSelectViewHolder holder, int position) {
         Tag tag = tagList.get(position);
         if (!selectMode) {
-            holder.itemView.setOnClickListener(this);
             holder.itemView.setBackgroundColor(Color.parseColor("#5D3FD3")); // Set background based on selection
 
         } // Set click listener on the entire item view
         else {
+            holder.itemView.setOnClickListener(this);
             holder.itemView.setBackgroundColor(isTagSelected.get(position) ? Color.parseColor("#5D3FD3") : Color.parseColor("#DDDDDD")); // Set background based on selection
         }
         holder.bind(tag);

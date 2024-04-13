@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.unisphere.model.User;
 import com.example.unisphere.service.AuthService;
 import com.example.unisphere.service.LoginCallback;
+import com.example.unisphere.service.Notification;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -50,7 +51,10 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
 
         //Check if user exists.
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         }
 
         super.onCreate(savedInstanceState);
@@ -139,6 +143,8 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
     @Override
     public void onLoginSuccess(String email) {
 
+        Intent serviceIntent = new Intent(this, Notification.class);
+        startService(serviceIntent);
         String domainName = getEmailDomain(email);
         univeresityReference = firebaseDatabase.getReference();
         univeresityReference.orderByChild("domain").equalTo(domainName).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -170,6 +176,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                                     currUserSnapshot.child("userRole").getValue(String.class),
                                     universityKey
                             );
+                            addUserDataToSharedPreferences(user);
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
@@ -179,7 +186,6 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                         }
 
 
-                        addUserDataToSharedPreferences(user);
 
 
                     }
