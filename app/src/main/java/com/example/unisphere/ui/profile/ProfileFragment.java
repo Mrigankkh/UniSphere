@@ -202,7 +202,7 @@ public class ProfileFragment extends Fragment {
 
         Intent serviceIntent = new Intent(getActivity(), Notification.class);
         getActivity().stopService(serviceIntent);
-        sharedPreferences.edit().clear();
+        sharedPreferences.edit().clear().apply();
         authService.signOut();
         navController.clearBackStack(R.id.activity_login);
         navController.navigate(R.id.action_navigation_profile_to_activity_login);

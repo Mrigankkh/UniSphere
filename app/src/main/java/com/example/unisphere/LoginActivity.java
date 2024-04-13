@@ -153,6 +153,10 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 System.out.println(snapshot);
+                if(snapshot.getValue()==null){
+                    Toast.makeText(LoginActivity.this, "Login Unsuccessful", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String universityKey = (String) snapshot.getChildren().iterator().next().getKey();
                 userReference = univeresityReference.child(universityKey).child("users");
                 userReference.orderByChild("emailID").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
