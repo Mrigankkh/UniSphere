@@ -48,6 +48,11 @@
         android:id="@+id/loginActivity"
         android:name="com.example.unisphere.LoginActivity"
         android:label="LoginActivity" />
+    <fragment
+        android:id="@+id/loadingFragment"
+        android:name="com.example.unisphere.LoadingFragment"
+        android:label="Loading" >
+    </fragment>
 
 
 
