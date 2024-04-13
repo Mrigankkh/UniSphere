@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.unisphere.R;
 import com.google.firebase.database.DataSnapshot;
@@ -36,7 +37,7 @@ public class MessengerFragment extends Fragment implements UsersAdapter.OnUserCl
     private DatabaseReference chatsReference, usersReference;
     private ChatSessionAdapter adapter;
     private UsersAdapter searchResultsAdapter;
-
+    private SwipeRefreshLayout swipeRefreshLayout;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_direct_message_search, container, false);
@@ -52,6 +53,12 @@ public class MessengerFragment extends Fragment implements UsersAdapter.OnUserCl
         setupSearchResultsRecyclerView();
         loadChatSessions();
 
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            loadChatSessions();
+            swipeRefreshLayout.setRefreshing(false);
+        });
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -65,9 +72,11 @@ public class MessengerFragment extends Fragment implements UsersAdapter.OnUserCl
                     searchUsers(newText, currentUserOrganization);
                     searchResultsRecyclerView.setVisibility(View.VISIBLE);
                     usersRecyclerView.setVisibility(View.GONE);
+                    swipeRefreshLayout.setVisibility(View.GONE);
                 } else {
                     searchResultsRecyclerView.setVisibility(View.GONE);
                     usersRecyclerView.setVisibility(View.VISIBLE);
+                    swipeRefreshLayout.setVisibility(View.VISIBLE);
                 }
                 return true;
             }
