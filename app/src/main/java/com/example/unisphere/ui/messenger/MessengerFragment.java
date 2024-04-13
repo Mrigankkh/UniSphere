@@ -61,7 +61,14 @@ public class MessengerFragment extends Fragment implements UsersAdapter.OnUserCl
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                searchUsers(newText, currentUserOrganization);
+                if (!newText.isEmpty()) {
+                    searchUsers(newText, currentUserOrganization);
+                    searchResultsRecyclerView.setVisibility(View.VISIBLE);
+                    usersRecyclerView.setVisibility(View.GONE);
+                } else {
+                    searchResultsRecyclerView.setVisibility(View.GONE);
+                    usersRecyclerView.setVisibility(View.VISIBLE);
+                }
                 return true;
             }
         });
@@ -129,6 +136,8 @@ public class MessengerFragment extends Fragment implements UsersAdapter.OnUserCl
     private void searchUsers(String searchText, String currentUserOrganization) {
         if (searchText == null || searchText.isEmpty()) {
             searchResultsAdapter.updateData(new ArrayList<>());
+            searchResultsRecyclerView.setVisibility(View.GONE);
+            usersRecyclerView.setVisibility(View.VISIBLE);
             return;
         }
 
@@ -145,6 +154,10 @@ public class MessengerFragment extends Fragment implements UsersAdapter.OnUserCl
                             }
                         }
                         searchResultsAdapter.updateData(searchResults);
+                        if (!searchResults.isEmpty()) {
+                            searchResultsRecyclerView.setVisibility(View.VISIBLE);
+                            usersRecyclerView.setVisibility(View.GONE);
+                        }
                     }
 
                     @Override
