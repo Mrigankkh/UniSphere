@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.unisphere.model.User;
 import com.example.unisphere.service.AuthService;
 import com.example.unisphere.service.LoginCallback;
+import com.example.unisphere.service.Notification;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -142,6 +143,8 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
     @Override
     public void onLoginSuccess(String email) {
 
+        Intent serviceIntent = new Intent(this, Notification.class);
+        startService(serviceIntent);
         String domainName = getEmailDomain(email);
         univeresityReference = firebaseDatabase.getReference();
         univeresityReference.orderByChild("domain").equalTo(domainName).addListenerForSingleValueEvent(new ValueEventListener() {

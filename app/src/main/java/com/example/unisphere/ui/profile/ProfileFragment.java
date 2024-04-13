@@ -2,6 +2,7 @@ package com.example.unisphere.ui.profile;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ import com.example.unisphere.R;
 import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
 import com.example.unisphere.model.Tag;
 import com.example.unisphere.service.AuthService;
+import com.example.unisphere.service.Notification;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.firebase.database.DataSnapshot;
@@ -192,6 +194,9 @@ public class ProfileFragment extends Fragment {
     }
 
     public void logOut() {
+
+        Intent serviceIntent = new Intent(getActivity(), Notification.class);
+        getActivity().stopService(serviceIntent);
         sharedPreferences.edit().clear();
         authService.signOut();
         navController.clearBackStack(R.id.activity_login);
