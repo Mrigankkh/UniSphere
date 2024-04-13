@@ -23,6 +23,9 @@ public class Notification extends Service {
     private DatabaseReference postsRef, chatsRef;
     private String loggedInUserEmail, uniUser;
 
+    private Query userPostsQuery;
+    private ValueEventListener likesEventListener,messagesEventListener;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -30,6 +33,8 @@ public class Notification extends Service {
         loggedInUserEmail = sharedPreferences.getString("email", "");
         uniUser = sharedPreferences.getString("university", "");
     }
+
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -47,9 +52,10 @@ public class Notification extends Service {
 
     private void listenForLikes() {
         postsRef = FirebaseDatabase.getInstance().getReference().child(uniUser + "/posts");
-        Query userPostsQuery = postsRef.orderByChild("userId").equalTo(loggedInUserEmail);
+        userPostsQuery = postsRef.orderByChild("userId").equalTo(loggedInUserEmail);
 
-        userPostsQuery.addValueEventListener(new ValueEventListener() {
+
+        likesEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -66,12 +72,13 @@ public class Notification extends Service {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
-        });
+        };
+        userPostsQuery.addValueEventListener(likesEventListener);
     }
 
     private void listenForNewMessages() {
         chatsRef = FirebaseDatabase.getInstance().getReference("chats");
-        chatsRef.addValueEventListener(new ValueEventListener() {
+        messagesEventListener =  new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
@@ -90,7 +97,8 @@ public class Notification extends Service {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
-        });
+        };
+        chatsRef.addValueEventListener(messagesEventListener);
     }
 
     private void setupMessageNotificationChannel() {
@@ -141,5 +149,11 @@ public class Notification extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (userPostsQuery != null) {
+            userPostsQuery.removeEventListener(likesEventListener);
+        }
+        if (chatsRef != null) {
+            chatsRef.removeEventListener(messagesEventListener);
+        }
     }
 }

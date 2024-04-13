@@ -23,6 +23,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.unisphere.MainActivity;
 import com.example.unisphere.R;
 import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
 import com.example.unisphere.model.Tag;
@@ -197,14 +198,15 @@ public class ProfileFragment extends Fragment {
 
     public void logOut() {
 
-        Intent serviceIntent = new Intent(getActivity(), com.example.unisphere.service.Notification.class);
-        getActivity().stopService(serviceIntent);
+
         SharedPreferences preferences = getActivity().getSharedPreferences(USER_DATA, MODE_PRIVATE);
         preferences.edit().clear().apply();
         authService.signOut();
         navController.clearBackStack(R.id.activity_login);
         navController.navigate(R.id.action_navigation_profile_to_activity_login);
         getActivity().finish();
+
+        ((MainActivity) requireActivity()).stopNotificationService();
 
 
     }

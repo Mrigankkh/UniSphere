@@ -37,6 +37,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.unisphere.MainActivity;
 import com.example.unisphere.R;
 import com.example.unisphere.adapter.PostAdapter;
 import com.example.unisphere.model.Post;
@@ -331,8 +332,8 @@ public class HomeFragment extends Fragment {
 
         preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
 
-        Intent serviceIntent = new Intent(getActivity(), com.example.unisphere.service.Notification.class);
-        getActivity().startService(serviceIntent);
+        ((MainActivity) requireActivity()).startNotificationService();
+
 
         User userDataPreferences = Util.getUserDataFromSharedPreferences(preferences);
         this.userId = userDataPreferences.getEmailID();
