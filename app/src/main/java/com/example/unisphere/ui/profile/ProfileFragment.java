@@ -64,6 +64,7 @@ public class ProfileFragment extends Fragment {
     private TextView profileUserRole;
     private RecyclerView recyclerViewTags;
     private List<Tag> tagList;
+    private Button editProfileBtn;
 
     private TagSelectAdapter tagSelectAdapter;
 

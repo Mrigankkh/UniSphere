@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/navigation_home">
+    app:startDestination="@+id/navigation_home">
 
     <activity
         android:id="@+id/activity_login"
@@ -26,20 +26,20 @@
         android:id="@+id/navigation_search"
         android:name="com.example.unisphere.ui.search.SearchFragment"
         android:label="@string/title_search"
-        tools:layout="@layout/fragment_search" >
+        tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_navigation_search_to_search_results"
-            app:destination="@id/search_results" />
+            app:destination="@+id/search_results" />
     </fragment>
 
     <fragment
         android:id="@+id/search_results"
-        android:label="@string/title_search"
         android:name="com.example.unisphere.ui.search.SearchResultFragment"
-        tools:layout="@layout/fragment_search_result" >
+        android:label="@string/title_search"
+        tools:layout="@layout/fragment_search_result">
         <action
             android:id="@+id/action_search_results_to_searchedUsersearchedUserProfileFragment"
-            app:destination="@id/searchedUsersearchedUserProfileFragment" />
+            app:destination="@+id/searchedUsersearchedUserProfileFragment" />
     </fragment>
 
 
@@ -47,17 +47,8 @@
         android:id="@+id/navigation_messenger"
         android:name="com.example.unisphere.ui.messenger.MessengerFragment"
         android:label="@string/title_messenger"
-        tools:layout="@layout/fragment_messenger" />
+        tools:layout="@layout/fragment_direct_message_search" />
 
-    <fragment
-        android:id="@+id/navigation_profile"
-        android:name="com.example.unisphere.ui.profile.ProfileFragment"
-        android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile">
-        <action
-            android:id="@+id/action_navigation_profile_to_activity_login"
-            app:destination="@id/activity_login" />
-    </fragment>
 
     <fragment
         android:id="@+id/postDetailsFragment"
@@ -85,11 +76,31 @@
     <fragment
         android:id="@+id/searchedUsersearchedUserProfileFragment"
         android:name="com.example.unisphere.ui.search.SearchedUsersearchedUserProfileFragment"
-        android:label="SearchedUsersearchedUserProfileFragment" >
+        android:label="SearchedUsersearchedUserProfileFragment"></fragment>
+
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.unisphere.ui.profile.EditProfileFragment"
+        android:label="EditProfileFragment"
+        tools:layout="@layout/fragment_edit_profile">
+
+        <action
+            android:id="@+id/action_editProfileFragment_to_navigation_profile"
+            app:destination="@+id/navigation_profile" />
     </fragment>
 
-    \
-
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.example.unisphere.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_navigation_profile_to_activity_login"
+            app:destination="@id/activity_login" />
+        <action
+            android:id="@+id/action_navigation_profile_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
 
 
     <!--    <fragment-->
