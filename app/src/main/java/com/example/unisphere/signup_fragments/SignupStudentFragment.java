@@ -2,6 +2,7 @@ package com.example.unisphere.signup_fragments;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.unisphere.service.Util.USER_DATA;
 import static com.google.firebase.appcheck.internal.util.Logger.TAG;
 
 import android.content.Context;
@@ -200,7 +201,7 @@ public class SignupStudentFragment extends Fragment {
                 }
             }
         });
-        universityName = preferences.getString("university", "Northeastern University");
+        universityName = preferences.getString("university", null);
         email = preferences.getString("email", null);
         universityReference = firebaseDatabase.getReference();
         userRole =  preferences.getString("userRole", "Student");
@@ -240,11 +241,10 @@ public class SignupStudentFragment extends Fragment {
      */
     private void setup() {
 
-        this.firebaseDatabase = FirebaseDatabase.getInstance("https://unisphere-340ac-default-rtdb.firebaseio.com/");
+        this.firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
         this.firebaseAuth = FirebaseAuth.getInstance();
         this.storage = FirebaseStorage.getInstance();
-        this.preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
-
+        this.preferences = getActivity().getSharedPreferences(USER_DATA, MODE_PRIVATE);
 
     }
 
@@ -341,7 +341,7 @@ public class SignupStudentFragment extends Fragment {
      * @param view
      */
     public void signupStudent(View view) {
-
+        showLoadingScreen();
         if (!validateInputs()) {
             Toast.makeText(this.getContext(), "Invalid Inputs!", Toast.LENGTH_SHORT).show();
             return;
@@ -374,6 +374,7 @@ public class SignupStudentFragment extends Fragment {
                                         @Override
                                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                             FirebaseUser user = firebaseAuth.getCurrentUser();
+                                            hideLoadingScreen();
                                             Intent intent = new Intent(getContext(), MainActivity.class);
                                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                             startActivity(intent);
@@ -397,13 +398,19 @@ public class SignupStudentFragment extends Fragment {
 
     }
 
+    private void showLoadingScreen() {
+        // Show loading screen fragment
+        navController.navigate(R.id.loadingFragment);
+    }
+
+    private void hideLoadingScreen() {
+        // Hide loading screen fragment
+        navController.popBackStack();
+    }
+
     private void addProfilePictureToFirebase(Uri profilePictureUri) {
-
-
         imageRef = storage.getReference().child("/Northeastern University/Users/mrigank@northeastern.edu/profile_picture/profile_picture.jpg");
         UploadTask uploadTask = imageRef.putFile(profilePictureUri);
-
-
     }
 
     private void initializeUIComponents(View view) {
