@@ -1,6 +1,8 @@
 package com.example.unisphere.ui.search;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.unisphere.service.Util.USER_DATA;
+import static com.example.unisphere.service.Util.getUserDataFromSharedPreferences;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -35,18 +37,17 @@ import java.util.List;
 public class SearchResultFragment extends Fragment {
 
 
+    List<User> searchedUsers;
+    FirebaseStorage storage;
+    StorageReference storageRef;
     private NavController navController;
     private RecyclerView searchResultsRecyclerView;
     private ArrayList<String> tempUserEmails;
     private ArrayList<String> searchedUserKeys;
     private SearchResultAdapter searchResultAdapter;
-    List<User> searchedUsers;
-    FirebaseStorage storage;
     private DatabaseReference universityReference;
     private FirebaseDatabase firebaseDatabase;
-
-    private SharedPreferences preferences;
-    StorageReference storageRef;
+    private User currentUser;
 
 
     public SearchResultFragment() {
@@ -58,7 +59,7 @@ public class SearchResultFragment extends Fragment {
         universityReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String universityName = preferences.getString("university", null);
+                String universityName = currentUser.getUniversity();
                 universityReference.orderByChild("name").equalTo(universityName).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -83,8 +84,9 @@ public class SearchResultFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.firebaseDatabase = FirebaseDatabase.getInstance("https://unisphere-340ac-default-rtdb.firebaseio.com/");
-        this.preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        this.firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
+        SharedPreferences preferences = getActivity().getSharedPreferences(USER_DATA, MODE_PRIVATE);
+        currentUser = getUserDataFromSharedPreferences(preferences);
         universityReference = firebaseDatabase.getReference();
         storageRef = FirebaseStorage.getInstance().getReference();
 
@@ -106,7 +108,7 @@ public class SearchResultFragment extends Fragment {
         universityReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String universityName = preferences.getString("university", null);
+                String universityName = currentUser.getUniversity();
                 if (universityName == null) {
                     // Handle missing university name
                     return;
@@ -145,7 +147,7 @@ public class SearchResultFragment extends Fragment {
                                         String searchedUserRole = userSnapshot.child("userRole").getValue(String.class);
                                         String searchedUserUniversity = userSnapshot.child("university").getValue(String.class);
 
-                                        StorageReference imageRef = storageRef.child("/Northeastern University/Users/" + searchedUserEmail + "/profile_picture/profile_picture.jpg");
+                                        StorageReference imageRef = storageRef.child("/" + currentUser.getUniversity() + "/Users/" + searchedUserEmail + "/profile_picture/profile_picture.jpg");
                                         imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
 
                                             searchedUsers.add(new User(searchedUserName, searchedUserEmail, uri.toString(), null, searchedUserRole, searchedUserUniversity));

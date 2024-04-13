@@ -330,6 +330,10 @@ public class HomeFragment extends Fragment {
         setRetainInstance(true);
 
         preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
+
+        Intent serviceIntent = new Intent(getActivity(), com.example.unisphere.service.Notification.class);
+        getActivity().startService(serviceIntent);
+
         User userDataPreferences = Util.getUserDataFromSharedPreferences(preferences);
         this.userId = userDataPreferences.getEmailID();
         this.universityKey = userDataPreferences.getUniversity();

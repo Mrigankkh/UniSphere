@@ -15,6 +15,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class Notification extends Service {
@@ -26,7 +27,7 @@ public class Notification extends Service {
     public void onCreate() {
         super.onCreate();
         SharedPreferences sharedPreferences = getSharedPreferences("USER_DATA", MODE_PRIVATE);
-        loggedInUserEmail = sharedPreferences.getString("emailID", "");
+        loggedInUserEmail = sharedPreferences.getString("email", "");
         uniUser = sharedPreferences.getString("university", "");
     }
 
@@ -46,7 +47,9 @@ public class Notification extends Service {
 
     private void listenForLikes() {
         postsRef = FirebaseDatabase.getInstance().getReference().child(uniUser + "/posts");
-        postsRef.addValueEventListener(new ValueEventListener() {
+        Query userPostsQuery = postsRef.orderByChild("userId").equalTo(loggedInUserEmail);
+
+        userPostsQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -119,6 +122,10 @@ public class Notification extends Service {
 
     private void showNewMessageNotification(String chatSessionId, String messageText) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("message_notifications", "Message Notifications", NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+        }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "message_notifications")
                 .setContentTitle("New Message")

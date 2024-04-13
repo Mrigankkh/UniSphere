@@ -2,13 +2,14 @@ package com.example.unisphere.ui.search;
 
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.unisphere.service.Util.USER_DATA;
+import static com.example.unisphere.service.Util.getUserDataFromSharedPreferences;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,7 +19,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unisphere.R;
@@ -44,10 +44,9 @@ import java.util.List;
 public class SearchedUsersearchedUserProfileFragment extends Fragment {
 
 
-    private SharedPreferences sharedPreferences;
-    private NavController navController;
     AuthService authService;
     StorageReference storageRef;
+    private NavController navController;
     private DatabaseReference universityReference;
     private DatabaseReference tagReference;
     private DatabaseReference userReference;
@@ -65,14 +64,14 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
     private List<Tag> tagList;
 
     private TagSelectAdapter tagSelectAdapter;
+    private User currentUser;
     private User searchedUser;
-    private String email;
     private List<String> userPostUri;
 
 
     private void getUserPosts(String email) {
 
-        String universityName = sharedPreferences.getString("university", null);
+        String universityName = currentUser.getUniversity();
         userPostUri = new ArrayList<>();
         if (universityName == null) {
             Toast.makeText(getContext(), "Error! Please go back!", Toast.LENGTH_SHORT).show();
@@ -81,8 +80,7 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
         universityReference.orderByChild("name").equalTo(universityName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                universityKey = (String) snapshot.getChildren().iterator().next().getKey();
-                postReference = universityReference.child(universityKey).child("posts");
+                postReference = universityReference.child(universityName).child("posts");
 
                 postReference.orderByChild("userId").equalTo(email).addValueEventListener(new ValueEventListener() {
                     @Override
@@ -92,7 +90,7 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
 
                             userPostUri.add(dataSnapshot.child("imageUrl").getValue(String.class));
                         }
-                        userPostAdapter = new UserPostAdapter(getContext(), userPostUri, recyclerViewUserPostsPreview,new UserPostAdapter.ClickListener() {
+                        userPostAdapter = new UserPostAdapter(getContext(), userPostUri, recyclerViewUserPostsPreview, new UserPostAdapter.ClickListener() {
                             @Override
                             public void onPostClick(int position) {
 
@@ -133,7 +131,7 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
      * Get the list of predefined tags offered by the university.
      */
     public void loadTagList() {
-        String universityName = sharedPreferences.getString("university", null);
+        String universityName = currentUser.getUniversity();
         if (universityName == null) {
             Toast.makeText(getContext(), "Error! Please go back!", Toast.LENGTH_SHORT).show();
             return;
@@ -141,7 +139,7 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
         universityReference.orderByChild("name").equalTo(universityName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String email = sharedPreferences.getString("email", "NULL");
+                String email = currentUser.getEmailID();
                 universityKey = (String) snapshot.getChildren().iterator().next().getKey();
                 userReference = universityReference.child(universityKey).child("users");
 
@@ -192,14 +190,15 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle arguments = getArguments();
         searchedUser = (User) arguments.getSerializable("Searched User");
-        sharedPreferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        SharedPreferences preferences = getActivity().getSharedPreferences(USER_DATA, MODE_PRIVATE);
+        currentUser = getUserDataFromSharedPreferences(preferences);
         authService = AuthService.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
-        this.firebaseDatabase = FirebaseDatabase.getInstance("https://unisphere-340ac-default-rtdb.firebaseio.com/");
+        this.firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
         universityReference = firebaseDatabase.getReference();
 
         String email = searchedUser.getEmailID();
-        StorageReference imageRef = storageRef.child("/Northeastern University/Users/" + email + "/searchedUserProfile_picture/searchedUserProfile_picture.jpg");
+        StorageReference imageRef = storageRef.child("/" + currentUser.getUniversity() + "/Users/" + email + "/searchedUserProfile_picture/searchedUserProfile_picture.jpg");
         loadTagList();
         getUserPosts(email);
 

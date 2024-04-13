@@ -53,15 +53,11 @@ public class EventsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         SharedPreferences preferences = getActivity().getSharedPreferences(USER_DATA, MODE_PRIVATE);
         currentUser = getUserDataFromSharedPreferences(preferences);
-
         firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
         eventDatabaseReference = firebaseDatabase.getReference().child(currentUser.getUniversity()).child(getString(R.string.events));
         events = new ArrayList<>();
-
     }
 
     @Override

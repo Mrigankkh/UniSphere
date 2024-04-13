@@ -2,6 +2,9 @@ package com.example.unisphere.ui.profile;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.unisphere.service.Util.USER_DATA;
+import static com.example.unisphere.service.Util.getUserDataFromSharedPreferences;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -23,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.unisphere.R;
 import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
 import com.example.unisphere.model.Tag;
+import com.example.unisphere.model.User;
 import com.example.unisphere.service.AuthService;
 import com.example.unisphere.service.Notification;
 import com.google.android.flexbox.FlexWrap;
@@ -44,7 +48,6 @@ public class ProfileFragment extends Fragment {
 
 
     private Button tempLogout;
-    private SharedPreferences sharedPreferences;
     private NavController navController;
     AuthService authService;
     StorageReference storageRef;
@@ -52,7 +55,7 @@ public class ProfileFragment extends Fragment {
     private DatabaseReference tagReference;
     private DatabaseReference userReference;
     private FirebaseDatabase firebaseDatabase;
-    private String universityKey;
+    private User currentUser;
     private ImageView profilePicture;
     private TextView profileUsername;
     private TextView profileEmail;
@@ -63,7 +66,6 @@ public class ProfileFragment extends Fragment {
     private Button editProfileBtn;
 
     private TagSelectAdapter tagSelectAdapter;
-
 
     private List<Tag> getTagListFromSnapshots(DataSnapshot dataSnapshot) {
         int i = 0;
@@ -79,7 +81,7 @@ public class ProfileFragment extends Fragment {
      * Get the list of predefined tags offered by the university.
      */
     public void loadTagList() {
-        String universityName = sharedPreferences.getString("university", null);
+        String universityName = currentUser.getUniversity();
         if (universityName == null) {
             Toast.makeText(getContext(), "Error! Please go back!", Toast.LENGTH_SHORT).show();
             return;
@@ -87,9 +89,8 @@ public class ProfileFragment extends Fragment {
         universityReference.orderByChild("name").equalTo(universityName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String email = sharedPreferences.getString("email", "NULL");
-                universityKey = (String) snapshot.getChildren().iterator().next().getKey();
-                userReference = universityReference.child(universityKey).child("users");
+                String email = currentUser.getEmailID();
+                userReference = universityReference.child(currentUser.getUniversity()).child("users");
 
                 userReference.orderByChild("emailID").equalTo(email).addValueEventListener(new ValueEventListener() {
                     @Override
@@ -136,14 +137,15 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPreferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        SharedPreferences preferences = getActivity().getSharedPreferences(USER_DATA, MODE_PRIVATE);
+        currentUser = getUserDataFromSharedPreferences(preferences);
         authService = AuthService.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
-        this.firebaseDatabase = FirebaseDatabase.getInstance("https://unisphere-340ac-default-rtdb.firebaseio.com/");
+        this.firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
         universityReference = firebaseDatabase.getReference();
 
-        String email = sharedPreferences.getString("email", null);
-        StorageReference imageRef = storageRef.child("/Northeastern University/Users/" + email + "/profile_picture/profile_picture.jpg");
+        String email = currentUser.getEmailID();
+        StorageReference imageRef = storageRef.child("/"+currentUser.getUniversity()+"/Users/" + email + "/profile_picture/profile_picture.jpg");
         loadTagList();
 
 
@@ -181,18 +183,10 @@ public class ProfileFragment extends Fragment {
         profileUniversity = view.findViewById(R.id.profileUniversity);
         profileUserRole = view.findViewById(R.id.profileUserRole);
         profileUsername = view.findViewById(R.id.profileUsername);
-        editProfileBtn = view.findViewById(R.id.editProfileBtn);
-        editProfileBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navController.navigate(R.id.action_navigation_profile_to_editProfileFragment);
-            }
-        });
-
-        String university = sharedPreferences.getString("university", "NULL");
-        String username = sharedPreferences.getString("username", "NULL");
-        String email = sharedPreferences.getString("email", "NULL");
-        String userRole = sharedPreferences.getString("user_role", "NULL");
+        String university = currentUser.getUniversity();
+        String username = currentUser.getName();
+        String email = currentUser.getEmailID();
+        String userRole = currentUser.getUserRole();
 
         profileUniversity.setText(university);
         profileUsername.setText(username);
@@ -204,9 +198,10 @@ public class ProfileFragment extends Fragment {
 
     public void logOut() {
 
-        Intent serviceIntent = new Intent(getActivity(), Notification.class);
+        Intent serviceIntent = new Intent(getActivity(), com.example.unisphere.service.Notification.class);
         getActivity().stopService(serviceIntent);
-        sharedPreferences.edit().clear();
+        SharedPreferences preferences = getActivity().getSharedPreferences(USER_DATA, MODE_PRIVATE);
+        preferences.edit().clear().apply();
         authService.signOut();
         navController.clearBackStack(R.id.activity_login);
         navController.navigate(R.id.action_navigation_profile_to_activity_login);

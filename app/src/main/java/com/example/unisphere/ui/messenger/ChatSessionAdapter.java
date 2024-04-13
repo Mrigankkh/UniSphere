@@ -1,11 +1,9 @@
 package com.example.unisphere.ui.messenger;
 
 import static android.app.PendingIntent.getActivity;
-import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,10 +25,12 @@ import java.util.List;
 
 public class ChatSessionAdapter extends RecyclerView.Adapter<ChatSessionAdapter.ChatSessionViewHolder> {
     private List<String> chatPartners;
+    private String currentUserOrganization;
 
 
-    public ChatSessionAdapter(List<String> chatPartners) {
+    public ChatSessionAdapter(List<String> chatPartners, String currentUserOrganization) {
         this.chatPartners = chatPartners;
+        this.currentUserOrganization = currentUserOrganization;
     }
 
     @NonNull
@@ -92,7 +92,7 @@ public class ChatSessionAdapter extends RecyclerView.Adapter<ChatSessionAdapter.
 
 
         public void bind(String chatPartnerEmail) {
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Northeastern University/users");
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference(currentUserOrganization + "/users");
             userRef.orderByChild("emailID").equalTo(chatPartnerEmail).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
