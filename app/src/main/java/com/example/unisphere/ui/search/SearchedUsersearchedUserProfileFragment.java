@@ -234,7 +234,7 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
         layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
         recyclerViewTags.setLayoutManager(layoutManager);
 
-        recyclerViewUserPostsPreview = view.findViewById(R.id.searchedUserPostsRecyclerView);
+//        recyclerViewUserPostsPreview = view.findViewById(R.id.searchedUserPostsRecyclerView);
 //        recyclerViewUserPostsPreview.setLayoutManager(new GridLayoutManager(getContext(), 4));
         FlexboxLayoutManager layoutManager2 = new FlexboxLayoutManager(requireContext());
         layoutManager2.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
