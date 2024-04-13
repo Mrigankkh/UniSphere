@@ -98,7 +98,7 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
 
                             }
                         });
-                        recyclerViewUserPostsPreview.setAdapter(userPostAdapter);
+//                        recyclerViewUserPostsPreview.setAdapter(userPostAdapter);
 //                        userPostAdapter.notifyDataSetChanged();
 
                     }
@@ -108,7 +108,7 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
 
                     }
                 });
-                recyclerViewUserPostsPreview.setAdapter(userPostAdapter);
+//                recyclerViewUserPostsPreview.setAdapter(userPostAdapter);
             }
 
             @Override
@@ -238,7 +238,7 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
 //        recyclerViewUserPostsPreview.setLayoutManager(new GridLayoutManager(getContext(), 4));
         FlexboxLayoutManager layoutManager2 = new FlexboxLayoutManager(requireContext());
         layoutManager2.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
-        recyclerViewUserPostsPreview.setLayoutManager(layoutManager2);
+//        recyclerViewUserPostsPreview.setLayoutManager(layoutManager2);
 
         searchedUserProfilePicture = view.findViewById(R.id.searchedUserProfilePicture);
         navController = Navigation.findNavController(view);
