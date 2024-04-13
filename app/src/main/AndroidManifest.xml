@@ -4,9 +4,11 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.camera.flash" android:required="false" />
+
     <application
         android:name=".Application"
         android:allowBackup="true"
@@ -18,6 +20,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Unisphere"
         tools:targetApi="31">
+        <service
+            android:name=".service.Notification"
+            android:enabled="true"
+            android:exported="false">
+        </service>
 
         <activity
             android:name=".SignupActivity"

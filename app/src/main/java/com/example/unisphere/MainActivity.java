@@ -61,8 +61,6 @@ public class MainActivity extends AppCompatActivity {
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
-                    Intent serviceIntent = new Intent(this, Notification.class);
-                    startService(serviceIntent);
                 } else {
                     checkAndRequestNotificationPermission();
                 }});

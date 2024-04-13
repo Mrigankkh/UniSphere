@@ -19,7 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class Notification extends Service {
 
-    private DatabaseReference postsRef;
+    private DatabaseReference postsRef, chatsRef;
     private String loggedInUserEmail, uniUser;
 
     @Override
@@ -39,6 +39,7 @@ public class Notification extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!loggedInUserEmail.isEmpty()) {
             listenForLikes();
+            listenForNewMessages();
         }
         return START_STICKY;
     }
@@ -65,6 +66,40 @@ public class Notification extends Service {
         });
     }
 
+    private void listenForNewMessages() {
+        chatsRef = FirebaseDatabase.getInstance().getReference("chats");
+        chatsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
+                    for (DataSnapshot messageSnapshot : sessionSnapshot.getChildren()) {
+                        String recipientEmail = messageSnapshot.child("recipientEmail").getValue(String.class);
+                        if (loggedInUserEmail.equals(recipientEmail)) {
+                            String messageText = messageSnapshot.child("message").getValue(String.class);
+                            if (messageText != null) {
+                                showNewMessageNotification(sessionSnapshot.getKey(), messageText);
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void setupMessageNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("message_notifications", "Message Notifications", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+
+
     private void showLikeNotification(String postId, long likesCount) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -79,6 +114,20 @@ public class Notification extends Service {
                 .setSmallIcon(R.drawable.ic_like_filled_foreground);
 
         int notificationId = postId.hashCode();
+        notificationManager.notify(notificationId, builder.build());
+    }
+
+    private void showNewMessageNotification(String chatSessionId, String messageText) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "message_notifications")
+                .setContentTitle("New Message")
+                .setContentText(messageText)
+                .setSmallIcon(R.drawable.ic_home)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(messageText));
+
+        int notificationId = chatSessionId.hashCode();
         notificationManager.notify(notificationId, builder.build());
     }
 
