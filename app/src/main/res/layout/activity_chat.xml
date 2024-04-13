@@ -38,8 +38,7 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:text="Username"
-                android:textAppearance="?attr/textAppearanceListItem"
-                android:textColor="@color/white"/>
+                android:textAppearance="?attr/textAppearanceListItem"/>
 
         </LinearLayout>
     </LinearLayout>

@@ -247,7 +247,7 @@ public class EditEventFragment extends Fragment {
                 event.setRadioButtonLabel(radioBtnLabel);
                 uploadImageAndAddToEvent(event);
                 Toast.makeText(requireContext(), "Event is successfully updated", Toast.LENGTH_SHORT).show();
-                returnToEventDetailFragment(event);
+                returnToEventDetailFragment();
             }
         });
 
@@ -256,10 +256,6 @@ public class EditEventFragment extends Fragment {
 
 
         return view;
-    }
-
-    private void deleteEventFromFirebase(View v, Event event) {
-
     }
 
     public void onClickUploadImageLayout(View v) {
@@ -309,7 +305,7 @@ public class EditEventFragment extends Fragment {
     }
 
 
-    private void returnToEventDetailFragment(Event updatedEvent) {
+    private void returnToEventDetailFragment() {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         fragmentManager.popBackStack();
     }

@@ -61,6 +61,7 @@ public class EventDetailsFragment extends Fragment {
     private TextView commentsET;
     private EditText pollResultsLinkET;
     private EditText qsnResultsLinkET;
+    private ImageView eventImage;
     private User currentUser;
 
 
@@ -83,10 +84,20 @@ public class EventDetailsFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (event.getEventImage() == null || event.getEventImage().isEmpty()) {
+            Picasso.get().load(R.drawable.no_image_available).resize(400, 300).into(eventImage);
+        } else {
+            Picasso.get().load(event.getEventImage()).resize(400, 300).into(eventImage);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_event_detail, container, false);
-        ImageView eventImage = view.findViewById(R.id.imageView_event);
+        eventImage = view.findViewById(R.id.imageView_event);
         TextView eventTitle = view.findViewById(R.id.eventTitleTv);
         TextView eventDescription = view.findViewById(R.id.textView_event_description);
         TextView eventDateTv = view.findViewById(R.id.eventDateTv);
