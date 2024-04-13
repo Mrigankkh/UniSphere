@@ -3,9 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/signup_navigation"
-    app:startDestination="@id/signupUserFragment"
-
-    >
+    app:startDestination="@+id/signupUserFragment">
 
 
     <fragment
@@ -19,18 +17,18 @@
         android:id="@+id/signupStudentFragment"
         android:name="com.example.unisphere.signup_fragments.SignupStudentFragment"
         android:label="@string/title_profile"
-        tools:layout="@layout/fragment_signup_student" >
-<!--        <argument-->
-<!--            android:name="studentBuilder"-->
-<!--            android:defaultValue="null" />-->
-<!--        <action-->
-<!--            android:id="@+id/action_signupStudentFragment_to_mainActivity"-->
-<!--            app:destination="@id/mainActivity"-->
-<!--            app:popUpTo="@id/loginActivity"-->
-<!--            app:popUpToInclusive="true" />-->
+        tools:layout="@layout/fragment_signup_student">
+        <!--        <argument-->
+        <!--            android:name="studentBuilder"-->
+        <!--            android:defaultValue="null" />-->
+        <!--        <action-->
+        <!--            android:id="@+id/action_signupStudentFragment_to_mainActivity"-->
+        <!--            app:destination="@id/mainActivity"-->
+        <!--            app:popUpTo="@id/loginActivity"-->
+        <!--            app:popUpToInclusive="true" />-->
         <action
             android:id="@+id/action_signupStudentFragment_to_signupUserFragment"
-            app:destination="@id/signupUserFragment" />
+            app:destination="@+id/signupUserFragment" />
     </fragment>
     <fragment
         android:id="@+id/navigation_signup_organization"
@@ -39,7 +37,7 @@
         tools:layout="@layout/fragment_signup_organization" />
     <action
         android:id="@+id/action_fragment_signup_user_to_fragment_signup_student"
-        app:destination="@id/signupStudentFragment" />
+        app:destination="@+id/signupStudentFragment" />
     <activity
         android:id="@+id/mainActivity"
         android:name="com.example.unisphere.MainActivity"
@@ -51,9 +49,7 @@
     <fragment
         android:id="@+id/loadingFragment"
         android:name="com.example.unisphere.LoadingFragment"
-        android:label="Loading" >
-    </fragment>
-
+        android:label="Loading" />
 
 
 </navigation>
