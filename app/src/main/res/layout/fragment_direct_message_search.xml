@@ -12,7 +12,10 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        android:queryHint="Search your friends here!"
+        android:iconifiedByDefault="true"
+        />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/middle_guideline"
