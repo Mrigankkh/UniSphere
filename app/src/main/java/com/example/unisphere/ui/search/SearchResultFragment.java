@@ -92,7 +92,7 @@ public class SearchResultFragment extends Fragment {
 
         getUniversityKey();// This is an async method and might cause null ptr issues.
         Bundle arguments = getArguments();
-        searchedUsers = new ArrayList<>();
+
         searchedUserKeys = (ArrayList<String>) arguments.getSerializable("search_results");
 
         if (searchedUserKeys == null) {
@@ -102,7 +102,6 @@ public class SearchResultFragment extends Fragment {
     }
 
     private void getSearchedUsers(ArrayList<String> searchedUserKeys) {
-        List<User> searchedUsers = new ArrayList<>();
         List<Task<DataSnapshot>> tasks = new ArrayList<>();
 
         universityReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -149,17 +148,23 @@ public class SearchResultFragment extends Fragment {
 
                                         StorageReference imageRef = storageRef.child("/" + currentUser.getUniversity() + "/Users/" + searchedUserEmail + "/profile_picture/profile_picture.jpg");
                                         imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                            User searchedUser = new User(searchedUserName, searchedUserEmail, uri.toString(), null, searchedUserRole, searchedUserUniversity);
+                                            if(searchedUser!=null) {
+                                                searchedUsers.add(searchedUser);
+                                                searchResultAdapter.notifyDataSetChanged();  // Notify the adapter in a better way
 
-                                            searchedUsers.add(new User(searchedUserName, searchedUserEmail, uri.toString(), null, searchedUserRole, searchedUserUniversity));
+                                            }
+                                            else {
+                                                System.out.println("User was null");
+                                            }
 
-                                            searchResultAdapter = new SearchResultAdapter(requireContext(), searchedUsers, new SearchResultAdapter.ClickListener() {
-                                                @Override
-                                                public void onSearchResultClick(int position) {
-                                                    // Implement click handling
-                                                }
-                                            });
-                                            searchResultsRecyclerView.setAdapter(searchResultAdapter);
-                                            searchResultAdapter.notifyDataSetChanged();  // Notify the adapter in a better way
+//                                            searchResultAdapter = new SearchResultAdapter(requireContext(), searchedUsers, new SearchResultAdapter.ClickListener() {
+//                                                @Override
+//                                                public void onSearchResultClick(int position) {
+//                                                    // Implement click handling
+//                                                }
+//                                            });
+//                                            searchResultsRecyclerView.setAdapter(searchResultAdapter);
 
                                         }).addOnFailureListener(error -> {
                                             //searchedUsers.add(new User(searchedUserName, Uri.EMPTY, searchedUserEmail));
@@ -202,6 +207,7 @@ public class SearchResultFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         this.searchResultsRecyclerView = view.findViewById(R.id.recyclerView_search_results);
         searchResultsRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 1));
+        searchedUsers = new ArrayList<>();
         searchResultAdapter = new SearchResultAdapter(requireContext(), searchedUsers, this::onUserClick);
         searchResultsRecyclerView.setAdapter(searchResultAdapter);
 
