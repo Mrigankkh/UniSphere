@@ -46,6 +46,16 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
     }
 
+    public void startNotificationService() {
+        Intent serviceIntent = new Intent(this, com.example.unisphere.service.Notification.class);
+        startService(serviceIntent);
+    }
+
+    public void stopNotificationService() {
+        Intent serviceIntent = new Intent(this, com.example.unisphere.service.Notification.class);
+        stopService(serviceIntent);
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
         return navController.navigateUp() || super.onSupportNavigateUp();
