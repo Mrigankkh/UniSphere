@@ -60,6 +60,7 @@ public class ProfileFragment extends Fragment {
     private TextView profileUserRole;
     private RecyclerView recyclerViewTags;
     private List<Tag> tagList;
+    private Button editProfileBtn;
 
     private TagSelectAdapter tagSelectAdapter;
 
@@ -180,6 +181,14 @@ public class ProfileFragment extends Fragment {
         profileUniversity = view.findViewById(R.id.profileUniversity);
         profileUserRole = view.findViewById(R.id.profileUserRole);
         profileUsername = view.findViewById(R.id.profileUsername);
+        editProfileBtn = view.findViewById(R.id.editProfileBtn);
+        editProfileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navController.navigate(R.id.action_navigation_profile_to_editProfileFragment);
+            }
+        });
+
         String university = sharedPreferences.getString("university", "NULL");
         String username = sharedPreferences.getString("username", "NULL");
         String email = sharedPreferences.getString("email", "NULL");
