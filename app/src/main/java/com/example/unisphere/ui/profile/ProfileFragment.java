@@ -195,7 +195,7 @@ public class ProfileFragment extends Fragment {
 
     public void logOut() {
 
-        Intent serviceIntent = new Intent(getActivity(), Notification.class);
+        Intent serviceIntent = new Intent(getActivity(), com.example.unisphere.service.Notification.class);
         getActivity().stopService(serviceIntent);
         sharedPreferences.edit().clear().apply();
         authService.signOut();

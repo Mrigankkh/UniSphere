@@ -163,9 +163,6 @@ public class SearchFragment extends Fragment {
         recyclerViewTags.setLayoutManager(layoutManager);
         searchButton.setOnClickListener(v -> search());
 
-
-
-
     }
 
     private void search() {
