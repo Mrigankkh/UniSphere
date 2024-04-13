@@ -143,8 +143,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
     @Override
     public void onLoginSuccess(String email) {
 
-        Intent serviceIntent = new Intent(this, Notification.class);
-        startService(serviceIntent);
+
         String domainName = getEmailDomain(email);
         univeresityReference = firebaseDatabase.getReference();
         univeresityReference.orderByChild("domain").equalTo(domainName).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -181,6 +180,8 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                                     universityKey
                             );
                             addUserDataToSharedPreferences(user);
+                            Intent serviceIntent = new Intent(getApplicationContext(), com.example.unisphere.service.Notification.class);
+                            startService(serviceIntent);
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);

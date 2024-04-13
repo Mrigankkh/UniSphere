@@ -26,7 +26,7 @@ public class Notification extends Service {
     public void onCreate() {
         super.onCreate();
         SharedPreferences sharedPreferences = getSharedPreferences("USER_DATA", MODE_PRIVATE);
-        loggedInUserEmail = sharedPreferences.getString("emailID", "");
+        loggedInUserEmail = sharedPreferences.getString("email", "");
         uniUser = sharedPreferences.getString("university", "");
     }
 
