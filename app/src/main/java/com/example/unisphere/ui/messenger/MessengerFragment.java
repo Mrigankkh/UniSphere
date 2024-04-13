@@ -2,6 +2,7 @@ package com.example.unisphere.ui.messenger;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MessengerFragment extends Fragment {
+public class MessengerFragment extends Fragment implements UsersAdapter.OnUserClickListener{
 
     private static final String TAG = "MessengerFragment";
     private RecyclerView usersRecyclerView, searchResultsRecyclerView;
@@ -76,8 +77,17 @@ public class MessengerFragment extends Fragment {
 
     private void setupSearchResultsRecyclerView() {
         searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        searchResultsAdapter = new UsersAdapter(new ArrayList<>());
+        searchResultsAdapter = new UsersAdapter(new ArrayList<>(), this);
         searchResultsRecyclerView.setAdapter(searchResultsAdapter);
+    }
+
+    @Override
+    public void onUserClicked(UserModel user) {
+        Intent intent = new Intent(getActivity(), ChatActivity.class);
+        intent.putExtra("CHAT_PARTNER_EMAIL", user.getEmailID());
+        intent.putExtra("CHAT_PARTNER_NAME", user.getName());
+        intent.putExtra("CHAT_PARTNER_IMAGE_URL", user.getProfilePictureURL());
+        startActivity(intent);
     }
 
     private void loadChatSessions() {

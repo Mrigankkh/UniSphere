@@ -106,7 +106,8 @@ public class ChatActivity extends AppCompatActivity {
             String chatSessionKey = generateChatSessionKey(currentUserEmail, chatPartnerEmail);
             DatabaseReference chatSessionRef = messageRef.child(chatSessionKey);
 
-            ChatMessage newMessage = new ChatMessage(messageText, currentUserEmail, System.currentTimeMillis());
+            long timestamp = System.currentTimeMillis();
+            ChatMessage newMessage = new ChatMessage(messageText, currentUserEmail, chatPartnerEmail, timestamp);
 
             chatSessionRef.push().setValue(newMessage).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
