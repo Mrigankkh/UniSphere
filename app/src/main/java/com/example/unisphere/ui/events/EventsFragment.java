@@ -28,6 +28,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,12 +53,21 @@ public class EventsFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        System.out.println("EventsFragment onCreate");
         super.onCreate(savedInstanceState);
         SharedPreferences preferences = getActivity().getSharedPreferences(USER_DATA, MODE_PRIVATE);
         currentUser = getUserDataFromSharedPreferences(preferences);
         firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
         eventDatabaseReference = firebaseDatabase.getReference().child(currentUser.getUniversity()).child(getString(R.string.events));
         events = new ArrayList<>();
+        retrieveEventsFromFirebase();
+    }
+
+    @Override
+    public void onResume() {
+        System.out.println("EventsFragment onResume");
+        super.onResume();
+        retrieveEventsFromFirebase();
     }
 
     @Override
@@ -109,6 +119,7 @@ public class EventsFragment extends Fragment {
 
                 // Notify the adapter of the data change TODO if this can be improved
                 eventAdapter.notifyDataSetChanged();
+                System.out.println("retrieveEventsFromFirebase called");
 //                if(events.size()>0) {
 //                    noEventsIv.setVisibility(View.GONE);
 //                    noEventsTv.setVisibility(View.GONE);

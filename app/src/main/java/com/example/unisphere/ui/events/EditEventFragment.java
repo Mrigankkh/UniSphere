@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.example.unisphere.service.Util.USER_DATA;
 import static com.example.unisphere.service.Util.checkBlank;
 import static com.example.unisphere.service.Util.getUserDataFromSharedPreferences;
+import static com.example.unisphere.service.Util.parseDateString;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -23,8 +24,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.unisphere.R;
 import com.example.unisphere.model.Event;
@@ -35,11 +40,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.firebase.storage.internal.Util;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class EditEventFragment extends Fragment {
@@ -49,7 +56,7 @@ public class EditEventFragment extends Fragment {
     private Event event;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventDatabaseReference;
-
+    private NavController navController;
     private ImageView eventImageView;
     private Uri eventImageUri;
     private User currentUser;
@@ -72,6 +79,12 @@ public class EditEventFragment extends Fragment {
         currentUser = getUserDataFromSharedPreferences(preferences);
         firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
         eventDatabaseReference = firebaseDatabase.getReference().child(currentUser.getUniversity()).child(getString(R.string.events));
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
     }
 
     @Override
@@ -195,6 +208,24 @@ public class EditEventFragment extends Fragment {
                 String timeTo = timeToTv.getText().toString();
                 String eventEndDateTime = dateTo + "T" + timeTo + ":00";
 
+                if (checkBlank(eventTitle)
+                        || checkBlank(eventDescription)
+                        || checkBlank(eventPlace)
+                        || checkBlank(dateFrom)
+                        || checkBlank(timeFrom)
+                        || checkBlank(dateTo)
+                        || checkBlank(timeTo)) {
+                    Toast.makeText(requireContext(), "All fields need to be filled!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Date startDate = parseDateString(eventStartDateTime);
+                Date endDate = parseDateString(eventEndDateTime);
+                if(endDate.before(startDate)){
+                    Toast.makeText(requireContext(), "End time cannot be before Start time!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 String radioLabel = null;
                 String radioOptions = null;
                 String radioBtnLabel = null;
@@ -253,8 +284,6 @@ public class EditEventFragment extends Fragment {
 
         Button deleteEventBtn = view.findViewById(R.id.deleteEventBtn);
         deleteEventBtn.setOnClickListener(v -> deleteEventFromFirebase(event));
-
-
         return view;
     }
 
@@ -274,6 +303,7 @@ public class EditEventFragment extends Fragment {
     }
 
     private void uploadImageAndAddToEvent(Event event) {
+        showLoadingScreen();
         String key = event.getEventId();
         if (this.eventImageUri == null) {
             // No image to upload
@@ -361,25 +391,40 @@ public class EditEventFragment extends Fragment {
         eventDatabaseReference.child(key).setValue(event)
                 .addOnSuccessListener(aVoid -> {
                     System.out.println("Event added to Firebase");
+                    hideLoadingScreen();
                 })
                 .addOnFailureListener(e -> {
                     System.out.println("Error adding message to Firebase");
                     e.printStackTrace();
+                    hideLoadingScreen();
                 });
     }
 
     public void deleteEventFromFirebase(Event event) {
+        showLoadingScreen();
         String key = event.getEventId();
         eventDatabaseReference.child(key).removeValue()
                 .addOnSuccessListener(aVoid -> {
                     System.out.println("Event deleted from Firebase");
+                    hideLoadingScreen();
                 })
                 .addOnFailureListener(e -> {
                     System.out.println("Error deleting event from Firebase");
                     e.printStackTrace();
+                    hideLoadingScreen();
                 });
 
         returnToEventListFragment();
+    }
+
+    private void showLoadingScreen() {
+        // Show loading screen fragment
+        navController.navigate(R.id.loadingFragment);
+    }
+
+    private void hideLoadingScreen() {
+        // Hide loading screen fragment
+        navController.popBackStack();
     }
 
 }

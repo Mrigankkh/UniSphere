@@ -101,7 +101,10 @@
             android:id="@+id/action_navigation_profile_to_editProfileFragment"
             app:destination="@id/editProfileFragment" />
     </fragment>
-
+    <fragment
+        android:id="@+id/loadingFragment"
+        android:name="com.example.unisphere.LoadingFragment"
+        android:label="Loading" />
 
     <!--    <fragment-->
     <!--        android:id="@+id/navigation_signup_user"-->

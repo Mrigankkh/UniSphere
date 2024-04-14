@@ -46,6 +46,7 @@ public class MessengerFragment extends Fragment implements UsersAdapter.OnUserCl
         usersRecyclerView = view.findViewById(R.id.user_search_results_recycler_view);
         searchResultsRecyclerView = view.findViewById(R.id.search_results_recycler_view);
         SearchView searchView = view.findViewById(R.id.search_view);
+        searchView.setQueryHint("Search your friends here!");
         String currentUserOrganization = sharedPreferences.getString("university", "");
         chatsReference = FirebaseDatabase.getInstance().getReference("chats");
 

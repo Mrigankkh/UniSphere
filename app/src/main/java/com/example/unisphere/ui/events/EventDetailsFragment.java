@@ -50,6 +50,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EventDetailsFragment extends Fragment {
@@ -135,6 +136,9 @@ public class EventDetailsFragment extends Fragment {
 
         RecyclerView commentsListRv = view.findViewById(R.id.recyclerViewComments);
         List<Comment> comments = event.getComments();
+        if (comments == null) {
+            comments = new ArrayList<>();
+        }
         commentsListRv.setLayoutManager(new LinearLayoutManager(requireContext()));
         commentAdapter = new CommentAdapter(comments);
         commentsListRv.setAdapter(commentAdapter);
@@ -188,7 +192,7 @@ public class EventDetailsFragment extends Fragment {
             Toast.makeText(requireContext(), "There are no responses yet!", Toast.LENGTH_SHORT).show();
         } else {
             StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-            StorageReference csvRef = storageRef.child( "events/poll_results/PollResults-" + event.getEventTitle() + ".csv");
+            StorageReference csvRef = storageRef.child("events/poll_results/PollResults-" + event.getEventTitle() + ".csv");
             StorageMetadata metadata = new StorageMetadata.Builder()
                     .setContentType("text/csv")
                     .build();
