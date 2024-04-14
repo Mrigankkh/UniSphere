@@ -9,6 +9,16 @@ public class Post implements Serializable {
     public String description;
     public String userId;
 
+    public String getLatestLikeAction() {
+        return latestLikeAction;
+    }
+
+    public void setLatestLikeAction(String latestLikeAction) {
+        this.latestLikeAction = latestLikeAction;
+    }
+
+    public String latestLikeAction;
+
     public String getKeyFirebase() {
         return keyFirebase;
     }

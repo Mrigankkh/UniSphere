@@ -92,9 +92,11 @@ public class PostViewHolder extends RecyclerView.ViewHolder  {
                 List<String> likedByUserIds = post.getLikedByUserIds();
                 if (likedByUserIds.contains(currentUserId)) {
                     // User already liked the post, remove like
+                    postRef.child("latestLikeAction").setValue("unliked");
                     likedByUserIds.remove(currentUserId);
                 } else {
                     // User has not liked the post, add like
+                    postRef.child("latestLikeAction").setValue("liked");
                     likedByUserIds.add(currentUserId);
                 }
 
