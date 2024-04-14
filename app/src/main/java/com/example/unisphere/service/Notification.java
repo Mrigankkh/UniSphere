@@ -18,12 +18,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+
 public class Notification extends Service {
 
     private DatabaseReference postsRef, chatsRef;
     private String loggedInUserEmail, uniUser;
 
-    private Query userPostsQuery;
+    private Query userPostsQuery, userR;
     private ValueEventListener likesEventListener,messagesEventListener;
 
     @Override
@@ -50,20 +52,25 @@ public class Notification extends Service {
         return START_STICKY;
     }
 
+    private HashMap<String, Long> previousLikesCounts = new HashMap<>();
+
     private void listenForLikes() {
         postsRef = FirebaseDatabase.getInstance().getReference().child(uniUser + "/posts");
         userPostsQuery = postsRef.orderByChild("userId").equalTo(loggedInUserEmail);
-
 
         likesEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String postId = snapshot.getKey();
                     String userId = snapshot.child("userId").getValue(String.class);
                     if (loggedInUserEmail.equals(userId)) {
-                        long likesCount = snapshot.child("likedByUserIds").getChildrenCount();
-                        if (likesCount > 0) {
-                            showLikeNotification(snapshot.getKey(), likesCount);
+                        long currentLikesCount = snapshot.child("likedByUserIds").getChildrenCount();
+                        Long lastLikesCount = previousLikesCounts.get(postId);
+
+                        if (lastLikesCount == null || currentLikesCount > lastLikesCount) {
+                            showLikeNotification(postId, currentLikesCount);
+                            previousLikesCounts.put(postId, currentLikesCount);
                         }
                     }
                 }
@@ -76,18 +83,22 @@ public class Notification extends Service {
         userPostsQuery.addValueEventListener(likesEventListener);
     }
 
+
     private void listenForNewMessages() {
         chatsRef = FirebaseDatabase.getInstance().getReference("chats");
-        messagesEventListener =  new ValueEventListener() {
+        userR = chatsRef.orderByChild("recipientEmail").equalTo(loggedInUserEmail);
+        messagesEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long currentTime = System.currentTimeMillis();
                 for (DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
                     for (DataSnapshot messageSnapshot : sessionSnapshot.getChildren()) {
-                        String recipientEmail = messageSnapshot.child("recipientEmail").getValue(String.class);
-                        if (loggedInUserEmail.equals(recipientEmail)) {
+                        Long messageTimestamp = messageSnapshot.child("timestamp").getValue(Long.class);
+                        if (messageTimestamp != null && (currentTime - messageTimestamp) < 60000) {
                             String messageText = messageSnapshot.child("message").getValue(String.class);
+                            String sender = messageSnapshot.child("senderEmail").getValue(String.class);
                             if (messageText != null) {
-                                showNewMessageNotification(sessionSnapshot.getKey(), messageText);
+                                showNewMessageNotification(sessionSnapshot.getKey(), messageText, sender);
                             }
                         }
                     }
@@ -98,15 +109,7 @@ public class Notification extends Service {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         };
-        chatsRef.addValueEventListener(messagesEventListener);
-    }
-
-    private void setupMessageNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("message_notifications", "Message Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            notificationManager.createNotificationChannel(channel);
-        }
+        userR.addValueEventListener(messagesEventListener);
     }
 
 
@@ -128,7 +131,7 @@ public class Notification extends Service {
         notificationManager.notify(notificationId, builder.build());
     }
 
-    private void showNewMessageNotification(String chatSessionId, String messageText) {
+    private void showNewMessageNotification(String chatSessionId, String messageText, String sender) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("message_notifications", "Message Notifications", NotificationManager.IMPORTANCE_DEFAULT);
@@ -136,7 +139,7 @@ public class Notification extends Service {
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "message_notifications")
-                .setContentTitle("New Message")
+                .setContentTitle("New Message from"+sender)
                 .setContentText(messageText)
                 .setSmallIcon(R.drawable.ic_home)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
