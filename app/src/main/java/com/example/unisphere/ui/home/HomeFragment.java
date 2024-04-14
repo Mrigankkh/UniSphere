@@ -180,14 +180,14 @@ public class HomeFragment extends Fragment {
                 requestPermissions(
                         new String[]{android.Manifest.permission.CAMERA},
                         MY_PERMISSIONS_REQUEST_CAMERA);
-            } else {
+            }
 
                 // Permission is granted, open camera
                 buttonClickPhoto.setVisibility(View.VISIBLE);
                 buttonClick.setVisibility(View.GONE);
                 buttonUpload.setVisibility(View.GONE);
                 openCamera(previewView);
-            }
+
         });
 
 
