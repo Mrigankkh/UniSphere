@@ -5,24 +5,30 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:background="#DDDDDD"
-
+    app:cardCornerRadius="20dp"
+    app:cardElevation="4dp"
     >
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:elevation="2dp"
+        android:gravity="center_vertical"
+        app:cardCornerRadius="20dp"
+        android:layout_margin="2dp"
+        >
 
         <TextView
-            android:padding="5dp"
             android:id="@+id/tagName"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:text="TagName"
-            android:textAlignment="center"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="#000000"
+            />
 
     </LinearLayout>
 
