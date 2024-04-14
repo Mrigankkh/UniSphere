@@ -7,6 +7,7 @@ import static com.example.unisphere.service.Util.getUserDataFromSharedPreference
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -105,7 +107,7 @@ public class ProfileFragment extends Fragment {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                                 tagList = getTagListFromSnapshots(dataSnapshot);
-                                tagSelectAdapter = new TagSelectAdapter(tagList, false, recyclerViewTags);
+                                tagSelectAdapter = new TagSelectAdapter(tagList, false, recyclerViewTags, Color.WHITE);
                                 recyclerViewTags.setAdapter(tagSelectAdapter);
 
                             }
@@ -172,6 +174,7 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerViewTags = view.findViewById(R.id.recyclerViewProfileTags);
+
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(requireContext());
         layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
         recyclerViewTags.setLayoutManager(layoutManager);
@@ -201,6 +204,7 @@ public class ProfileFragment extends Fragment {
                 navController.navigate(R.id.action_navigation_profile_to_editProfileFragment);
             }
         });
+
 
     }
 

@@ -21,6 +21,8 @@ public class TagSelectAdapter extends RecyclerView.Adapter<TagSelectViewHolder> 
     private RecyclerView recyclerView;
     private boolean selectMode;
 
+    private int tagColor;
+
     public List<Tag> getSelectedTags() {
         List<Tag> selectedTags = new ArrayList<>();
         for (int i = 0; i < tagList.size(); i++) {
@@ -35,15 +37,20 @@ public class TagSelectAdapter extends RecyclerView.Adapter<TagSelectViewHolder> 
     // data is passed into the constructor
     private List<Boolean> isTagSelected;  // List to track selected state
 
-    public TagSelectAdapter(List<Tag> tagList, boolean selectMode, RecyclerView recyclerView) {
+    public TagSelectAdapter(List<Tag> tagList, boolean selectMode, RecyclerView recyclerView, int tagColor) {
         this.tagList = tagList;
+        this.tagColor = tagColor;
         this.recyclerView = recyclerView;
         this.selectMode = selectMode;
         isTagSelected = new ArrayList<>(Collections.nCopies(tagList.size(), false));  // Initialize selectedTags with all false
-
-
     }
-
+    public TagSelectAdapter(List<Tag> tagList, boolean selectMode, RecyclerView recyclerView) {
+        this.tagList = tagList;
+        this.tagColor = Color.BLACK;
+        this.recyclerView = recyclerView;
+        this.selectMode = selectMode;
+        isTagSelected = new ArrayList<>(Collections.nCopies(tagList.size(), false));  // Initialize selectedTags with all false
+    }
     // inflates the cell layout from xml when needed
     @NonNull
     @Override
@@ -56,6 +63,7 @@ public class TagSelectAdapter extends RecyclerView.Adapter<TagSelectViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull TagSelectViewHolder holder, int position) {
         Tag tag = tagList.get(position);
+        holder.textViewTag.setTextColor(tagColor);
         if (!selectMode) {
             holder.itemView.setBackgroundColor(Color.parseColor("#5D3FD3")); // Set background based on selection
 
