@@ -1,5 +1,7 @@
 package com.example.unisphere.ui.messenger;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -49,9 +51,15 @@ public class ChatActivity extends AppCompatActivity {
 
         String chatPartnerEmail = getIntent().getStringExtra("CHAT_PARTNER_EMAIL");
         String name = getIntent().getStringExtra("CHAT_PARTNER_NAME");
+        String extra = "Chat with yourself";
         String imageUrl = getIntent().getStringExtra("CHAT_PARTNER_IMAGE_URL");
 
-        chatPartnerName.setText(name);
+        if(!chatPartnerEmail.equals(currentUserEmail)) {
+            chatPartnerName.setText(name);
+        } else {
+            chatPartnerName.setText(extra);
+            Toast.makeText(ChatActivity.this, "Warning : Self messages will not be displayed in the list.", Toast.LENGTH_SHORT).show();
+        }
         if(imageUrl != null && !imageUrl.isEmpty()) {
             Picasso.get().load(imageUrl).into(chatPartnerImage);
         }
