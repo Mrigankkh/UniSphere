@@ -23,15 +23,20 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unisphere.MainActivity;
 import com.example.unisphere.R;
+import com.example.unisphere.adapter.PostAdapter;
+import com.example.unisphere.adapter.UserPost.UserPostAdapter;
 import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
+import com.example.unisphere.model.Post;
 import com.example.unisphere.model.Tag;
 import com.example.unisphere.model.User;
 import com.example.unisphere.service.AuthService;
 import com.example.unisphere.service.Notification;
+import com.example.unisphere.service.Util;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.firebase.database.DataSnapshot;
@@ -52,8 +57,10 @@ public class ProfileFragment extends Fragment {
 
     private Button tempLogout;
     private NavController navController;
+    private DatabaseReference postDatabaseReference;
     AuthService authService;
     StorageReference storageRef;
+    String userKey;
     private DatabaseReference universityReference;
     private DatabaseReference tagReference;
     private DatabaseReference userReference;
@@ -65,10 +72,16 @@ public class ProfileFragment extends Fragment {
     private TextView profileUniversity;
     private TextView profileUserRole;
     private RecyclerView recyclerViewTags;
+    private RecyclerView  recyclerViewUserPosts;
     private List<Tag> tagList;
     private Button editProfileBtn;
+    List<Post> postList;
+
+    UserPostAdapter userPostAdapter;
 
     private TagSelectAdapter tagSelectAdapter;
+    String universityKey;
+    private String email;
 
     private List<Tag> getTagListFromSnapshots(DataSnapshot dataSnapshot) {
         int i = 0;
@@ -135,20 +148,38 @@ public class ProfileFragment extends Fragment {
 
 
     }
+    public void loadUserPosts()
+    {
 
+
+        retrievePostsFromFirebase();
+
+
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         SharedPreferences preferences = getActivity().getSharedPreferences(USER_DATA, MODE_PRIVATE);
+
         currentUser = getUserDataFromSharedPreferences(preferences);
         authService = AuthService.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
         this.firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
         universityReference = firebaseDatabase.getReference();
+        this.universityKey = currentUser.getUniversity();
+        postList = new ArrayList<>();
 
         String email = currentUser.getEmailID();
         StorageReference imageRef = storageRef.child("/"+currentUser.getUniversity()+"/Users/" + email + "/profile_picture/profile_picture.jpg");
+
+
+        postDatabaseReference = firebaseDatabase.getReference().child(universityKey).child(getString(R.string.posts));
+
+
+
+        loadUserPosts();
         loadTagList();
 
 
@@ -174,12 +205,18 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerViewTags = view.findViewById(R.id.recyclerViewProfileTags);
+        recyclerViewUserPosts = view.findViewById(R.id.userPostPreview);
 
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(requireContext());
         layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
         recyclerViewTags.setLayoutManager(layoutManager);
 
+
+
+
+        recyclerViewUserPosts.setLayoutManager(new GridLayoutManager(getContext(),3));
         tempLogout = view.findViewById(R.id.tempLogout);
+
         profilePicture = view.findViewById(R.id.profilePicture);
         tempLogout.setOnClickListener(View -> logOut());
         navController = Navigation.findNavController(view);
@@ -207,9 +244,38 @@ public class ProfileFragment extends Fragment {
 
 
     }
+    public void retrievePostsFromFirebase() {
+
+
+
+        postDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Post> posts = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Post post = snapshot.getValue(Post.class);
+                    if(post.userId.equals(currentUser.getEmailID())) {
+                        posts.add(post);
+                    }
+                }
+
+                // Assuming postList is a member variable of your class
+                postList.clear();
+                postList.addAll(posts);
+                userPostAdapter = new UserPostAdapter(postList, recyclerViewUserPosts);
+                recyclerViewUserPosts.setAdapter(userPostAdapter);
+                // Notify the adapter of the data change
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     public void logOut() {
-
 
         SharedPreferences preferences = getActivity().getSharedPreferences(USER_DATA, MODE_PRIVATE);
         preferences.edit().clear().apply();

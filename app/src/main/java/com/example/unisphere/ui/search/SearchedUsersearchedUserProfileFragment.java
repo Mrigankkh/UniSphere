@@ -90,12 +90,12 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
 
                             userPostUri.add(dataSnapshot.child("imageUrl").getValue(String.class));
                         }
-                        userPostAdapter = new UserPostAdapter(getContext(), userPostUri, recyclerViewUserPostsPreview, new UserPostAdapter.ClickListener() {
-                            @Override
-                            public void onPostClick(int position) {
-
-                            }
-                        });
+//                        userPostAdapter = new UserPostAdapter(getContext(), userPostUri, recyclerViewUserPostsPreview, new UserPostAdapter.ClickListener() {
+//                            @Override
+//                            public void onPostClick(int position) {
+//
+//                            }
+//                        });
 //                        recyclerViewUserPostsPreview.setAdapter(userPostAdapter);
 //                        userPostAdapter.notifyDataSetChanged();
 
