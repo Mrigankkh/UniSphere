@@ -162,7 +162,7 @@ public class Notification extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "message_notifications1")
                 .setContentTitle("New Message from "+sender)
                 .setContentText("Message: "+messageText)
-                .setSmallIcon(R.drawable.ic_home)
+                .setSmallIcon(R.drawable.ic_message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(messageText));
 
@@ -173,10 +173,10 @@ public class Notification extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (userPostsQuery != null) {
+        if (userPostsQuery != null && likesEventListener != null) {
             userPostsQuery.removeEventListener(likesEventListener);
         }
-        if (chatsRef != null) {
+        if (chatsRef != null && messagesEventListener != null) {
             chatsRef.removeEventListener(messagesEventListener);
         }
     }
