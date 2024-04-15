@@ -90,15 +90,15 @@ public class PostViewHolder extends RecyclerView.ViewHolder  {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<String> likedByUserIds = post.getLikedByUserIds();
-                long currentTime = System.currentTimeMillis();
                 if (likedByUserIds.contains(currentUserId)) {
                     // User already liked the post, remove like
                     postRef.child("latestLikeAction").setValue("unliked");
-                    postRef.child("latestLikeTimestamp").setValue(currentTime);
                     likedByUserIds.remove(currentUserId);
                 } else {
                     // User has not liked the post, add like
+                    long currentTime = System.currentTimeMillis();
                     postRef.child("latestLikeAction").setValue("liked");
+                    postRef.child("latestLikeTimestamp").setValue(currentTime);
                     likedByUserIds.add(currentUserId);
                 }
 

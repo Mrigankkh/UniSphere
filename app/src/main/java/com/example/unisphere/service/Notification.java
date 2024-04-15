@@ -98,7 +98,7 @@ public class Notification extends Service {
 
     private void listenForNewMessages() {
         chatsRef = FirebaseDatabase.getInstance().getReference("chats");
-        chatsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        chatsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d("NotificationService", "Data fetched: " + dataSnapshot.toString());
@@ -154,11 +154,11 @@ public class Notification extends Service {
     private void showNewMessageNotification(String chatSessionId, String messageText, String sender) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("message_notifications", "Message Notifications", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel("message_notifications1", "Message Notifications", NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(channel);
         }
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "message_notifications")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "message_notifications1")
                 .setContentTitle("New Message from "+sender)
                 .setContentText("Message: "+messageText)
                 .setSmallIcon(R.drawable.ic_home)
