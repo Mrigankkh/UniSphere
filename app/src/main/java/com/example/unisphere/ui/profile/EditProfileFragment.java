@@ -1,7 +1,6 @@
 package com.example.unisphere.ui.profile;
 
 import static android.content.Context.MODE_PRIVATE;
-
 import static com.example.unisphere.service.Util.USER_DATA;
 import static com.example.unisphere.service.Util.getUserDataFromSharedPreferences;
 
@@ -33,10 +32,7 @@ import com.example.unisphere.model.Tag;
 import com.example.unisphere.model.User;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -55,9 +51,8 @@ import java.util.stream.Collectors;
 public class EditProfileFragment extends Fragment {
 
 
-    private FirebaseDatabase firebaseDatabase;
     FirebaseStorage storage;
-
+    private FirebaseDatabase firebaseDatabase;
     private NavController navController;
 
     private DatabaseReference tagReference;
@@ -97,7 +92,7 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                universityKey = (String) snapshot.getChildren().iterator().next().getKey();
+                universityKey = snapshot.getChildren().iterator().next().getKey();
                 tagReference = universityReference.child(universityKey).child("tags");
                 tagReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -205,7 +200,7 @@ public class EditProfileFragment extends Fragment {
         return true;
     }
 
-    private void removeUserFromAllTags(String userKey,List<String> selectedTags ) {
+    private void removeUserFromAllTags(String userKey, List<String> selectedTags) {
 
         tagReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -215,7 +210,7 @@ public class EditProfileFragment extends Fragment {
                     String tagName = (String) tagSnapshot.child("name").getValue();
 
                     List<String> existingUsers = (List<String>) tagSnapshot.child("users").getValue();
-                    if(existingUsers!= null) {
+                    if (existingUsers != null) {
 
                         if (existingUsers.contains(userKey)) {
                             existingUsers.remove(userKey);
@@ -271,7 +266,7 @@ public class EditProfileFragment extends Fragment {
 
 
     private void syncTags(String userKey, List<String> selectedTags) {
-        removeUserFromAllTags(userKey,  selectedTags);
+        removeUserFromAllTags(userKey, selectedTags);
         addUserToTags(userKey, selectedTags);
 
     }
@@ -296,7 +291,7 @@ public class EditProfileFragment extends Fragment {
         universityReference.child(universityKey).child("users").orderByChild("emailID").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String userKey = (String) snapshot.getChildren().iterator().next().getKey();
+                String userKey = snapshot.getChildren().iterator().next().getKey();
                 universityReference.child(universityKey).child("users").child(userKey).child("userTags").setValue(selectedTags).addOnCompleteListener(task -> {
                     if (profilePicture != null) {
                         imageRef = storage.getReference().child(fireStoreProfilePictureURL);
@@ -337,7 +332,6 @@ public class EditProfileFragment extends Fragment {
         // Hide loading screen fragment
         navController.popBackStack();
     }
-
 
 
     private void initializeUIComponents(View view) {

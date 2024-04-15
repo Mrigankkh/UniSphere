@@ -1,7 +1,5 @@
 package com.example.unisphere.ui.messenger;
 
-import static android.app.PendingIntent.getActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -9,8 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.unisphere.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,8 +24,8 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class ChatSessionAdapter extends RecyclerView.Adapter<ChatSessionAdapter.ChatSessionViewHolder> {
-    private List<String> chatPartners;
-    private String currentUserOrganization;
+    private final List<String> chatPartners;
+    private final String currentUserOrganization;
 
 
     public ChatSessionAdapter(List<String> chatPartners, String currentUserOrganization) {
@@ -58,9 +58,9 @@ public class ChatSessionAdapter extends RecyclerView.Adapter<ChatSessionAdapter.
     }
 
     public class ChatSessionViewHolder extends RecyclerView.ViewHolder {
-        private TextView userNameTextView;
-        private ImageView userProfTextView;
-        private TextView chatPartnerEmailTextView;
+        private final TextView userNameTextView;
+        private final ImageView userProfTextView;
+        private final TextView chatPartnerEmailTextView;
 
         public ChatSessionViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -72,7 +72,7 @@ public class ChatSessionAdapter extends RecyclerView.Adapter<ChatSessionAdapter.
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
-                    if(position != RecyclerView.NO_POSITION) {
+                    if (position != RecyclerView.NO_POSITION) {
                         String chatPartnerEmail = chatPartners.get(position);
                         String chatPartnerName = userNameTextView.getText().toString();
                         String chatPartnerImageUrl = userProfTextView.getTag() != null ? userProfTextView.getTag().toString() : null;
@@ -90,7 +90,6 @@ public class ChatSessionAdapter extends RecyclerView.Adapter<ChatSessionAdapter.
         }
 
 
-
         public void bind(String chatPartnerEmail) {
             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference(currentUserOrganization + "/users");
             userRef.orderByChild("emailID").equalTo(chatPartnerEmail).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -105,7 +104,7 @@ public class ChatSessionAdapter extends RecyclerView.Adapter<ChatSessionAdapter.
                             chatPartnerEmailTextView.setText(chatPartnerEmail);
 
                             if (profileImagePath != null && !profileImagePath.isEmpty()) {
-                                if(profileImagePath.startsWith("http")) {
+                                if (profileImagePath.startsWith("http")) {
                                     Picasso.get().load(profileImagePath).placeholder(R.drawable.ic_launcher_background).into(userProfTextView);
                                     userProfTextView.setTag(profileImagePath);
                                 } else {

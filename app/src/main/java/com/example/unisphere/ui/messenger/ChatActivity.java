@@ -1,7 +1,5 @@
 package com.example.unisphere.ui.messenger;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.unisphere.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,6 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,7 +31,7 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView messagesRecyclerView;
     private EditText messageEditText;
     private Button sendButton;
-    private List<ChatMessage> messageList = new ArrayList<>();
+    private final List<ChatMessage> messageList = new ArrayList<>();
     private MessageAdapter messageAdapter;
     private String currentUserEmail;
 
@@ -54,13 +54,13 @@ public class ChatActivity extends AppCompatActivity {
         String extra = "Chat with yourself";
         String imageUrl = getIntent().getStringExtra("CHAT_PARTNER_IMAGE_URL");
 
-        if(!chatPartnerEmail.equals(currentUserEmail)) {
+        if (!chatPartnerEmail.equals(currentUserEmail)) {
             chatPartnerName.setText(name);
         } else {
             chatPartnerName.setText(extra);
             Toast.makeText(ChatActivity.this, "Warning : Self messages will not be displayed in the list.", Toast.LENGTH_SHORT).show();
         }
-        if(imageUrl != null && !imageUrl.isEmpty()) {
+        if (imageUrl != null && !imageUrl.isEmpty()) {
             Picasso.get().load(imageUrl).into(chatPartnerImage);
         }
 

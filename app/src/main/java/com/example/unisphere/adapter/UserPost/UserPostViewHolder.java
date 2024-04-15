@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.unisphere.R;
 
 
-
 public class UserPostViewHolder extends RecyclerView.ViewHolder {
 
     ImageView userPostPreview;

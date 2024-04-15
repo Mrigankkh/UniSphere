@@ -1,6 +1,5 @@
 package com.example.unisphere.ui.home;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,12 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
 import com.example.unisphere.R;
 import com.example.unisphere.model.Post;
@@ -29,16 +26,16 @@ public class EditPostDialogFragment extends DialogFragment {
     private Button buttonDelete;
     private Button buttonSaveChanges;
 
-    private Post post;
+    private final Post post;
 
-    private NavController navController;
+    private final NavController navController;
 
-    private String university;
+    private final String university;
 
     private DatabaseReference postRef;
+    private EditPostListener editPostListener;
 
-
-    public EditPostDialogFragment(Post post,NavController navController,String university) {
+    public EditPostDialogFragment(Post post, NavController navController, String university) {
         this.post = post;
         this.navController = navController;
         this.university = university;
@@ -107,8 +104,6 @@ public class EditPostDialogFragment extends DialogFragment {
                     Log.e("EditPost", "Failed to delete post", e);
                 });
     }
-
-    private EditPostListener editPostListener;
 
     public void setEditPostListener(EditPostListener editPostListener) {
         this.editPostListener = editPostListener;

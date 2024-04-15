@@ -16,9 +16,9 @@ import java.util.List;
 public class UserPostAdapter extends RecyclerView.Adapter<UserPostViewHolder> {
 
 
-    private List<Post> userPostUriList;
+    private final List<Post> userPostUriList;
 
-    private RecyclerView recyclerView;
+    private final RecyclerView recyclerView;
 
     public UserPostAdapter(List<Post> userPostUriList, RecyclerView recyclerView) {
 
@@ -43,7 +43,7 @@ public class UserPostAdapter extends RecyclerView.Adapter<UserPostViewHolder> {
         Picasso.get()
                 .load(userPostUriList.get(position).getImageUrl())
                 .resize(120, 120)  // Resize to 150dp width and height
-                    // Crop the image to fit the ImageView while maintaining aspect ratio
+                // Crop the image to fit the ImageView while maintaining aspect ratio
                 .into(holder.userPostPreview);
 
     }

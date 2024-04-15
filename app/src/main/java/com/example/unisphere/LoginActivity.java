@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.unisphere.model.User;
 import com.example.unisphere.service.AuthService;
 import com.example.unisphere.service.LoginCallback;
-import com.example.unisphere.service.Notification;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -66,8 +65,8 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
         this.storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
-        email = (EditText) findViewById(R.id.email);
-        password = (EditText) findViewById(R.id.password);
+        email = findViewById(R.id.email);
+        password = findViewById(R.id.password);
 
 
     }
@@ -75,10 +74,8 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
 
     private boolean checkInputValidity(String emailString, String passwordString) {
 
-        if (emailString.isEmpty() || passwordString.length() < 6)
-            return false;
+        return !emailString.isEmpty() && passwordString.length() >= 6;
         //TODO: Check if any validation required
-        return true;
     }
 
     /**
@@ -152,18 +149,18 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 System.out.println(snapshot);
-                if(snapshot.getValue()==null){
+                if (snapshot.getValue() == null) {
                     Toast.makeText(LoginActivity.this, "Login Unsuccessful", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                String universityKey = (String) snapshot.getChildren().iterator().next().getKey();
+                String universityKey = snapshot.getChildren().iterator().next().getKey();
                 userReference = univeresityReference.child(universityKey).child("users");
                 userReference.orderByChild("emailID").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         User user = null;
 
-                        String userKey = (String) snapshot.getChildren().iterator().next().getKey();
+                        String userKey = snapshot.getChildren().iterator().next().getKey();
 
 
                         DataSnapshot currUserSnapshot = snapshot.child(userKey);
@@ -174,7 +171,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                                     currUserSnapshot.child("name").getValue(String.class),
                                     currUserSnapshot.child("emailID").getValue(String.class),
                                     currUserSnapshot.child("profilePicture").getValue(String.class),
-                                    getTagListFromSnapshots( currUserSnapshot.child("userTags"))
+                                    getTagListFromSnapshots(currUserSnapshot.child("userTags"))
                                     ,
                                     currUserSnapshot.child("userRole").getValue(String.class),
                                     universityKey
@@ -187,8 +184,6 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
-
-
 
 
                     }
@@ -235,7 +230,6 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                 .putString("user_role", user.getUserRole())
                 .putString("profile_picture", user.getProfilePicture())
                 .putStringSet("tags", new HashSet<>()).apply();
-        ;
 
     }
 

@@ -12,12 +12,8 @@ import com.example.unisphere.R;
 import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private List<ChatMessage> messages;
-    private String currentUserEmail;
-
-    private enum ViewType {
-        SENT, RECEIVED
-    }
+    private final List<ChatMessage> messages;
+    private final String currentUserEmail;
 
     public MessageAdapter(List<ChatMessage> messages, String currentUserEmail) {
         this.messages = messages;
@@ -62,6 +58,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public int getItemCount() {
         return messages.size();
+    }
+
+    private enum ViewType {
+        SENT, RECEIVED
     }
 
 }

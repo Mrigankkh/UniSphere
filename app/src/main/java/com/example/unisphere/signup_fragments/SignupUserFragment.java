@@ -4,12 +4,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +11,11 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.unisphere.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -29,8 +28,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
  */
 public class SignupUserFragment extends Fragment {
 
+    private final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     private NavController navController;
-
     private Spinner universitySelector;
     private EditText userName;
     private EditText userEmail;
@@ -38,7 +37,6 @@ public class SignupUserFragment extends Fragment {
     private EditText userConfirmPassword;
     private Spinner userRoleSelector;
     private SharedPreferences preferences;
-    private final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
 //private File
 
@@ -75,17 +73,17 @@ public class SignupUserFragment extends Fragment {
 
         navController = Navigation.findNavController(view);
 
-        universitySelector = (Spinner) view.findViewById(R.id.universitySpinner);
+        universitySelector = view.findViewById(R.id.universitySpinner);
         ArrayAdapter<CharSequence> universityAdapter = ArrayAdapter.createFromResource(this.getContext(), R.array.universities, android.R.layout.simple_spinner_dropdown_item);
         universitySelector.setAdapter(universityAdapter);
 
-        userRoleSelector = (Spinner) view.findViewById(R.id.userRoleSelector);
+        userRoleSelector = view.findViewById(R.id.userRoleSelector);
         ArrayAdapter<CharSequence> userRoleAdapter = ArrayAdapter.createFromResource(this.getContext(), R.array.user_roles, android.R.layout.simple_spinner_dropdown_item);
         userRoleSelector.setAdapter(userRoleAdapter);
-        userName = (EditText) view.findViewById(R.id.name);
-        userEmail = (EditText) view.findViewById(R.id.newUserEmail);
-        userPassword = (EditText) view.findViewById(R.id.newUserPassword);
-        userConfirmPassword = (EditText) view.findViewById(R.id.newUserConfirmPassword);
+        userName = view.findViewById(R.id.name);
+        userEmail = view.findViewById(R.id.newUserEmail);
+        userPassword = view.findViewById(R.id.newUserPassword);
+        userConfirmPassword = view.findViewById(R.id.newUserConfirmPassword);
         FloatingActionButton nextButton = view.findViewById(R.id.signup_user_next_btn);
         nextButton.setOnClickListener(this::signupUser);
 
@@ -113,8 +111,6 @@ public class SignupUserFragment extends Fragment {
     }
 
     /**
-     *
-     *
      * @param view
      */
     public void signupUser(View view) {

@@ -7,9 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unisphere.R;
 import com.example.unisphere.model.Tag;
-import com.google.android.gms.tasks.OnCompleteListener;
 
-public class TagSelectViewHolder extends RecyclerView.ViewHolder  {
+public class TagSelectViewHolder extends RecyclerView.ViewHolder {
     TextView textViewTag;
 
     TagSelectViewHolder(View itemView) {
@@ -24,4 +23,4 @@ public class TagSelectViewHolder extends RecyclerView.ViewHolder  {
 
 }
 
-    // convenience method for getting data at click position
+// convenience method for getting data at click position

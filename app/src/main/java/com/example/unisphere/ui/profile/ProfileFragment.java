@@ -1,11 +1,9 @@
 package com.example.unisphere.ui.profile;
 
 import static android.content.Context.MODE_PRIVATE;
-
 import static com.example.unisphere.service.Util.USER_DATA;
 import static com.example.unisphere.service.Util.getUserDataFromSharedPreferences;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,9 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -29,15 +25,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unisphere.MainActivity;
 import com.example.unisphere.R;
-import com.example.unisphere.adapter.PostAdapter;
 import com.example.unisphere.adapter.UserPost.UserPostAdapter;
 import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
 import com.example.unisphere.model.Post;
 import com.example.unisphere.model.Tag;
 import com.example.unisphere.model.User;
 import com.example.unisphere.service.AuthService;
-import com.example.unisphere.service.Notification;
-import com.example.unisphere.service.Util;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.firebase.database.DataSnapshot;
@@ -56,12 +49,15 @@ import java.util.List;
 public class ProfileFragment extends Fragment {
 
 
-    private Button tempLogout;
-    private NavController navController;
-    private DatabaseReference postDatabaseReference;
     AuthService authService;
     StorageReference storageRef;
     String userKey;
+    List<Post> postList;
+    UserPostAdapter userPostAdapter;
+    String universityKey;
+    private Button tempLogout;
+    private NavController navController;
+    private DatabaseReference postDatabaseReference;
     private DatabaseReference universityReference;
     private DatabaseReference tagReference;
     private DatabaseReference userReference;
@@ -73,16 +69,10 @@ public class ProfileFragment extends Fragment {
     private TextView profileUniversity;
     private TextView profileUserRole;
     private RecyclerView recyclerViewTags;
-
     private List<Tag> tagList;
     private Button editProfileBtn;
-    List<Post> postList;
-    private RecyclerView  recyclerViewUserPosts;
-
-    UserPostAdapter userPostAdapter;
-
+    private RecyclerView recyclerViewUserPosts;
     private TagSelectAdapter tagSelectAdapter;
-    String universityKey;
     private String email;
 
     private List<Tag> getTagListFromSnapshots(DataSnapshot dataSnapshot) {
@@ -113,7 +103,7 @@ public class ProfileFragment extends Fragment {
                 userReference.orderByChild("emailID").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        String userKey = (String) snapshot.getChildren().iterator().next().getKey();
+                        String userKey = snapshot.getChildren().iterator().next().getKey();
 
                         tagReference = userReference.child(userKey).child("userTags");
                         tagReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -148,8 +138,8 @@ public class ProfileFragment extends Fragment {
 
 
     }
-    public void loadUserPosts()
-    {
+
+    public void loadUserPosts() {
         retrievePostsFromFirebase();
     }
 
@@ -181,7 +171,7 @@ public class ProfileFragment extends Fragment {
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(requireContext());
         layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
         recyclerViewTags.setLayoutManager(layoutManager);
-        recyclerViewUserPosts.setLayoutManager(new GridLayoutManager(getContext(),3));
+        recyclerViewUserPosts.setLayoutManager(new GridLayoutManager(getContext(), 3));
         tagList = new ArrayList<>();
         tagSelectAdapter = new TagSelectAdapter(tagList, false, recyclerViewTags, Color.WHITE);
         recyclerViewTags.setAdapter(tagSelectAdapter);
@@ -213,7 +203,7 @@ public class ProfileFragment extends Fragment {
         loadUserPosts();
         loadTagList();
 
-        StorageReference imageRef = storageRef.child("/"+currentUser.getUniversity()+"/Users/" + email + "/profile_picture/profile_picture.jpg");
+        StorageReference imageRef = storageRef.child("/" + currentUser.getUniversity() + "/Users/" + email + "/profile_picture/profile_picture.jpg");
 
         imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
             Picasso.get().load(uri.toString()).resize(400, 400).centerCrop().into(profilePicture);
@@ -239,7 +229,7 @@ public class ProfileFragment extends Fragment {
                 List<Post> posts = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
-                    if(post.userId.equals(currentUser.getEmailID())) {
+                    if (post.userId.equals(currentUser.getEmailID())) {
                         posts.add(post);
                     }
                 }

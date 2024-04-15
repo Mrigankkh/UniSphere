@@ -40,7 +40,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.google.firebase.storage.internal.Util;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -221,7 +220,7 @@ public class EditEventFragment extends Fragment {
 
                 Date startDate = parseDateString(eventStartDateTime);
                 Date endDate = parseDateString(eventEndDateTime);
-                if(endDate.before(startDate)){
+                if (endDate.before(startDate)) {
                     Toast.makeText(requireContext(), "End time cannot be before Start time!", Toast.LENGTH_SHORT).show();
                     return;
                 }

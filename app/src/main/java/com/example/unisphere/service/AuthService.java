@@ -1,17 +1,18 @@
 package com.example.unisphere.service;
 
-import android.widget.Toast;
-
-import com.example.unisphere.LoginActivity;
-import com.example.unisphere.MainActivity;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class AuthService {
 
-    private final FirebaseAuth firebaseAuth;
     private static AuthService instance;
+    private final FirebaseAuth firebaseAuth;
+
+    private AuthService() {
+        firebaseAuth = FirebaseAuth.getInstance(FirebaseApp.getInstance());
+        System.out.println("hello world");
+    }
 
     /**
      * Get a static instance of the Auth Service.
@@ -24,11 +25,6 @@ public class AuthService {
             instance = new AuthService();
         }
         return instance;
-    }
-
-    private AuthService() {
-        firebaseAuth = FirebaseAuth.getInstance(FirebaseApp.getInstance());
-        System.out.println("hello world");
     }
 
     public void signOut() {
@@ -51,8 +47,7 @@ public class AuthService {
 
 
                 }
-            }
-            else {
+            } else {
                 loginCallback.onLoginFailure(new Exception("Authentication Failed"));
             }
 

@@ -5,21 +5,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.unisphere.R;
-import com.example.unisphere.ui.messenger.UserModel;
 
 import java.util.List;
 
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHolder> {
-    private List<UserModel> userList;
+    private final List<UserModel> userList;
     private LayoutInflater inflater;
-    private OnUserClickListener listener;
-
-    public interface OnUserClickListener {
-        void onUserClicked(UserModel user);
-    }
+    private final OnUserClickListener listener;
 
     public UsersAdapter(List<UserModel> userList, OnUserClickListener listener) {
         this.userList = userList;
@@ -51,6 +48,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         this.userList.clear();
         this.userList.addAll(newUsers);
         notifyDataSetChanged();
+    }
+
+    public interface OnUserClickListener {
+        void onUserClicked(UserModel user);
     }
 
     static class UserViewHolder extends RecyclerView.ViewHolder {

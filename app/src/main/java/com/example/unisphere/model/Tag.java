@@ -1,6 +1,8 @@
 package com.example.unisphere.model;
 
 public class Tag {
+    private String tagName;
+
     public Tag(String tagName) {
         this.tagName = tagName;
     }
@@ -12,6 +14,4 @@ public class Tag {
     public void setTagName(String tagName) {
         this.tagName = tagName;
     }
-
-    private String tagName;
 }
