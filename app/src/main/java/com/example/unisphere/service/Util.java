@@ -22,6 +22,8 @@ public class Util {
     public static final String KEY_UNIVERSITY = "university";
     public static final String KEY_EMAIL = "email";
     public static final String KEY_USER_ROLE = "user_role";
+    public static final String PROFILE_PICTURE = "profile_picture";
+
     public static final String KEY_PHONE_NUMBER = "phone_number";
     public static final String KEY_TAGS = "tags";
     public static final String USER_DATA = "USER_DATA";
@@ -55,7 +57,9 @@ public class Util {
         String university = preferences.getString(KEY_UNIVERSITY, "");
         String email = preferences.getString(KEY_EMAIL, "");
         String userRole = preferences.getString(KEY_USER_ROLE, "");
+        String profilePicture = preferences.getString(PROFILE_PICTURE, "");
+
         Set<String> tags = preferences.getStringSet(KEY_TAGS, new HashSet<>());
-        return new User(username, email, null, tags, userRole, university);
+        return new User(username, email, profilePicture, tags, userRole, university);
     }
 }

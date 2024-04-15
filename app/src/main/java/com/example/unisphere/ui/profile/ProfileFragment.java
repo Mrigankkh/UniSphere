@@ -172,13 +172,14 @@ public class ProfileFragment extends Fragment {
         this.firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
         universityReference = firebaseDatabase.getReference();
         this.universityKey = currentUser.getUniversity();
+
         postList = new ArrayList<>();
 
         String email = currentUser.getEmailID();
         StorageReference imageRef = storageRef.child("/"+currentUser.getUniversity()+"/Users/" + email + "/profile_picture/profile_picture.jpg");
 
 
-        postDatabaseReference = firebaseDatabase.getReference().child(universityKey).child(getString(R.string.posts));
+        postDatabaseReference = firebaseDatabase.getRefe1qrence().child(universityKey).child(getString(R.string.posts));
 
 
         loadUserPosts();

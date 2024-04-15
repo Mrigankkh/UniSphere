@@ -173,7 +173,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                             user = new User(
                                     currUserSnapshot.child("name").getValue(String.class),
                                     currUserSnapshot.child("emailID").getValue(String.class),
-                                    null,
+                                    currUserSnapshot.child("profilePicture").getValue(String.class),
                                     getTagListFromSnapshots( currUserSnapshot.child("userTags"))
                                     ,
                                     currUserSnapshot.child("userRole").getValue(String.class),
@@ -233,6 +233,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                 .putString("university", user.getUniversity())
                 .putString("email", user.getEmailID())
                 .putString("user_role", user.getUserRole())
+                .putString("profile_picture", user.getProfilePicture())
                 .putStringSet("tags", new HashSet<>()).apply();
         ;
 

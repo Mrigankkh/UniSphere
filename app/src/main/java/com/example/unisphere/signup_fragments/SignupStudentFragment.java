@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.example.unisphere.service.Util.USER_DATA;
 import static com.google.firebase.appcheck.internal.util.Logger.TAG;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -340,7 +341,8 @@ public class SignupStudentFragment extends Fragment {
             Toast.makeText(this.getContext(), "Invalid Inputs!", Toast.LENGTH_SHORT).show();
             return;
         }
-        String fireStoreProfilePictureURL = "/" + universityName + "/" + "Users" + "/" + email + "/" + "profile_picture/profile_picture.jpg";
+        String fireStoreProfilePictureURL =  "/" + universityName + "/" + "Users" + "/" + email + "/" + "profile_picture/profile_picture.jpg";
+
         List<String> selectedTags = tagSelectAdapter.getSelectedTags().stream()
                 .map(Tag::getTagName)
                 .collect(Collectors.toList());
@@ -364,11 +366,20 @@ public class SignupStudentFragment extends Fragment {
                                     Log.d("TAG", "User added successfully!");
                                     addUserToTags(userKey, selectedTags);
                                     imageRef = storage.getReference().child(fireStoreProfilePictureURL);
+
                                     if(profilePicture== null)
                                     {
-                                        Toast.makeText(getContext(), "Enter pfp ", Toast.LENGTH_SHORT).show();
-                                        return;
+                                        Context context = getContext();
+                                        int drawableId = context.getResources().getIdentifier("no_profile", "drawable", context.getPackageName());
+                                        profilePicture = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE +
+                                                "://" + context.getResources().getResourcePackageName(drawableId)
+                                                + '/' + context.getResources().getResourceTypeName(drawableId)
+                                                + '/' + context.getResources().getResourceEntryName(drawableId));
+
                                     }
+
+
+
                                     imageRef.putFile(profilePicture).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                         @Override
                                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -405,11 +416,6 @@ public class SignupStudentFragment extends Fragment {
     private void hideLoadingScreen() {
         // Hide loading screen fragment
         navController.popBackStack();
-    }
-
-    private void addProfilePictureToFirebase(Uri profilePictureUri) {
-        imageRef = storage.getReference().child("/Northeastern University/Users/mrigank@northeastern.edu/profile_picture/profile_picture.jpg");
-        UploadTask uploadTask = imageRef.putFile(profilePictureUri);
     }
 
     private void initializeUIComponents(View view) {
