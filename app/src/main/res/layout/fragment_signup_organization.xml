@@ -84,7 +84,7 @@
             android:layout_marginTop="50dp"
             android:text="Add Tags"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/uploadProfilePictureButton" />
+            app:layout_constraintTop_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
