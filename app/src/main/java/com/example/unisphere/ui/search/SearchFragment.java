@@ -84,7 +84,7 @@ public class SearchFragment extends Fragment {
 
                 universityKey = (String) snapshot.getChildren().iterator().next().getKey();
                 tagReference = universityReference.child(universityKey).child("tags");
-                tagReference.addValueEventListener(new ValueEventListener() {
+                tagReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -174,7 +174,7 @@ public class SearchFragment extends Fragment {
             return;
         }
 
-        universityReference.addValueEventListener(new ValueEventListener() {
+        universityReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String universityName = preferences.getString("university", null);

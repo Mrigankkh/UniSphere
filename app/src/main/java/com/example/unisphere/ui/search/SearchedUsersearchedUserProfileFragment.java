@@ -135,13 +135,13 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
                 universityKey = (String) snapshot.getChildren().iterator().next().getKey();
                 userReference = universityReference.child(universityKey).child("users");
 
-                userReference.orderByChild("emailID").equalTo(email).addValueEventListener(new ValueEventListener() {
+                userReference.orderByChild("emailID").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String userKey = (String) snapshot.getChildren().iterator().next().getKey();
 
                         tagReference = userReference.child(userKey).child("userTags");
-                        tagReference.addValueEventListener(new ValueEventListener() {
+                        tagReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

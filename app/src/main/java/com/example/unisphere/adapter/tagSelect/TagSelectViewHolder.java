@@ -19,8 +19,6 @@ public class TagSelectViewHolder extends RecyclerView.ViewHolder  {
 
     void bind(Tag tag) {
         textViewTag.setText(tag.getTagName());
-
-
     }
 
 

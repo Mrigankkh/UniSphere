@@ -112,7 +112,7 @@ public class SignupStudentFragment extends Fragment {
 
                 universityKey = (String) snapshot.getChildren().iterator().next().getKey();
                 tagReference = universityReference.child(universityKey).child("tags");
-                tagReference.addValueEventListener(new ValueEventListener() {
+                tagReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -154,7 +154,7 @@ public class SignupStudentFragment extends Fragment {
 
                 universityKey = (String) snapshot.getChildren().iterator().next().getKey();
                 programReference = universityReference.child(universityKey).child("programs");
-                programReference.addValueEventListener(new ValueEventListener() {
+                programReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -346,7 +346,12 @@ public class SignupStudentFragment extends Fragment {
         List<String> selectedTags = tagSelectAdapter.getSelectedTags().stream()
                 .map(Tag::getTagName)
                 .collect(Collectors.toList());
-        User user = new User(preferences.getString("username", "NULL"), preferences.getString("email", "NULL"), fireStoreProfilePictureURL, selectedTags, "Student", preferences.getString("university", null));
+        User user = new User(preferences.getString("username", "NULL"),
+                preferences.getString("email", "NULL"),
+                fireStoreProfilePictureURL,
+                selectedTags,
+                "Student",
+                preferences.getString("university", null));
 
         String userKey = universityReference.child(universityKey).child("users").push().getKey();
         // Add this userkey in each selected tag
@@ -367,7 +372,7 @@ public class SignupStudentFragment extends Fragment {
                                     addUserToTags(userKey, selectedTags);
                                     imageRef = storage.getReference().child(fireStoreProfilePictureURL);
 
-                                    if(profilePicture== null)
+                                    if(profilePicture == null)
                                     {
                                         Context context = getContext();
                                         int drawableId = context.getResources().getIdentifier("no_profile", "drawable", context.getPackageName());

@@ -62,6 +62,10 @@ public class TagSelectAdapter extends RecyclerView.Adapter<TagSelectViewHolder> 
     // binds the data to the TextView in each cell
     @Override
     public void onBindViewHolder(@NonNull TagSelectViewHolder holder, int position) {
+        if(tagList.isEmpty())   return;
+        if(isTagSelected.size() != tagList.size()) {
+            isTagSelected = new ArrayList<>(Collections.nCopies(tagList.size(), false));
+        }
         Tag tag = tagList.get(position);
         holder.textViewTag.setTextColor(tagColor);
         if (!selectMode) {

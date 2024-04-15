@@ -2,6 +2,9 @@ package com.example.unisphere.ui.profile;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.unisphere.service.Util.USER_DATA;
+import static com.example.unisphere.service.Util.getUserDataFromSharedPreferences;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -27,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.unisphere.R;
 import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
 import com.example.unisphere.model.Tag;
+import com.example.unisphere.model.User;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -51,13 +55,11 @@ import java.util.stream.Collectors;
 public class EditProfileFragment extends Fragment {
 
 
-    private NavController navController;
     private FirebaseDatabase firebaseDatabase;
     FirebaseStorage storage;
     private DatabaseReference tagReference;
     private DatabaseReference universityReference;
-
-    private SharedPreferences preferences;
+    private User currentUser;
 
     private Button uploadProfilePictureButton;
     private Uri profilePicture;
@@ -71,7 +73,6 @@ public class EditProfileFragment extends Fragment {
     private String email;
     private FloatingActionButton prevButton;
     private ActivityResultLauncher<Intent> galleryLauncher;
-    private FirebaseAuth firebaseAuth;
     private List<Tag> tagList;
 
     private TagSelectAdapter tagSelectAdapter;
@@ -95,15 +96,13 @@ public class EditProfileFragment extends Fragment {
 
                 universityKey = (String) snapshot.getChildren().iterator().next().getKey();
                 tagReference = universityReference.child(universityKey).child("tags");
-                tagReference.addValueEventListener(new ValueEventListener() {
+                tagReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                        tagList = getTagListFromSnapshots(dataSnapshot);
-                        tagSelectAdapter = new TagSelectAdapter(tagList, true, recyclerViewTags);
-                        recyclerViewTags.setAdapter(tagSelectAdapter);
-
+                        tagList.clear();
+                        tagList.addAll(getTagListFromSnapshots(dataSnapshot));
+                        tagSelectAdapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -131,7 +130,6 @@ public class EditProfileFragment extends Fragment {
 
         // Set up Firebase and Shared Preferences
         setup();
-
         galleryLauncher = this.registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == getActivity().RESULT_OK) {
                 // Handle gallery pick result
@@ -142,55 +140,34 @@ public class EditProfileFragment extends Fragment {
                 }
             }
         });
-        universityName = preferences.getString("university", "Northeastern University");
-        email = preferences.getString("email", null);
+        universityName = currentUser.getUniversity();
+        email = currentUser.getEmailID();
         universityReference = firebaseDatabase.getReference();
-        loadTagList();
-
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
-
-        return inflater.inflate(R.layout.fragment_edit_profile, container, false);
-
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initializeUIComponents(view);
-
-        prevButton.setOnClickListener(this::onPrevClicked);
-        nextButton.setOnClickListener(this::editUserProfile);
-
+        View editProfileView = inflater.inflate(R.layout.fragment_edit_profile, container, false);
+        initializeUIComponents(editProfileView);
+        return editProfileView;
     }
 
     private void onPrevClicked(View view) {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         fragmentManager.popBackStack();
-
     }
 
     /**
      * Set up the firebase service, shared preferences and register for activity results.
      */
     private void setup() {
-
-        this.firebaseDatabase = FirebaseDatabase.getInstance("https://unisphere-340ac-default-rtdb.firebaseio.com/");
+        this.firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
         this.storage = FirebaseStorage.getInstance();
-        this.preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
-
-
+        SharedPreferences preferences = getActivity().getSharedPreferences(USER_DATA, MODE_PRIVATE);
+        currentUser = getUserDataFromSharedPreferences(preferences);
     }
-
-
-
-
 
     private List<Tag> getTagListFromSnapshots(DataSnapshot dataSnapshot) {
         int i = 0;
@@ -207,9 +184,7 @@ public class EditProfileFragment extends Fragment {
      * Launch a image picker when the image upload button is clicked.
      */
     public void onUploadButtonClick() {
-
         galleryLauncher.launch(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI));
-
     }
 
     public boolean validateInputs() {
@@ -243,9 +218,6 @@ public class EditProfileFragment extends Fragment {
                 if (!updates.isEmpty()) {
                     tagReference.updateChildren(updates);
                 }
-
-
-
             }
 
             @Override
@@ -312,7 +284,7 @@ public class EditProfileFragment extends Fragment {
                 .map(Tag::getTagName)
                 .collect(Collectors.toList());
 
-        universityReference.child(universityKey).child("users").orderByChild("emailID").equalTo(email).addValueEventListener(new ValueEventListener() {
+        universityReference.child(universityKey).child("users").orderByChild("emailID").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String userKey = (String) snapshot.getChildren().iterator().next().getKey();
@@ -346,17 +318,21 @@ public class EditProfileFragment extends Fragment {
     private void initializeUIComponents(View view) {
         recyclerViewTags = view.findViewById(R.id.recyclerViewEditTags);
 
-        navController = Navigation.findNavController(view);
         uploadProfilePictureButton = view.findViewById(R.id.uploadEditedProfilePictureButton);
         uploadProfilePictureButton.setOnClickListener(View -> onUploadButtonClick());
         profilePictureView = view.findViewById(R.id.editProfilePictureView);
         nextButton = view.findViewById(R.id.editProfileConfirm);
         prevButton = view.findViewById(R.id.editProfileCancel);
-
+        prevButton.setOnClickListener(this::onPrevClicked);
+        nextButton.setOnClickListener(this::editUserProfile);
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(requireContext());
         layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
         recyclerViewTags.setLayoutManager(layoutManager);
 
+        tagList = new ArrayList<>();
+        tagSelectAdapter = new TagSelectAdapter(tagList, true, recyclerViewTags);
+        recyclerViewTags.setAdapter(tagSelectAdapter);
+        loadTagList();
 
     }
 }

@@ -56,7 +56,7 @@ public class SearchResultFragment extends Fragment {
 
     private void getUniversityKey() {
 
-        universityReference.addValueEventListener(new ValueEventListener() {
+        universityReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String universityName = currentUser.getUniversity();
