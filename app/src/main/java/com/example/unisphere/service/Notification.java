@@ -162,7 +162,7 @@ public class Notification extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "message_notifications1")
                 .setContentTitle("New Message from "+sender)
                 .setContentText("Message: "+messageText)
-                .setSmallIcon(R.drawable.ic_home)
+                .setSmallIcon(R.drawable.ic_message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(messageText));
 
@@ -180,5 +180,4 @@ public class Notification extends Service {
             chatsRef.removeEventListener(messagesEventListener);
         }
     }
-3
 }
