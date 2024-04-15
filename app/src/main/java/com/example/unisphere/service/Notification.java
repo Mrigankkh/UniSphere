@@ -98,7 +98,7 @@ public class Notification extends Service {
 
     private void listenForNewMessages() {
         chatsRef = FirebaseDatabase.getInstance().getReference("chats");
-        chatsRef.addValueEventListener(new ValueEventListener() {
+        messagesEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d("NotificationService", "Data fetched: " + dataSnapshot.toString());
@@ -129,7 +129,8 @@ public class Notification extends Service {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e("NotificationService", "Error fetching messages", databaseError.toException());
             }
-        });
+        };
+        chatsRef.addValueEventListener(messagesEventListener);
 
     }
 
