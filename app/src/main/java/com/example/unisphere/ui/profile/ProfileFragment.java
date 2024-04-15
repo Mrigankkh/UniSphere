@@ -120,11 +120,9 @@ public class ProfileFragment extends Fragment {
 
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                tagList = getTagListFromSnapshots(dataSnapshot);
-                                tagSelectAdapter = new TagSelectAdapter(tagList, false, recyclerViewTags, Color.WHITE);
-                                recyclerViewTags.setAdapter(tagSelectAdapter);
-
+                                tagList.clear();
+                                tagList.addAll(getTagListFromSnapshots(dataSnapshot));
+                                tagSelectAdapter.notifyDataSetChanged();
                             }
 
                             @Override
@@ -177,10 +175,16 @@ public class ProfileFragment extends Fragment {
         recyclerViewTags = profileView.findViewById(R.id.recyclerViewProfileTags);
         recyclerViewUserPosts = profileView.findViewById(R.id.userPostPreview);
 
+        userPostAdapter = new UserPostAdapter(postList, recyclerViewUserPosts);
+        recyclerViewUserPosts.setAdapter(userPostAdapter);
+
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(requireContext());
         layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
         recyclerViewTags.setLayoutManager(layoutManager);
         recyclerViewUserPosts.setLayoutManager(new GridLayoutManager(getContext(),3));
+        tagList = new ArrayList<>();
+        tagSelectAdapter = new TagSelectAdapter(tagList, false, recyclerViewTags, Color.WHITE);
+        recyclerViewTags.setAdapter(tagSelectAdapter);
         tempLogout = profileView.findViewById(R.id.tempLogout);
 
         profilePicture = profileView.findViewById(R.id.profilePicture);
@@ -243,8 +247,7 @@ public class ProfileFragment extends Fragment {
                 // Assuming postList is a member variable of your class
                 postList.clear();
                 postList.addAll(posts);
-                userPostAdapter = new UserPostAdapter(postList, recyclerViewUserPosts);
-                recyclerViewUserPosts.setAdapter(userPostAdapter);
+                userPostAdapter.notifyDataSetChanged();
                 // Notify the adapter of the data change
 
             }

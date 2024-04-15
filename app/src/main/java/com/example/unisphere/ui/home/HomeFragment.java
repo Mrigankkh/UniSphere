@@ -113,6 +113,7 @@ public class HomeFragment extends Fragment {
 
         recyclerView = homeView.findViewById(R.id.recyclerViewPostsHome);
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 1));
+        postList = new ArrayList<>();
         postAdapter = new PostAdapter(requireContext(), postList, homeView.findViewById(android.R.id.content), this::onPostClick);
         recyclerView.setAdapter(postAdapter);
 
@@ -340,7 +341,6 @@ public class HomeFragment extends Fragment {
         this.universityKey = userDataPreferences.getUniversity();
 
         super.onCreate(savedInstanceState);
-        postList = new ArrayList<>();
         firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
 
         postDatabaseReference = firebaseDatabase.getReference().child(universityKey).child(getString(R.string.posts));
