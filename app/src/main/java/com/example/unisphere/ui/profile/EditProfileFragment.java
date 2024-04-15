@@ -317,8 +317,11 @@ public class EditProfileFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String userKey = (String) snapshot.getChildren().iterator().next().getKey();
                 universityReference.child(universityKey).child("users").child(userKey).child("userTags").setValue(selectedTags).addOnCompleteListener(task -> {
-                    imageRef = storage.getReference().child(fireStoreProfilePictureURL);
-                    imageRef.putFile(profilePicture);
+                    if(profilePicture!=null) {
+                        imageRef = storage.getReference().child(fireStoreProfilePictureURL);
+
+                        imageRef.putFile(profilePicture);
+                    }
 
 
                 });

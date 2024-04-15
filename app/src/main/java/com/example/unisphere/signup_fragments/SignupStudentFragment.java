@@ -1,7 +1,6 @@
 package com.example.unisphere.signup_fragments;
 
 import static android.content.Context.MODE_PRIVATE;
-
 import static com.example.unisphere.service.Util.USER_DATA;
 import static com.google.firebase.appcheck.internal.util.Logger.TAG;
 
@@ -10,16 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,7 +20,15 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.unisphere.LoginActivity;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.unisphere.MainActivity;
 import com.example.unisphere.R;
 import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
@@ -51,13 +48,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,7 +117,7 @@ public class SignupStudentFragment extends Fragment {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                         tagList = getTagListFromSnapshots(dataSnapshot);
-                        tagSelectAdapter = new TagSelectAdapter(tagList,true, recyclerViewTags);
+                        tagSelectAdapter = new TagSelectAdapter(tagList, true, recyclerViewTags);
                         recyclerViewTags.setAdapter(tagSelectAdapter);
 
                     }
@@ -190,7 +187,6 @@ public class SignupStudentFragment extends Fragment {
 
         // Set up Firebase and Shared Preferences
         setup();
-
         galleryLauncher = this.registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == getActivity().RESULT_OK) {
                 // Handle gallery pick result
@@ -204,7 +200,7 @@ public class SignupStudentFragment extends Fragment {
         universityName = preferences.getString("university", null);
         email = preferences.getString("email", null);
         universityReference = firebaseDatabase.getReference();
-        userRole =  preferences.getString("userRole", "Student");
+        userRole = preferences.getString("userRole", "Student");
 
         loadTagList();
         loadProgramList();
@@ -300,8 +296,7 @@ public class SignupStudentFragment extends Fragment {
     }
 
 
-    public void addUserToTags(String userKey, List<String> selectedTags)
-    {
+    public void addUserToTags(String userKey, List<String> selectedTags) {
         // Assuming there is a tag reference since it was previously used to load the tags
 
         tagReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -325,15 +320,14 @@ public class SignupStudentFragment extends Fragment {
                 }
 
 
-
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });    }
+        });
+    }
 
     /**
      * Handle sign up complete event
@@ -370,6 +364,11 @@ public class SignupStudentFragment extends Fragment {
                                     Log.d("TAG", "User added successfully!");
                                     addUserToTags(userKey, selectedTags);
                                     imageRef = storage.getReference().child(fireStoreProfilePictureURL);
+                                    if(profilePicture== null)
+                                    {
+                                        Toast.makeText(getContext(), "Enter pfp ", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
                                     imageRef.putFile(profilePicture).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                         @Override
                                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
