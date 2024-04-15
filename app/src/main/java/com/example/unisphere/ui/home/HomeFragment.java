@@ -373,7 +373,7 @@ public class HomeFragment extends Fragment {
                     postDatabaseReference.child(key).setValue(post)
                             .addOnSuccessListener(aVoid -> {
                                 System.out.println("Message added to Firebase");
-                                Toast.makeText(requireContext(), "Message Sent ", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), "Post added", Toast.LENGTH_SHORT).show();
                                 retrievePostsFromFirebase();
 
                             })
