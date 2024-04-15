@@ -152,6 +152,17 @@
         android:text="Role"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/domainNameTextView" />
+
+    <TextView
+        android:id="@+id/domainNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="3dp"
+        android:text="university.edu"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newUserEmail" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
