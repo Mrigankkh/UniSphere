@@ -4,19 +4,20 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.unisphere.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -34,9 +35,11 @@ public class SignupUserFragment extends Fragment {
     private Spinner universitySelector;
     private EditText userName;
     private EditText userEmail;
+    private String emailDomain;
     private EditText userPassword;
     private EditText userConfirmPassword;
     private Spinner userRoleSelector;
+    private TextView domainNameTextView;
     private SharedPreferences preferences;
     private final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
@@ -50,8 +53,8 @@ public class SignupUserFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // If you reach this page, your app should have no prior user data.
+        emailDomain = "";
+// If you reach this page, your app should have no prior user data.
         getContext().deleteSharedPreferences("USER_DATA");
 
         preferences = getActivity().getSharedPreferences("USER_DATA", MODE_PRIVATE);
@@ -78,7 +81,18 @@ public class SignupUserFragment extends Fragment {
         universitySelector = (Spinner) view.findViewById(R.id.universitySpinner);
         ArrayAdapter<CharSequence> universityAdapter = ArrayAdapter.createFromResource(this.getContext(), R.array.universities, android.R.layout.simple_spinner_dropdown_item);
         universitySelector.setAdapter(universityAdapter);
+        universitySelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                domainNameTextView.setText(getResources().getStringArray(R.array.domains)[position]);
+                emailDomain = getResources().getStringArray(R.array.domains)[position];
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         userRoleSelector = (Spinner) view.findViewById(R.id.userRoleSelector);
         ArrayAdapter<CharSequence> userRoleAdapter = ArrayAdapter.createFromResource(this.getContext(), R.array.user_roles, android.R.layout.simple_spinner_dropdown_item);
         userRoleSelector.setAdapter(userRoleAdapter);
@@ -86,6 +100,8 @@ public class SignupUserFragment extends Fragment {
         userEmail = (EditText) view.findViewById(R.id.newUserEmail);
         userPassword = (EditText) view.findViewById(R.id.newUserPassword);
         userConfirmPassword = (EditText) view.findViewById(R.id.newUserConfirmPassword);
+        domainNameTextView = view.findViewById(R.id.domainNameTextView);
+
         FloatingActionButton nextButton = view.findViewById(R.id.signup_user_next_btn);
         nextButton.setOnClickListener(this::signupUser);
 
@@ -100,7 +116,7 @@ public class SignupUserFragment extends Fragment {
      */
     public boolean validateInputs() throws Exception {
 
-        String email = userEmail.getText().toString();
+        String email = userEmail.getText().toString() + emailDomain;
         if (!(email.matches(emailPattern) && email.length() > 0))
             throw new Exception("Invalid Email!");
         if (userPassword.getText().toString().length() < 6)
@@ -113,8 +129,6 @@ public class SignupUserFragment extends Fragment {
     }
 
     /**
-     *
-     *
      * @param view
      */
     public void signupUser(View view) {
@@ -143,7 +157,7 @@ public class SignupUserFragment extends Fragment {
      */
     private void addUserInformationToSharedPreferences() {
         preferences.edit().putString("username", userName.getText().toString()).putString("university", universitySelector.getSelectedItem().toString()).
-                putString("email", userEmail.getText().toString())
+                putString("email", userEmail.getText().toString() + emailDomain)
                 .putString("user_role", userRoleSelector.getSelectedItem().toString()).putString("password", userPassword.getText().toString()).apply();
 
     }

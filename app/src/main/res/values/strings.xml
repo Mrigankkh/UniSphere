@@ -38,6 +38,9 @@
     <string-array name="universities">
         <item>Northeastern University</item>
         <item>Boston University</item>
-
+    </string-array>
+    <string-array name="domains">
+        <item>@northeastern.edu</item>
+        <item>@bu.edu</item>
     </string-array>
 </resources>
