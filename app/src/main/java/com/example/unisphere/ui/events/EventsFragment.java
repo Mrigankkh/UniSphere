@@ -59,15 +59,12 @@ public class EventsFragment extends Fragment {
         currentUser = getUserDataFromSharedPreferences(preferences);
         firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
         eventDatabaseReference = firebaseDatabase.getReference().child(currentUser.getUniversity()).child(getString(R.string.events));
-        events = new ArrayList<>();
-        retrieveEventsFromFirebase();
     }
 
     @Override
     public void onResume() {
         System.out.println("EventsFragment onResume");
         super.onResume();
-        retrieveEventsFromFirebase();
     }
 
     @Override
@@ -76,6 +73,7 @@ public class EventsFragment extends Fragment {
         View eventsView = inflater.inflate(R.layout.fragment_events, container, false);
         recyclerView = eventsView.findViewById(R.id.recyclerViewEventsList);
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 1));
+        events = new ArrayList<>();
         eventAdapter = new EventAdapter(requireContext(), events, eventsView.findViewById(android.R.id.content), this::onEventClick);
         recyclerView.setAdapter(eventAdapter);
         fabAddEvent = eventsView.findViewById(R.id.fabAddEvent);

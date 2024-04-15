@@ -152,11 +152,7 @@ public class ProfileFragment extends Fragment {
     }
     public void loadUserPosts()
     {
-
-
         retrievePostsFromFirebase();
-
-
     }
 
     @Override
@@ -177,21 +173,12 @@ public class ProfileFragment extends Fragment {
 
         String email = currentUser.getEmailID();
         StorageReference imageRef = storageRef.child("/"+currentUser.getUniversity()+"/Users/" + email + "/profile_picture/profile_picture.jpg");
-
-
         postDatabaseReference = firebaseDatabase.getReference().child(universityKey).child(getString(R.string.posts));
-
-
         loadUserPosts();
         loadTagList();
-
-
         imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
             Picasso.get().load(uri.toString()).resize(400, 400).centerCrop().into(profilePicture);
-
-
         }).addOnFailureListener(error -> {
-
         });
 
     }
