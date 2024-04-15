@@ -73,10 +73,11 @@ public class ProfileFragment extends Fragment {
     private TextView profileUniversity;
     private TextView profileUserRole;
     private RecyclerView recyclerViewTags;
-    private RecyclerView  recyclerViewUserPosts;
+
     private List<Tag> tagList;
     private Button editProfileBtn;
     List<Post> postList;
+    private RecyclerView  recyclerViewUserPosts;
 
     UserPostAdapter userPostAdapter;
 

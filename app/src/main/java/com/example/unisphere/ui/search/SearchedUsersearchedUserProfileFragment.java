@@ -19,11 +19,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unisphere.R;
 import com.example.unisphere.adapter.UserPost.UserPostAdapter;
 import com.example.unisphere.adapter.tagSelect.TagSelectAdapter;
+import com.example.unisphere.model.Post;
 import com.example.unisphere.model.Tag;
 import com.example.unisphere.model.User;
 import com.example.unisphere.service.AuthService;
@@ -45,6 +47,8 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
 
 
     AuthService authService;
+    private DatabaseReference postDatabaseReference;
+
     StorageReference storageRef;
     private NavController navController;
     private DatabaseReference universityReference;
@@ -59,62 +63,50 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
     private TextView searchedUserProfileUniversity;
     private TextView searchedUserProfileUserRole;
     private RecyclerView recyclerViewTags;
-    private RecyclerView recyclerViewUserPostsPreview;
     private UserPostAdapter userPostAdapter;
     private List<Tag> tagList;
 
     private TagSelectAdapter tagSelectAdapter;
     private User currentUser;
     private User searchedUser;
-    private List<String> userPostUri;
+
+    List<Post> postList;
+    private RecyclerView  recyclerViewUserPosts;
 
 
-    private void getUserPosts(String email) {
 
-        String universityName = currentUser.getUniversity();
-        userPostUri = new ArrayList<>();
-        if (universityName == null) {
-            Toast.makeText(getContext(), "Error! Please go back!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        universityReference.orderByChild("name").equalTo(universityName).addListenerForSingleValueEvent(new ValueEventListener() {
+
+
+
+    public void retrievePostsFromFirebase() {
+
+
+
+        postDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                postReference = universityReference.child(universityName).child("posts");
-
-                postReference.orderByChild("userId").equalTo(email).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-
-                            userPostUri.add(dataSnapshot.child("imageUrl").getValue(String.class));
-                        }
-//                        userPostAdapter = new UserPostAdapter(getContext(), userPostUri, recyclerViewUserPostsPreview, new UserPostAdapter.ClickListener() {
-//                            @Override
-//                            public void onPostClick(int position) {
-//
-//                            }
-//                        });
-//                        recyclerViewUserPostsPreview.setAdapter(userPostAdapter);
-//                        userPostAdapter.notifyDataSetChanged();
-
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Post> posts = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Post post = snapshot.getValue(Post.class);
+                    if(post.userId.equals(searchedUser.getEmailID())) {
+                        posts.add(post);
                     }
+                }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                // Assuming postList is a member variable of your class
+                postList.clear();
+                postList.addAll(posts);
+                userPostAdapter = new UserPostAdapter(postList, recyclerViewUserPosts);
+                recyclerViewUserPosts.setAdapter(userPostAdapter);
+                // Notify the adapter of the data change
 
-                    }
-                });
-//                recyclerViewUserPostsPreview.setAdapter(userPostAdapter);
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
-
     }
 
     private List<Tag> getTagListFromSnapshots(DataSnapshot dataSnapshot) {
@@ -189,6 +181,7 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle arguments = getArguments();
+        postList = new ArrayList<>();
         searchedUser = (User) arguments.getSerializable("Searched User");
         SharedPreferences preferences = getActivity().getSharedPreferences(USER_DATA, MODE_PRIVATE);
         currentUser = getUserDataFromSharedPreferences(preferences);
@@ -196,11 +189,12 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
         storageRef = FirebaseStorage.getInstance().getReference();
         this.firebaseDatabase = FirebaseDatabase.getInstance(getString(R.string.firebase_db_url));
         universityReference = firebaseDatabase.getReference();
-
+        this.universityKey = currentUser.getUniversity();
+        postDatabaseReference = firebaseDatabase.getReference().child(universityKey).child(getString(R.string.posts));
         String email = searchedUser.getEmailID();
         StorageReference imageRef = storageRef.child("/" + currentUser.getUniversity() + "/Users/" + email + "/searchedUserProfile_picture/searchedUserProfile_picture.jpg");
         loadTagList();
-        getUserPosts(email);
+        retrievePostsFromFirebase();
 
         imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
             Picasso.get()
@@ -232,6 +226,8 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(requireContext());
         layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
         recyclerViewTags.setLayoutManager(layoutManager);
+        recyclerViewUserPosts = view.findViewById(R.id.searchedUserPostPreview);
+        recyclerViewUserPosts.setLayoutManager(new GridLayoutManager(getContext(),3));
 
 //        recyclerViewUserPostsPreview = view.findViewById(R.id.searchedUserPostsRecyclerView);
 //        recyclerViewUserPostsPreview.setLayoutManager(new GridLayoutManager(getContext(), 4));
