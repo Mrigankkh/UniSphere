@@ -47,9 +47,9 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
 
 
     AuthService authService;
-    private DatabaseReference postDatabaseReference;
-
     StorageReference storageRef;
+    List<Post> postList;
+    private DatabaseReference postDatabaseReference;
     private NavController navController;
     private DatabaseReference universityReference;
     private DatabaseReference tagReference;
@@ -65,21 +65,13 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
     private RecyclerView recyclerViewTags;
     private UserPostAdapter userPostAdapter;
     private List<Tag> tagList;
-
     private TagSelectAdapter tagSelectAdapter;
     private User currentUser;
     private User searchedUser;
-
-    List<Post> postList;
-    private RecyclerView  recyclerViewUserPosts;
-
-
-
-
+    private RecyclerView recyclerViewUserPosts;
 
 
     public void retrievePostsFromFirebase() {
-
 
 
         postDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -88,7 +80,7 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
                 List<Post> posts = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
-                    if(post.userId.equals(searchedUser.getEmailID())) {
+                    if (post.userId.equals(searchedUser.getEmailID())) {
                         posts.add(post);
                     }
                 }
@@ -132,13 +124,13 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String email = currentUser.getEmailID();
-                universityKey = (String) snapshot.getChildren().iterator().next().getKey();
+                universityKey = snapshot.getChildren().iterator().next().getKey();
                 userReference = universityReference.child(universityKey).child("users");
 
                 userReference.orderByChild("emailID").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        String userKey = (String) snapshot.getChildren().iterator().next().getKey();
+                        String userKey = snapshot.getChildren().iterator().next().getKey();
 
                         tagReference = userReference.child(userKey).child("userTags");
                         tagReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -227,7 +219,7 @@ public class SearchedUsersearchedUserProfileFragment extends Fragment {
         layoutManager.setFlexWrap(FlexWrap.WRAP); // Enable line wrapping
         recyclerViewTags.setLayoutManager(layoutManager);
         recyclerViewUserPosts = view.findViewById(R.id.searchedUserPostPreview);
-        recyclerViewUserPosts.setLayoutManager(new GridLayoutManager(getContext(),3));
+        recyclerViewUserPosts.setLayoutManager(new GridLayoutManager(getContext(), 3));
 
 //        recyclerViewUserPostsPreview = view.findViewById(R.id.searchedUserPostsRecyclerView);
 //        recyclerViewUserPostsPreview.setLayoutManager(new GridLayoutManager(getContext(), 4));

@@ -9,12 +9,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unisphere.R;
-
 import com.example.unisphere.model.User;
 
 import java.util.List;
 
-public class SearchResultViewHolder extends RecyclerView.ViewHolder  {
+public class SearchResultViewHolder extends RecyclerView.ViewHolder {
 
     ImageView searchedUserProfilePicture;
     TextView searchedUserName;

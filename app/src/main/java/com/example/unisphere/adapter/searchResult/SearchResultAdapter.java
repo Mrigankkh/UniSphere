@@ -2,7 +2,6 @@ package com.example.unisphere.adapter.searchResult;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
-
 
 import com.example.unisphere.R;
 import com.example.unisphere.model.User;
@@ -24,7 +22,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultViewHo
     List<User> searchedUsers;
     View rootView;
 
-    private ClickListener clickListener;
+    private final ClickListener clickListener;
 
     public SearchResultAdapter(Context context, List<User> searchedUsers, ClickListener clickListener) {
         this.context = context;
@@ -46,7 +44,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultViewHo
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-               bundle.putSerializable("Searched User",  currentSearchedUser);
+                bundle.putSerializable("Searched User", currentSearchedUser);
                 NavController navController = Navigation.findNavController(v);
                 navController.navigate(R.id.action_search_results_to_searchedUsersearchedUserProfileFragment, bundle);
             }

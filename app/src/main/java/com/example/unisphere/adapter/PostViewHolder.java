@@ -25,7 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
-public class PostViewHolder extends RecyclerView.ViewHolder  {
+public class PostViewHolder extends RecyclerView.ViewHolder {
 
     CardView cardView;
     TextView description;
@@ -57,7 +57,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder  {
 
         this.cardView = itemView.findViewById(R.id.post_list_container);
         this.usernameText = itemView.findViewById(R.id.textView_username);
-        this.postImage =  itemView.findViewById(R.id.imageView_post);
+        this.postImage = itemView.findViewById(R.id.imageView_post);
         this.description = itemView.findViewById(R.id.textView_post_description);
         this.likeCount = itemView.findViewById(R.id.like_count);
         this.commentCount = itemView.findViewById(R.id.comment_count);
@@ -71,7 +71,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder  {
             }
         });
         this.description.setTextColor(ContextCompat.getColor(context, android.R.color.black)); // Change text color to black
-       // itemView.setOnClickListener(this);
+        // itemView.setOnClickListener(this);
         likeIcon.setOnClickListener(v -> {
             int position = getAdapterPosition();
             Post post = postList.get(position);

@@ -23,13 +23,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostViewHolder> {
     Context context;
     List<Post> list;
     View rootView;
-
-    private ClickListener clickListener;
-
     String currentUserId;
     String university;
-
     SharedPreferences sharedPreferences;
+    private final ClickListener clickListener;
 
     public PostAdapter(Context context, List<Post> list, View rootView, ClickListener clickListener) {
         this.context = context;
@@ -45,7 +42,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostViewHolder> {
     @NonNull
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new PostViewHolder(LayoutInflater.from(context).inflate(R.layout.fragment_post_element, parent, false), context, list,clickListener);
+        return new PostViewHolder(LayoutInflater.from(context).inflate(R.layout.fragment_post_element, parent, false), context, list, clickListener);
     }
 
     @Override

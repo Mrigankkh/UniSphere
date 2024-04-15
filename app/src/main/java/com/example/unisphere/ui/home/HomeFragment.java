@@ -74,17 +74,12 @@ public class HomeFragment extends Fragment {
     RecyclerView recyclerView;
     PostAdapter postAdapter;
     ImageCapture imageCapture;
-    private FirebaseDatabase firebaseDatabase;
-
     Uri photoUriData;
-
     View popupView;
-
     // TODO: change this to get from profile
     String universityKey;
-
     String userId;
-
+    private FirebaseDatabase firebaseDatabase;
     private DatabaseReference postDatabaseReference;
 
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -102,7 +97,6 @@ public class HomeFragment extends Fragment {
             }
         }
     }
-
 
 
     @Override
@@ -126,7 +120,6 @@ public class HomeFragment extends Fragment {
             retrievePostsFromFirebase();
             swipeRefreshLayout.setRefreshing(false);
         });
-
 
 
         return homeView;
@@ -183,11 +176,11 @@ public class HomeFragment extends Fragment {
                         MY_PERMISSIONS_REQUEST_CAMERA);
             }
 
-                // Permission is granted, open camera
-                buttonClickPhoto.setVisibility(View.VISIBLE);
-                buttonClick.setVisibility(View.GONE);
-                buttonUpload.setVisibility(View.GONE);
-                openCamera(previewView);
+            // Permission is granted, open camera
+            buttonClickPhoto.setVisibility(View.VISIBLE);
+            buttonClick.setVisibility(View.GONE);
+            buttonUpload.setVisibility(View.GONE);
+            openCamera(previewView);
 
         });
 
@@ -231,7 +224,7 @@ public class HomeFragment extends Fragment {
             }
 
             Post post = new Post();
-            post.description=description;
+            post.description = description;
             post.userId = userId;
             createPostOnFirebase(post);
             dialog.dismiss();
@@ -422,7 +415,6 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-
 
 
 }

@@ -10,6 +10,7 @@ public class Comment implements Serializable {
         this.userId = userId;
         this.text = text;
     }
+
     public Comment() {
 
     }

@@ -8,6 +8,15 @@ public class Post implements Serializable {
     public String imageUrl;
     public String description;
     public String userId;
+    public String latestLikeAction;
+    public String keyFirebase;
+    private List<String> likedByUserIds;
+    private List<Comment> comments;
+
+    public Post() {
+        likedByUserIds = new ArrayList<>();
+        comments = new ArrayList<>();
+    }
 
     public String getLatestLikeAction() {
         return latestLikeAction;
@@ -17,21 +26,12 @@ public class Post implements Serializable {
         this.latestLikeAction = latestLikeAction;
     }
 
-    public String latestLikeAction;
-
     public String getKeyFirebase() {
         return keyFirebase;
     }
 
     public void setKeyFirebase(String keyFirebase) {
         this.keyFirebase = keyFirebase;
-    }
-
-    public String keyFirebase;
-
-    public Post() {
-        likedByUserIds=new ArrayList<>();
-        comments = new ArrayList<>();
     }
 
     public List<String> getLikedByUserIds() {
@@ -41,10 +41,6 @@ public class Post implements Serializable {
     public void setLikedByUserIds(List<String> likedByUserIds) {
         this.likedByUserIds = likedByUserIds;
     }
-
-    private List<String> likedByUserIds;
-
-    private List<Comment> comments;
 
     public String getImageUrl() {
         return imageUrl;

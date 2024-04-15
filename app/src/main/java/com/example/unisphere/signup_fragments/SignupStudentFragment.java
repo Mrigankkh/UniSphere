@@ -53,8 +53,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,9 +63,9 @@ import java.util.stream.Collectors;
 public class SignupStudentFragment extends Fragment {
 
 
+    FirebaseStorage storage;
     private NavController navController;
     private FirebaseDatabase firebaseDatabase;
-    FirebaseStorage storage;
     private DatabaseReference programReference;
     private DatabaseReference tagReference;
     private DatabaseReference universityReference;
@@ -110,7 +108,7 @@ public class SignupStudentFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                universityKey = (String) snapshot.getChildren().iterator().next().getKey();
+                universityKey = snapshot.getChildren().iterator().next().getKey();
                 tagReference = universityReference.child(universityKey).child("tags");
                 tagReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -152,7 +150,7 @@ public class SignupStudentFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                universityKey = (String) snapshot.getChildren().iterator().next().getKey();
+                universityKey = snapshot.getChildren().iterator().next().getKey();
                 programReference = universityReference.child(universityKey).child("programs");
                 programReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -341,7 +339,7 @@ public class SignupStudentFragment extends Fragment {
             Toast.makeText(this.getContext(), "Invalid Inputs!", Toast.LENGTH_SHORT).show();
             return;
         }
-        String fireStoreProfilePictureURL =  "/" + universityName + "/" + "Users" + "/" + email + "/" + "profile_picture/profile_picture.jpg";
+        String fireStoreProfilePictureURL = "/" + universityName + "/" + "Users" + "/" + email + "/" + "profile_picture/profile_picture.jpg";
 
         List<String> selectedTags = tagSelectAdapter.getSelectedTags().stream()
                 .map(Tag::getTagName)
@@ -372,8 +370,7 @@ public class SignupStudentFragment extends Fragment {
                                     addUserToTags(userKey, selectedTags);
                                     imageRef = storage.getReference().child(fireStoreProfilePictureURL);
 
-                                    if(profilePicture == null)
-                                    {
+                                    if (profilePicture == null) {
                                         Context context = getContext();
                                         int drawableId = context.getResources().getIdentifier("no_profile", "drawable", context.getPackageName());
                                         profilePicture = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE +
@@ -382,7 +379,6 @@ public class SignupStudentFragment extends Fragment {
                                                 + '/' + context.getResources().getResourceEntryName(drawableId));
 
                                     }
-
 
 
                                     imageRef.putFile(profilePicture).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

@@ -38,25 +38,15 @@ import java.util.List;
 public class PostDetailsFragment extends Fragment implements EditPostDialogFragment.EditPostListener {
 
     private static final String ARG_POST = "post";
-
-    private Post post;
-
-    private  TextView textViewCommentBox;
-
-    private CommentAdapter commentAdapter;
-
-
     String currentUserId;
     String university;
-
     SharedPreferences sharedPreferences;
-
     ImageView likeIcon;
-
     TextView likeCount;
-
     TextView textViewDescription;
-
+    private Post post;
+    private TextView textViewCommentBox;
+    private CommentAdapter commentAdapter;
 
     public static PostDetailsFragment newInstance(Post post) {
         PostDetailsFragment fragment = new PostDetailsFragment();
@@ -102,29 +92,26 @@ public class PostDetailsFragment extends Fragment implements EditPostDialogFragm
         TextView textViewCommentCount = view.findViewById(R.id.comment_count);
         TextView usernameText = view.findViewById(R.id.textView_username);
 
-        textViewCommentBox  = view.findViewById(R.id.editText_comment);
+        textViewCommentBox = view.findViewById(R.id.editText_comment);
         this.likeIcon = view.findViewById(R.id.like_icon);
 
         FloatingActionButton fabEdit = view.findViewById(R.id.fab_edit);
         fabEdit.setOnClickListener(v -> {
-            EditPostDialogFragment dialogFragment = new EditPostDialogFragment(post, Navigation.findNavController(requireView()),university);
+            EditPostDialogFragment dialogFragment = new EditPostDialogFragment(post, Navigation.findNavController(requireView()), university);
             dialogFragment.setEditPostListener(this);
             dialogFragment.show(getChildFragmentManager(), "EditPostDialogFragment");
         });
 
 
-
-
-        Button buttonPostComment= view.findViewById(R.id.button_post_comment);
+        Button buttonPostComment = view.findViewById(R.id.button_post_comment);
         buttonPostComment.setOnClickListener((viewButton) -> {
-            postComment(post,textViewCommentBox.getText().toString());
+            postComment(post, textViewCommentBox.getText().toString());
         });
-
 
 
         if (post != null) {
             // only display edit option to author
-            if(!currentUserId.equals(post.getUserId())){
+            if (!currentUserId.equals(post.getUserId())) {
                 fabEdit.setVisibility(View.GONE);
             }
             Picasso.get().load(post.getImageUrl()).into(imageViewPost);
@@ -155,9 +142,6 @@ public class PostDetailsFragment extends Fragment implements EditPostDialogFragm
 
         return view;
     }
-
-
-
 
 
     private void toggleLike(Post post) {
@@ -205,7 +189,7 @@ public class PostDetailsFragment extends Fragment implements EditPostDialogFragm
     }
 
 
-    private void postComment(Post post,String commentText) {
+    private void postComment(Post post, String commentText) {
 
 
         DatabaseReference postRef = FirebaseDatabase.getInstance().getReference().child(university).child("posts").child(post.getKeyFirebase());
@@ -214,7 +198,7 @@ public class PostDetailsFragment extends Fragment implements EditPostDialogFragm
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Comment> comments = post.getComments();
-                Comment newComment = new Comment(currentUserId,commentText);
+                Comment newComment = new Comment(currentUserId, commentText);
                 comments.add(newComment);
                 textViewCommentBox.setText("");
                 commentAdapter.notifyDataSetChanged();
@@ -240,7 +224,6 @@ public class PostDetailsFragment extends Fragment implements EditPostDialogFragm
 
         });
     }
-
 
 
 }

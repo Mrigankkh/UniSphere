@@ -1,10 +1,10 @@
 package com.example.unisphere;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
-import android.os.Bundle;
 
 public class SignupActivity extends AppCompatActivity {
 

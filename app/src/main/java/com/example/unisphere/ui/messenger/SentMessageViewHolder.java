@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.unisphere.R;
 
 public class SentMessageViewHolder extends RecyclerView.ViewHolder {
-    private TextView messageBody;
+    private final TextView messageBody;
 
     public SentMessageViewHolder(@NonNull View itemView) {
         super(itemView);

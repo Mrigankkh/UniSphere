@@ -9,9 +9,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.appcompat.widget.SearchView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MessengerFragment extends Fragment implements UsersAdapter.OnUserClickListener{
+public class MessengerFragment extends Fragment implements UsersAdapter.OnUserClickListener {
 
     private static final String TAG = "MessengerFragment";
     private RecyclerView usersRecyclerView, searchResultsRecyclerView;
@@ -38,6 +38,7 @@ public class MessengerFragment extends Fragment implements UsersAdapter.OnUserCl
     private ChatSessionAdapter adapter;
     private UsersAdapter searchResultsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_direct_message_search, container, false);

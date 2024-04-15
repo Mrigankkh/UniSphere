@@ -1,19 +1,31 @@
 package com.example.unisphere.model;
 
 
-import android.net.Uri;
-
-import java.io.File;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * Represents a user of the application.
  */
-public  class User implements Serializable {
+public class User implements Serializable {
+
+    private final String university;
+    private final String name;
+    private final String emailID;
+    private final String profilePictureURL;
+    private final Collection<String> userTags;
+    private final String userRole;
+
+    public User(String name, String emailID, String profilePictureURL, Collection<String> userTags, String userRole, String university) {
+//        this.university = university;
+        this.name = name;
+        this.emailID = emailID;
+        this.university = university;
+        this.profilePictureURL = profilePictureURL;
+        this.userTags = userTags;
+        this.userRole = userRole;
+
+    }
 
     public String getName() {
         return name;
@@ -23,8 +35,7 @@ public  class User implements Serializable {
         return emailID;
     }
 
-
-
+    //Currently we do not hash it; Using Bcrypt to store hashed password would be good practice.
 
     public String getProfilePicture() {
         return profilePictureURL;
@@ -38,33 +49,9 @@ public  class User implements Serializable {
         return userRole;
     }
 
-
     public String getUniversity() {
         return university;
     }
-
-    private String university;
-    private String name;
-    private String emailID;
-
-    //Currently we do not hash it; Using Bcrypt to store hashed password would be good practice.
-
-
-    private String profilePictureURL;
-    private Collection<String> userTags;
-    private String userRole;
-
-    public User(String name, String emailID, String profilePictureURL, Collection<String> userTags, String userRole, String university) {
-//        this.university = university;
-        this.name = name;
-        this.emailID = emailID;
-       this.university = university;
-        this.profilePictureURL = profilePictureURL;
-        this.userTags = userTags;
-        this.userRole = userRole;
-
-    }
-
 
     @Override
     public String toString() {

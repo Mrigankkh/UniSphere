@@ -20,7 +20,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     List<Event> events;
     View rootView;
 
-    private ClickListener clickListener;
+    private final ClickListener clickListener;
 
 
     public EventAdapter(Context context, List<Event> events, View rootView, ClickListener clickListener) {

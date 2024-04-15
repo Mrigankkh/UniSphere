@@ -4,6 +4,12 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,6 +135,8 @@ public class SignupUserFragment extends Fragment {
     }
 
     /**
+     *
+     *
      * @param view
      */
     public void signupUser(View view) {
@@ -157,7 +165,7 @@ public class SignupUserFragment extends Fragment {
      */
     private void addUserInformationToSharedPreferences() {
         preferences.edit().putString("username", userName.getText().toString()).putString("university", universitySelector.getSelectedItem().toString()).
-                putString("email", userEmail.getText().toString() + emailDomain)
+                putString("email", userEmail.getText().toString())
                 .putString("user_role", userRoleSelector.getSelectedItem().toString()).putString("password", userPassword.getText().toString()).apply();
 
     }

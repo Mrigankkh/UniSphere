@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -49,7 +48,11 @@ public class SearchFragment extends Fragment {
     private String universityKey;
     private RecyclerView recyclerViewTags;
     private Button searchButton;
-    private Bundle bundle = new Bundle();
+    private final Bundle bundle = new Bundle();
+
+    public SearchFragment() {
+        // Required empty public constructor
+    }
 
     private void setup() {
 
@@ -82,7 +85,7 @@ public class SearchFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                universityKey = (String) snapshot.getChildren().iterator().next().getKey();
+                universityKey = snapshot.getChildren().iterator().next().getKey();
                 tagReference = universityReference.child(universityKey).child("tags");
                 tagReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -90,7 +93,7 @@ public class SearchFragment extends Fragment {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                         tagList = getTagListFromSnapshots(dataSnapshot);
-                        tagSelectAdapter = new TagSelectAdapter(tagList, true,recyclerViewTags);
+                        tagSelectAdapter = new TagSelectAdapter(tagList, true, recyclerViewTags);
                         recyclerViewTags.setAdapter(tagSelectAdapter);
 
                     }
@@ -110,12 +113,6 @@ public class SearchFragment extends Fragment {
 
 
     }
-
-
-    public SearchFragment() {
-        // Required empty public constructor
-    }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -169,7 +166,7 @@ public class SearchFragment extends Fragment {
         List<String> selectedTags = tagSelectAdapter.getSelectedTags().stream()
                 .map(Tag::getTagName)
                 .collect(Collectors.toList());
-        if (selectedTags.size() == 0 ) {
+        if (selectedTags.size() == 0) {
             Toast.makeText(this.getContext(), "You must enter a search criteria!", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -185,7 +182,7 @@ public class SearchFragment extends Fragment {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                        universityKey = (String) snapshot.getChildren().iterator().next().getKey();
+                        universityKey = snapshot.getChildren().iterator().next().getKey();
                         tagReference = universityReference.child(universityKey).child("tags");
                         tagReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override

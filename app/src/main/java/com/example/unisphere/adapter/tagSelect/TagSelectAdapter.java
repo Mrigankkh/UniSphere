@@ -17,11 +17,29 @@ import java.util.List;
 
 public class TagSelectAdapter extends RecyclerView.Adapter<TagSelectViewHolder> implements View.OnClickListener {
 
-    private List<Tag> tagList;
-    private RecyclerView recyclerView;
-    private boolean selectMode;
+    private final List<Tag> tagList;
+    private final RecyclerView recyclerView;
+    private final boolean selectMode;
 
-    private int tagColor;
+    private final int tagColor;
+    // data is passed into the constructor
+    private List<Boolean> isTagSelected;  // List to track selected state
+
+    public TagSelectAdapter(List<Tag> tagList, boolean selectMode, RecyclerView recyclerView, int tagColor) {
+        this.tagList = tagList;
+        this.tagColor = tagColor;
+        this.recyclerView = recyclerView;
+        this.selectMode = selectMode;
+        isTagSelected = new ArrayList<>(Collections.nCopies(tagList.size(), false));  // Initialize selectedTags with all false
+    }
+
+    public TagSelectAdapter(List<Tag> tagList, boolean selectMode, RecyclerView recyclerView) {
+        this.tagList = tagList;
+        this.tagColor = Color.BLACK;
+        this.recyclerView = recyclerView;
+        this.selectMode = selectMode;
+        isTagSelected = new ArrayList<>(Collections.nCopies(tagList.size(), false));  // Initialize selectedTags with all false
+    }
 
     public List<Tag> getSelectedTags() {
         List<Tag> selectedTags = new ArrayList<>();
@@ -34,23 +52,6 @@ public class TagSelectAdapter extends RecyclerView.Adapter<TagSelectViewHolder> 
         return selectedTags;
     }
 
-    // data is passed into the constructor
-    private List<Boolean> isTagSelected;  // List to track selected state
-
-    public TagSelectAdapter(List<Tag> tagList, boolean selectMode, RecyclerView recyclerView, int tagColor) {
-        this.tagList = tagList;
-        this.tagColor = tagColor;
-        this.recyclerView = recyclerView;
-        this.selectMode = selectMode;
-        isTagSelected = new ArrayList<>(Collections.nCopies(tagList.size(), false));  // Initialize selectedTags with all false
-    }
-    public TagSelectAdapter(List<Tag> tagList, boolean selectMode, RecyclerView recyclerView) {
-        this.tagList = tagList;
-        this.tagColor = Color.BLACK;
-        this.recyclerView = recyclerView;
-        this.selectMode = selectMode;
-        isTagSelected = new ArrayList<>(Collections.nCopies(tagList.size(), false));  // Initialize selectedTags with all false
-    }
     // inflates the cell layout from xml when needed
     @NonNull
     @Override
@@ -62,8 +63,8 @@ public class TagSelectAdapter extends RecyclerView.Adapter<TagSelectViewHolder> 
     // binds the data to the TextView in each cell
     @Override
     public void onBindViewHolder(@NonNull TagSelectViewHolder holder, int position) {
-        if(tagList.isEmpty())   return;
-        if(isTagSelected.size() != tagList.size()) {
+        if (tagList.isEmpty()) return;
+        if (isTagSelected.size() != tagList.size()) {
             isTagSelected = new ArrayList<>(Collections.nCopies(tagList.size(), false));
         }
         Tag tag = tagList.get(position);

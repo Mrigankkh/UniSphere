@@ -64,7 +64,7 @@ public class SearchResultFragment extends Fragment {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                        String universityKey = (String) snapshot.getChildren().iterator().next().getKey();
+                        String universityKey = snapshot.getChildren().iterator().next().getKey();
                     }
 
                     @Override
@@ -121,7 +121,7 @@ public class SearchResultFragment extends Fragment {
                             return;
                         }
 
-                        String universityKey = (String) snapshot.getChildren().iterator().next().getKey();
+                        String universityKey = snapshot.getChildren().iterator().next().getKey();
                         for (String searchedUserKey : searchedUserKeys) {
                             if (searchedUserKey == null) {
                                 continue;
@@ -149,12 +149,11 @@ public class SearchResultFragment extends Fragment {
                                         StorageReference imageRef = storageRef.child("/" + currentUser.getUniversity() + "/Users/" + searchedUserEmail + "/profile_picture/profile_picture.jpg");
                                         imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                                             User searchedUser = new User(searchedUserName, searchedUserEmail, uri.toString(), null, searchedUserRole, searchedUserUniversity);
-                                            if(searchedUser!=null) {
+                                            if (searchedUser != null) {
                                                 searchedUsers.add(searchedUser);
                                                 searchResultAdapter.notifyDataSetChanged();  // Notify the adapter in a better way
 
-                                            }
-                                            else {
+                                            } else {
                                                 System.out.println("User was null");
                                             }
 

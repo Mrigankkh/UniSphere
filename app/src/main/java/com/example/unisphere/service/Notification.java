@@ -20,15 +20,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
-
 public class Notification extends Service {
 
     private DatabaseReference postsRef, chatsRef;
     private String loggedInUserEmail, uniUser;
 
     private Query userPostsQuery, userR;
-    private ValueEventListener likesEventListener,messagesEventListener;
+    private ValueEventListener likesEventListener, messagesEventListener;
 
     @Override
     public void onCreate() {
@@ -37,7 +35,6 @@ public class Notification extends Service {
         loggedInUserEmail = sharedPreferences.getString("email", "");
         uniUser = sharedPreferences.getString("university", "");
     }
-
 
 
     @Override
@@ -69,7 +66,7 @@ public class Notification extends Service {
                     String toggle = snapshot.child("latestLikeAction").getValue(String.class);
                     Long messageTimestamp = snapshot.child("latestLikeTimestamp").getValue(Long.class);
                     if (loggedInUserEmail.equals(userId) && messageTimestamp != null && (currentTime - messageTimestamp) < 30000) {
-                        if("liked".equals(toggle)){
+                        if ("liked".equals(toggle)) {
                             String lastUserEmail = "";
                             for (DataSnapshot userSnapshot : snapshot.child("likedByUserIds").getChildren()) {
                                 lastUserEmail = userSnapshot.getValue(String.class);
@@ -95,13 +92,12 @@ public class Notification extends Service {
     }
 
 
-
     private void listenForNewMessages() {
         chatsRef = FirebaseDatabase.getInstance().getReference("chats");
         messagesEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("NotificationService", "Data fetched: " + dataSnapshot.toString());
+                Log.d("NotificationService", "Data fetched: " + dataSnapshot);
                 long currentTime = System.currentTimeMillis();
                 for (DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
                     Log.d("NotificationService", "Session ID: " + sessionSnapshot.getKey());
@@ -135,7 +131,7 @@ public class Notification extends Service {
     }
 
 
-        private void showLikeNotification(String postId, String lastUser) {
+    private void showLikeNotification(String postId, String lastUser) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -160,8 +156,8 @@ public class Notification extends Service {
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "message_notifications1")
-                .setContentTitle("New Message from "+sender)
-                .setContentText("Message: "+messageText)
+                .setContentTitle("New Message from " + sender)
+                .setContentText("Message: " + messageText)
                 .setSmallIcon(R.drawable.ic_message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(messageText));
