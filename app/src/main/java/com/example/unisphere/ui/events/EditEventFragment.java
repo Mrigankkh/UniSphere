@@ -278,7 +278,6 @@ public class EditEventFragment extends Fragment {
                 event.setRadioButtonLabel(radioBtnLabel);
                 uploadImageAndAddToEvent(event);
                 Toast.makeText(requireContext(), "Event is successfully updated", Toast.LENGTH_SHORT).show();
-                returnToEventDetailFragment();
             }
         });
 
@@ -392,11 +391,13 @@ public class EditEventFragment extends Fragment {
                 .addOnSuccessListener(aVoid -> {
                     System.out.println("Event added to Firebase");
                     hideLoadingScreen();
+                    returnToEventDetailFragment();
                 })
                 .addOnFailureListener(e -> {
                     System.out.println("Error adding message to Firebase");
                     e.printStackTrace();
                     hideLoadingScreen();
+                    returnToEventDetailFragment();
                 });
     }
 
