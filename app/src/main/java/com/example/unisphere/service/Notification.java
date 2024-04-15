@@ -96,21 +96,26 @@ public class Notification extends Service {
 
     private void listenForNewMessages() {
         chatsRef = FirebaseDatabase.getInstance().getReference("chats");
-        userR = chatsRef.orderByChild("recipientEmail").equalTo(loggedInUserEmail.trim());
-        messagesEventListener = new ValueEventListener() {
+        chatsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("NotificationService", "Data fetched: " + dataSnapshot.toString());
                 long currentTime = System.currentTimeMillis();
-                Log.d("NotificationService", "Checking messages for: " + loggedInUserEmail);
                 for (DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
+                    Log.d("NotificationService", "Session ID: " + sessionSnapshot.getKey());
                     for (DataSnapshot messageSnapshot : sessionSnapshot.getChildren()) {
+                        String recipient = messageSnapshot.child("recipientEmail").getValue(String.class);
+                        String sender = messageSnapshot.child("senderEmail").getValue(String.class);
                         Long messageTimestamp = messageSnapshot.child("timestamp").getValue(Long.class);
-                        Log.d("NotificationService", "Timestamp: " + messageTimestamp);
-                        if (messageTimestamp != null && (currentTime - messageTimestamp) < 60000) {
-                            String messageText = messageSnapshot.child("message").getValue(String.class);
-                            String sender = messageSnapshot.child("senderEmail").getValue(String.class);
+                        String messageText = messageSnapshot.child("message").getValue(String.class);
+
+                        Log.d("NotificationService", "Checking message from: " + sender + " to " + recipient);
+                        if (loggedInUserEmail.equals(recipient) && messageTimestamp != null && (currentTime - messageTimestamp) < 60000) {
                             if (messageText != null && sender != null) {
-                                Log.d("NotificationService", "New message from " + sender + ": " + messageText);
+                                int atIndex = sender.indexOf('@');
+                                if (atIndex != -1) {
+                                    sender = sender.substring(0, atIndex);
+                                }
                                 showNewMessageNotification(sessionSnapshot.getKey(), messageText, sender);
                             }
                         }
@@ -122,12 +127,12 @@ public class Notification extends Service {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e("NotificationService", "Error fetching messages", databaseError.toException());
             }
-        };
-        userR.addValueEventListener(messagesEventListener);
+        });
+
     }
 
 
-    private void showLikeNotification(String postId, String lastUser) {
+        private void showLikeNotification(String postId, String lastUser) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -152,8 +157,8 @@ public class Notification extends Service {
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "message_notifications")
-                .setContentTitle("New Message from"+sender)
-                .setContentText(messageText)
+                .setContentTitle("New Message from "+sender)
+                .setContentText("Message: "+messageText)
                 .setSmallIcon(R.drawable.ic_home)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(messageText));
