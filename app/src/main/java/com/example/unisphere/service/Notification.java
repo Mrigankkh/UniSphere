@@ -173,11 +173,12 @@ public class Notification extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (userPostsQuery != null) {
+        if (userPostsQuery != null && likesEventListener != null) {
             userPostsQuery.removeEventListener(likesEventListener);
         }
-        if (chatsRef != null) {
+        if (chatsRef != null && messagesEventListener != null) {
             chatsRef.removeEventListener(messagesEventListener);
         }
     }
+3
 }
