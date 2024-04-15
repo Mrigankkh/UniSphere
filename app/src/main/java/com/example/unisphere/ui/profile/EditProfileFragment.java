@@ -57,6 +57,9 @@ public class EditProfileFragment extends Fragment {
 
     private FirebaseDatabase firebaseDatabase;
     FirebaseStorage storage;
+
+    private NavController navController;
+
     private DatabaseReference tagReference;
     private DatabaseReference universityReference;
     private User currentUser;
@@ -152,6 +155,12 @@ public class EditProfileFragment extends Fragment {
         View editProfileView = inflater.inflate(R.layout.fragment_edit_profile, container, false);
         initializeUIComponents(editProfileView);
         return editProfileView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
     }
 
     private void onPrevClicked(View view) {
@@ -289,30 +298,46 @@ public class EditProfileFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String userKey = (String) snapshot.getChildren().iterator().next().getKey();
                 universityReference.child(universityKey).child("users").child(userKey).child("userTags").setValue(selectedTags).addOnCompleteListener(task -> {
-                    if(profilePicture!=null) {
+                    if (profilePicture != null) {
                         imageRef = storage.getReference().child(fireStoreProfilePictureURL);
+                        showLoadingScreen();
+                        imageRef.putFile(profilePicture).addOnSuccessListener(taskSnapshot -> {
 
-                        imageRef.putFile(profilePicture);
+                            // Image upload successful, pop the fragment off the back stack
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            fragmentManager.popBackStack();
+                            hideLoadingScreen();
+                        }).addOnFailureListener(exception -> {
+                            // Handle unsuccessful image upload
+                            Toast.makeText(getContext(), "Failed to upload profile picture!", Toast.LENGTH_SHORT).show();
+                            hideLoadingScreen();
+                        });
+                    } else {
+                        // No profile picture to upload, just pop the fragment off the back stack
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        fragmentManager.popBackStack();
                     }
-
-
                 });
                 syncTags(userKey, selectedTags);
-
-
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                // Handle onCancelled
             }
         });
-        // Add this userkey in each selected tag
-
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        fragmentManager.popBackStack();
     }
+
+    private void showLoadingScreen() {
+        // Show loading screen fragment
+        navController.navigate(R.id.loadingFragment);
+    }
+
+    private void hideLoadingScreen() {
+        // Hide loading screen fragment
+        navController.popBackStack();
+    }
+
 
 
     private void initializeUIComponents(View view) {
