@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
@@ -52,7 +54,6 @@ public class Notification extends Service {
         return START_STICKY;
     }
 
-    private HashMap<String, Long> previousLikesCounts = new HashMap<>();
 
     private void listenForLikes() {
         postsRef = FirebaseDatabase.getInstance().getReference().child(uniUser + "/posts");
@@ -64,13 +65,20 @@ public class Notification extends Service {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String postId = snapshot.getKey();
                     String userId = snapshot.child("userId").getValue(String.class);
+                    String toggle = snapshot.child("latestLikeAction").getValue(String.class);
                     if (loggedInUserEmail.equals(userId)) {
-                        long currentLikesCount = snapshot.child("likedByUserIds").getChildrenCount();
-                        Long lastLikesCount = previousLikesCounts.get(postId);
-
-                        if (lastLikesCount == null || currentLikesCount > lastLikesCount) {
-                            showLikeNotification(postId, currentLikesCount);
-                            previousLikesCounts.put(postId, currentLikesCount);
+                        if("liked".equals(toggle)){
+                            String lastUserEmail = "";
+                            for (DataSnapshot userSnapshot : snapshot.child("likedByUserIds").getChildren()) {
+                                lastUserEmail = userSnapshot.getValue(String.class);
+                            }
+                            if (!lastUserEmail.isEmpty()) {
+                                int atIndex = lastUserEmail.indexOf('@');
+                                if (atIndex != -1) {
+                                    lastUserEmail = lastUserEmail.substring(0, atIndex);
+                                }
+                                showLikeNotification(postId, lastUserEmail);
+                            }
                         }
                     }
                 }
@@ -78,26 +86,31 @@ public class Notification extends Service {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("NotificationService", "Error fetching posts", databaseError.toException());
             }
         };
         userPostsQuery.addValueEventListener(likesEventListener);
     }
 
 
+
     private void listenForNewMessages() {
         chatsRef = FirebaseDatabase.getInstance().getReference("chats");
-        userR = chatsRef.orderByChild("recipientEmail").equalTo(loggedInUserEmail);
+        userR = chatsRef.orderByChild("recipientEmail").equalTo(loggedInUserEmail.trim());
         messagesEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long currentTime = System.currentTimeMillis();
+                Log.d("NotificationService", "Checking messages for: " + loggedInUserEmail);
                 for (DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
                     for (DataSnapshot messageSnapshot : sessionSnapshot.getChildren()) {
                         Long messageTimestamp = messageSnapshot.child("timestamp").getValue(Long.class);
+                        Log.d("NotificationService", "Timestamp: " + messageTimestamp);
                         if (messageTimestamp != null && (currentTime - messageTimestamp) < 60000) {
                             String messageText = messageSnapshot.child("message").getValue(String.class);
                             String sender = messageSnapshot.child("senderEmail").getValue(String.class);
-                            if (messageText != null) {
+                            if (messageText != null && sender != null) {
+                                Log.d("NotificationService", "New message from " + sender + ": " + messageText);
                                 showNewMessageNotification(sessionSnapshot.getKey(), messageText, sender);
                             }
                         }
@@ -107,14 +120,14 @@ public class Notification extends Service {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("NotificationService", "Error fetching messages", databaseError.toException());
             }
         };
         userR.addValueEventListener(messagesEventListener);
     }
 
 
-
-    private void showLikeNotification(String postId, long likesCount) {
+    private void showLikeNotification(String postId, String lastUser) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -124,7 +137,7 @@ public class Notification extends Service {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "like_notifications")
                 .setContentTitle("New like on your post")
-                .setContentText("Your post has been liked " + likesCount + " times!")
+                .setContentText("Your post has been liked by " + lastUser)
                 .setSmallIcon(R.drawable.ic_like_filled_foreground);
 
         int notificationId = postId.hashCode();
