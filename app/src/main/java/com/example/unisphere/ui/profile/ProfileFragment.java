@@ -181,7 +181,6 @@ public class ProfileFragment extends Fragment {
         postDatabaseReference = firebaseDatabase.getReference().child(universityKey).child(getString(R.string.posts));
 
 
-
         loadUserPosts();
         loadTagList();
 
@@ -243,6 +242,18 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 navController.navigate(R.id.action_navigation_profile_to_editProfileFragment);
             }
+        });
+        loadUserPosts();
+        loadTagList();
+
+        StorageReference imageRef = storageRef.child("/"+currentUser.getUniversity()+"/Users/" + email + "/profile_picture/profile_picture.jpg");
+
+        imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            Picasso.get().load(uri.toString()).resize(400, 400).centerCrop().into(profilePicture);
+
+
+        }).addOnFailureListener(error -> {
+
         });
 
 
