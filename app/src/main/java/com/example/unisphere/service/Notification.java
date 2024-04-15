@@ -64,9 +64,11 @@ public class Notification extends Service {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String postId = snapshot.getKey();
+                    long currentTime = System.currentTimeMillis();
                     String userId = snapshot.child("userId").getValue(String.class);
                     String toggle = snapshot.child("latestLikeAction").getValue(String.class);
-                    if (loggedInUserEmail.equals(userId)) {
+                    Long messageTimestamp = snapshot.child("latestLikeTimestamp").getValue(Long.class);
+                    if (loggedInUserEmail.equals(userId) && messageTimestamp != null && (currentTime - messageTimestamp) < 30000) {
                         if("liked".equals(toggle)){
                             String lastUserEmail = "";
                             for (DataSnapshot userSnapshot : snapshot.child("likedByUserIds").getChildren()) {

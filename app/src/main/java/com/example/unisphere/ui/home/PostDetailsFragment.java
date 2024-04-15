@@ -171,6 +171,8 @@ public class PostDetailsFragment extends Fragment implements EditPostDialogFragm
                 List<String> likedByUserIds = post.getLikedByUserIds();
                 if (likedByUserIds.contains(currentUserId)) {
                     // User already liked the post, remove like
+                    long currentTime = System.currentTimeMillis();
+                    postRef.child("latestLikeTimestamp").setValue(currentTime);
                     postRef.child("latestLikeAction").setValue("unliked");
                     likedByUserIds.remove(currentUserId);
                 } else {
