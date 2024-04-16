@@ -108,7 +108,7 @@ public class Notification extends Service {
                         String messageText = messageSnapshot.child("message").getValue(String.class);
 
                         Log.d("NotificationService", "Checking message from: " + sender + " to " + recipient);
-                        if (loggedInUserEmail.equals(recipient) && messageTimestamp != null && (currentTime - messageTimestamp) < 60000) {
+                        if (loggedInUserEmail.equals(recipient) && messageTimestamp != null && (currentTime - messageTimestamp) < 5000) {
                             if (messageText != null && sender != null) {
                                 int atIndex = sender.indexOf('@');
                                 if (atIndex != -1) {

@@ -125,6 +125,13 @@ public class HomeFragment extends Fragment {
         return homeView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        retrievePostsFromFirebase();
+    }
+
+
     private void showAddPostPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         this.popupView = getLayoutInflater().inflate(R.layout.dialog_new_post, null);
