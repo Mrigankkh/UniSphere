@@ -188,7 +188,7 @@ public class CreateEventFragment extends Fragment {
 
                 Date startDate = parseDateString(eventStartDateTime);
                 Date endDate = parseDateString(eventEndDateTime);
-                if (!endDate.before(startDate)) {
+                if (endDate.before(startDate)) {
                     Toast.makeText(requireContext(), "End time cannot be before Start time!", Toast.LENGTH_SHORT).show();
                     return;
                 }
