@@ -348,7 +348,7 @@ public class SignupStudentFragment extends Fragment {
                 preferences.getString("email", "NULL"),
                 fireStoreProfilePictureURL,
                 selectedTags,
-                "Student",
+                userRole,
                 preferences.getString("university", null));
 
         String userKey = universityReference.child(universityKey).child("users").push().getKey();

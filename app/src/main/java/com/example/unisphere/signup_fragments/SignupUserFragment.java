@@ -166,7 +166,7 @@ public class SignupUserFragment extends Fragment {
     private void addUserInformationToSharedPreferences() {
         preferences.edit().putString("username", userName.getText().toString()).putString("university", universitySelector.getSelectedItem().toString()).
                 putString("email", userEmail.getText().toString() + emailDomain)
-                .putString("user_role", userRoleSelector.getSelectedItem().toString()).putString("password", userPassword.getText().toString()).apply();
+                .putString("userRole", userRoleSelector.getSelectedItem().toString()).putString("password", userPassword.getText().toString()).apply();
 
     }
 
