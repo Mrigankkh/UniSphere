@@ -1,4 +1,8 @@
 # UniSphere
+![Static Badge](https://img.shields.io/badge/Android-green)
+![Static Badge](https://img.shields.io/badge/java-orange)
+![Static Badge](https://img.shields.io/badge/kotlin-purple)
+![Static Badge](https://img.shields.io/badge/firebase-orange)
 
 UniSphere is your ultimate university social platform, designed to bring your campus life into the palm of your hand. With a focus on real-time engagement, this app facilitates a vibrant community where students can stay informed, share moments, and connect like never before. 
 
